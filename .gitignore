@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+
+# Review captures (local evidence, not source)
+.impeccable/review/
+
+# Verbatim text extractions of the copyrighted Hammond/Suzuki manuals stay
+# local; docs/manual-verification.md carries the sourced summary.
+docs/manual-extraction.md
+docs/manual-mk1-extraction.md
+docs/service-manual-extraction.md
