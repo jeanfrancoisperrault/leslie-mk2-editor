@@ -14,6 +14,11 @@ export const STR = {
   sendAll: 'Envoyer tout',
   honesty:
     "L'éditeur ne peut pas lire la machine. L'état affiché est celui de l'éditeur — « Envoyer tout » pousse la configuration complète vers la Leslie.",
+  loaded: {
+    lead: (time: string) => `Valeurs lues sur la Leslie (dump de ${time}).`,
+    unsaved: (n: number) => `${n} réglage(s) du preset actif ne sont pas enregistrés : appuyez sur MEMORY sur la Leslie pour les garder. Les modifications faites ensuite ne sont pas relues.`,
+    allSaved: 'Le preset actif correspond à sa mémoire. Les modifications faites ensuite ne sont pas relues ; refaites un dump pour actualiser.',
+  },
   honestyLead: "L'éditeur ne peut pas lire la machine.",
   console: 'Console MIDI',
   consoleEmpty: 'Aucun message envoyé pour l’instant.',
@@ -53,4 +58,30 @@ export const STR = {
   hearLabel: "Ce qu'on entend.",
   adviceLabel: 'Conseil.',
   off: 'Off',
+  midiPortAria: 'Port MIDI de sortie',
+  midiOut: 'Sortie MIDI (vers le MIDI IN de la Leslie)',
+  midiIn: 'Entrée MIDI (depuis le MIDI OUT de la Leslie)',
+  outLabel: 'Sortie',
+  inLabel: 'Entrée',
+  noInput: 'Aucune entrée',
+  consoleClear: 'Effacer',
+  dir: { out: '→', in: '←', echo: '↩ écho' },
+  sysexDenied: 'Permission SysEx refusée : messages de vitesse Roland et dumps indisponibles ; CC et NRPN fonctionnent.',
+  speed: {
+    label: 'Rotor',
+    cmds: { slow: 'Slow', fast: 'Fast', brake: 'Brake' },
+    method: 'Méthode d’envoi',
+    via: 'via',
+    methods: { sysex: 'SysEx Roland', cc: 'CC 82 / 83', nrpn: 'NRPN Leslie Mode' },
+    noSysexBrake: 'Aucune valeur SysEx connue pour Brake',
+    note: 'Envoi immédiat vers la Leslie.',
+
+    reported: 'La Leslie indique :',
+  },
+  dump: {
+    receiving: (n: number) => `Réception du dump… ${n} paquet(s)`,
+    done: (n: number, bad: number, mode: string) =>
+      `Dump reçu : ${n} paquet(s), ` + (bad === 0 ? `checksum OK (${mode})` : `${bad} erreur(s) de checksum`),
+    save: 'Enregistrer le dump (.syx)',
+  },
 };

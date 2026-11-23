@@ -14,6 +14,11 @@ export const STR = {
   sendAll: 'Send all',
   honesty:
     'The editor cannot read the machine. The state shown is the editor’s — “Send all” pushes the full configuration to the Leslie.',
+  loaded: {
+    lead: (time: string) => `Values read from the Leslie (dump at ${time}).`,
+    unsaved: (n: number) => `${n} setting(s) of the active preset are not saved yet: press MEMORY on the Leslie to keep them. Later edits in the editor are not read back.`,
+    allSaved: 'The active preset matches its memory. Later edits in the editor are not read back; take a new dump to refresh.',
+  },
   honestyLead: 'The editor cannot read the machine.',
   console: 'MIDI console',
   consoleEmpty: 'No messages sent yet.',
@@ -91,7 +96,32 @@ export const STR = {
     title: 'Parameter guide',
     body: 'Hover or focus any parameter: what it sets, what you hear, its range and a live visualization appear here.',
   },
-  midiPortAria: 'MIDI port',
+  midiPortAria: 'MIDI output port',
+  midiOut: 'MIDI output (to the Leslie MIDI IN)',
+  midiIn: 'MIDI input (from the Leslie MIDI OUT)',
+  outLabel: 'Out',
+  inLabel: 'In',
+  noInput: 'No input',
+  consoleClear: 'Clear',
+  dir: { out: '→', in: '←', echo: '↩ echo' },
+  sysexDenied: 'SysEx permission refused: Roland speed messages and dumps are unavailable; CC and NRPN still work.',
+  speed: {
+    label: 'Rotor',
+    cmds: { slow: 'Slow', fast: 'Fast', brake: 'Brake' },
+    method: 'Transport method',
+    via: 'via',
+    methods: { sysex: 'SysEx Roland', cc: 'CC 82 / 83', nrpn: 'NRPN Leslie Mode' },
+    noSysexBrake: 'No known SysEx value for Brake',
+    note: 'Sends immediately to the Leslie.',
+
+    reported: 'Leslie reports:',
+  },
+  dump: {
+    receiving: (n: number) => `Receiving dump… ${n} packet(s)`,
+    done: (n: number, bad: number, mode: string) =>
+      `Dump received: ${n} packet(s), ` + (bad === 0 ? `checksum OK (${mode})` : `${bad} checksum error(s)`),
+    save: 'Save dump (.syx)',
+  },
   presetAria: 'Preset',
   fallbackPortName: 'MIDI port',
 };

@@ -13,6 +13,8 @@ export interface LoggedMessage {
 
 const CC_NAMES: Record<number, string> = {
   1: 'Modulation',
+  82: 'Rotary Fast',
+  83: 'Rotary Brake',
   6: 'DataEntryMSB',
   11: 'Expression',
   38: 'DataEntryLSB',
@@ -38,6 +40,15 @@ export function decodeMessage(bytes: Uint8Array): string {
     return `ch${ch} ProgramChange ${bytes[1]}`;
   }
   if (status === 0xf0) {
+    if (bytes[1] === 0x41 && bytes[5] === 0x12) {
+      const addr = Array.from(bytes.slice(6, 10), (b) => b.toString(16).padStart(2, '0')).join(' ');
+      const data = bytes[10];
+      const label = addr === '02 00 10 3d' ? (data === 0 ? ' Slow' : data === 1 ? ' Fast' : '') : '';
+      return `SysEx Roland write @${addr} = ${data}${label}`;
+    }
+    if (bytes[1] === 0x55 && bytes[5] === 0x11) {
+      return `SysEx Suzuki dump packet ${bytes[7]}/${bytes[8]} (${bytes.length} bytes)`;
+    }
     return `SysEx (${bytes.length} bytes)`;
   }
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(' ');

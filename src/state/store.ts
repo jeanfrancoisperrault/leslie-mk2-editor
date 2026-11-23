@@ -24,6 +24,8 @@ export interface AppState {
   connection: ConnectionKind;
   /** Parameter ids changed since app start (shown with the "changed" dot). */
   dirty: Set<string>;
+  /** Set once values were loaded from a Leslie dump (null = editor defaults). */
+  loadedFromDevice: { at: Date; unsaved: string[] } | null;
 }
 
 function defaultsForPreset(preset: PresetIndex): Record<string, number> {
@@ -50,6 +52,7 @@ export class Store {
     focusedParam: null,
     connection: { kind: 'unsupported' },
     dirty: new Set(),
+    loadedFromDevice: null,
   };
   #listeners = new Set<Listener>();
   /** Called with (def, rawValue) whenever a value change must reach MIDI. */
@@ -111,6 +114,28 @@ export class Store {
     this.#state.editedPreset = preset;
     this.#state.systemValues['presetNumber'] = preset;
     this.onSend?.(getParam('presetNumber'), preset);
+    this.#emit();
+  }
+
+  /**
+   * Replace the editor state with values read from the Leslie (dump).
+   * Sends nothing: the machine already holds these values. The selected
+   * preset gets its live values, the other preset its stored ones.
+   */
+  loadFromDevice(dev: {
+    selectedPreset: PresetIndex;
+    system: Record<string, number>;
+    active: Record<string, number>;
+    stored: [Record<string, number>, Record<string, number>];
+    unsaved: string[];
+  }): void {
+    const other: PresetIndex = dev.selectedPreset === 0 ? 1 : 0;
+    Object.assign(this.#state.systemValues, dev.system);
+    Object.assign(this.#state.presetValues[dev.selectedPreset], dev.active);
+    Object.assign(this.#state.presetValues[other], dev.stored[other]);
+    this.#state.editedPreset = dev.selectedPreset;
+    this.#state.dirty = new Set();
+    this.#state.loadedFromDevice = { at: new Date(), unsaved: dev.unsaved };
     this.#emit();
   }
 
