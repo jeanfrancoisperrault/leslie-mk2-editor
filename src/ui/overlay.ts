@@ -1,6 +1,6 @@
-// Startup overlay shown when no compatible MIDI device is detected
-// (shadcn Dialog look). It explains how to hook the Leslie up over MIDI and
-// closes itself as soon as a port appears (hot-plug), or on user dismissal.
+// Startup overlay shown when no compatible MIDI device is detected. It explains
+// how to hook the Leslie up over MIDI and closes itself as soon as a port
+// appears (hot-plug), or on user dismissal.
 
 import { STR } from '../content/i18n';
 import { el, svgEl } from './dom';
@@ -13,20 +13,20 @@ function chainDiagram(): SVGElement {
   const box = (x: number, w: number, label: string) =>
     [
       svgEl('rect', {
-        x: String(x), y: '14', width: String(w), height: '34', rx: '6',
-        fill: 'none', stroke: 'var(--border)',
+        x: String(x), y: '14', width: String(w), height: '34', rx: '4',
+        fill: 'var(--ground)', stroke: 'var(--rule-strong)',
       }),
       svgEl('text', {
         x: String(x + w / 2), y: '35', 'text-anchor': 'middle',
-        fill: 'var(--foreground)', 'font-size': '11', 'font-weight': '500',
+        fill: 'var(--ink)', 'font-size': '13', 'font-weight': '500',
       }, label),
     ];
   const link = (x1: number, x2: number, label: string) =>
     [
-      svgEl('line', { x1: String(x1), y1: '31', x2: String(x2), y2: '31', stroke: 'var(--primary)', 'stroke-width': '2' }),
+      svgEl('line', { x1: String(x1), y1: '31', x2: String(x2), y2: '31', stroke: 'var(--ink)', 'stroke-width': '2' }),
       svgEl('text', {
         x: String((x1 + x2) / 2), y: '24', 'text-anchor': 'middle',
-        fill: 'var(--muted-foreground)', 'font-size': '9',
+        fill: 'var(--ink-soft)', 'font-size': '12',
       }, label),
     ];
   return svgEl(

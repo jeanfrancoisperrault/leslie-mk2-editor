@@ -22,8 +22,6 @@ export interface AppState {
   /** Parameter shown in the explainer panel; null shows the neutral guide. */
   focusedParam: string | null;
   connection: ConnectionKind;
-  /** Parameter ids changed since app start (shown with the "changed" dot). */
-  dirty: Set<string>;
   /** Set once values were loaded from a Leslie dump (null = editor defaults). */
   loadedFromDevice: { at: Date; unsaved: string[] } | null;
 }
@@ -42,6 +40,9 @@ function systemDefaults(): Record<string, number> {
   return out;
 }
 
+/** Live states of the machine rather than settings: never counted as edits. */
+const STATE_PARAMS = new Set(['presetNumber', 'leslieMode']);
+
 export type Listener = (state: AppState) => void;
 
 export class Store {
@@ -51,9 +52,10 @@ export class Store {
     editedPreset: 0,
     focusedParam: null,
     connection: { kind: 'unsupported' },
-    dirty: new Set(),
     loadedFromDevice: null,
   };
+  /** Values at the last dump, to show what was changed since. */
+  #loaded: { presets: AppState['presetValues']; system: AppState['systemValues'] } | null = null;
   #listeners = new Set<Listener>();
   /** Called with (def, rawValue) whenever a value change must reach MIDI. */
   onSend: ((def: ParamDef, value: number) => void) | null = null;
@@ -87,7 +89,31 @@ export class Store {
       : this.#state.presetValues[this.#state.editedPreset][id]!;
   }
 
-  /** Set a raw value (clamped), mark dirty, and send it over MIDI. */
+  /** Raw value read from the Leslie for the edited preset; undefined before a dump. */
+  loadedValue(id: string): number | undefined {
+    return getParam(id).scope === 'system'
+      ? this.#loaded?.system[id]
+      : this.#loaded?.presets[this.#state.editedPreset][id];
+  }
+
+  /** Whether the value differs from the one read from the Leslie. */
+  isEdited(id: string): boolean {
+    const loaded = this.loadedValue(id);
+    return !STATE_PARAMS.has(id) && loaded !== undefined && loaded !== this.getValue(id);
+  }
+
+  /** Number of settings changed since the dump, both presets and system. */
+  editCount(): number {
+    const was = this.#loaded;
+    if (!was) return 0;
+    const diff = (a: Record<string, number>, b: Record<string, number>) =>
+      Object.keys(a).filter((id) => !STATE_PARAMS.has(id) && a[id] !== b[id]).length;
+    return diff(this.#state.presetValues[0], was.presets[0])
+      + diff(this.#state.presetValues[1], was.presets[1])
+      + diff(this.#state.systemValues, was.system);
+  }
+
+  /** Set a raw value (clamped) and send it over MIDI. */
   setValue(id: string, value: number, { send = true } = {}): void {
     if (send && this.locked) return;
     const def = getParam(id);
@@ -98,7 +124,6 @@ export class Store {
     } else {
       this.#state.presetValues[this.#state.editedPreset][id] = v;
     }
-    this.#state.dirty.add(id);
     if (send) this.onSend?.(def, v);
     this.#emit();
   }
@@ -145,7 +170,7 @@ export class Store {
     Object.assign(this.#state.presetValues[dev.selectedPreset], dev.active);
     Object.assign(this.#state.presetValues[other], dev.stored[other]);
     this.#state.editedPreset = dev.selectedPreset;
-    this.#state.dirty = new Set();
+    this.#loaded = structuredClone({ presets: this.#state.presetValues, system: this.#state.systemValues });
     this.#state.loadedFromDevice = { at: new Date(), unsaved: dev.unsaved };
     this.#emit();
   }

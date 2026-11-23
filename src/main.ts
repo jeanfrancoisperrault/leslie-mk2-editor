@@ -1,6 +1,13 @@
 // Entry point: wire the store, Web MIDI, the NRPN queue and the UI shell.
 
+import '@fontsource/geist-mono/latin-200.css';
+import '@fontsource/geist-mono/latin-400.css';
+import '@fontsource/plus-jakarta-sans/latin-400.css';
+import '@fontsource/plus-jakarta-sans/latin-500.css';
+import '@fontsource/plus-jakarta-sans/latin-600.css';
+import '@fontsource/plus-jakarta-sans/latin-700.css';
 import './ui/style.css';
+import './ui/halfmoon.css';
 
 import { decodeMessage } from './midi/mock';
 import { NrpnQueue } from './midi/queue';
@@ -22,9 +29,12 @@ import { MidiOverlay } from './ui/overlay';
 import { buildPanels } from './ui/panels';
 import { buildShell } from './ui/shell';
 
+/** Leslie Mode data values, in order. */
+const MODES: SpeedCommand[] = ['slow', 'fast', 'brake'];
+
 const store = new Store();
 const shell = buildShell(store);
-const panels = buildPanels(store);
+const panels = buildPanels(store, shell.status);
 const explainer = buildExplainer(store);
 
 // --- MIDI plumbing -----------------------------------------------------------
@@ -59,6 +69,12 @@ function shortHex(bytes: Uint8Array): string {
   return bytes.length <= 16 ? toHex(bytes) : `${toHex(bytes.slice(0, 12))} … (${bytes.length} bytes)`;
 }
 
+/** Show the rotor mode last sent or reported, and play it on the score. */
+function showMode(cmd: SpeedCommand): void {
+  shell.setMode(cmd);
+  panels.play(cmd);
+}
+
 const teeSink: MidiSink = {
   send(message) {
     if (hardwareSink) {
@@ -85,13 +101,13 @@ shell.onSpeed = (cmd) => {
   queue.flush();
   const ch = store.getValue('controlChannel');
   for (const msg of encodeSpeed(cmd, ch <= 15 ? ch : 0)) teeSink.send(msg);
+  showMode(cmd);
 };
 
 // --- Incoming: NRPN reports from the Leslie, dump capture ---------------------
 
 const nrpnIn = new NrpnParser();
 const dump = new DumpCollector();
-const MODES: SpeedCommand[] = ['slow', 'fast', 'brake'];
 
 // --- Save to memory: send a dump built from a real one + editor values ----
 
@@ -149,7 +165,7 @@ dump.onComplete = (packets) => {
     a.download = `leslie-dump-${stamp}.syx`;
     a.click();
     URL.revokeObjectURL(a.href);
-  });
+  }, bad > 0);
 };
 
 function onIncoming(bytes: Uint8Array): void {
@@ -173,7 +189,8 @@ function onIncoming(bytes: Uint8Array): void {
     shell.logMessage({ dir: 'in', hex: '  ⤷', text: `Leslie → ${label}` });
     if (def?.id === 'leslieMode') {
       store.setValue('leslieMode', write.value, { send: false });
-      shell.setReportedMode(MODES[write.value] ?? null);
+      const mode = MODES[write.value];
+      if (mode) showMode(mode);
     }
   }
 }
@@ -284,7 +301,7 @@ if (!app) throw new Error('#app mount point missing');
 const main = document.createElement('div');
 main.className = 'main';
 main.append(panels.root, explainer.root);
-app.append(shell.header, shell.transport, shell.honesty, shell.stateBanner, main, shell.console);
+app.append(shell.header, main, shell.console);
 
 store.subscribe((state) => {
   shell.update(state);

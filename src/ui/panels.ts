@@ -1,20 +1,36 @@
-// Edit zone: one block per parameter group, rows generated from the schema.
+// Work area: the score, then the settings. Two views (Sound / System) so that
+// the rarely used system settings stay out of the way.
 
-import { STR } from '../content/i18n';
-import { PARAMS } from '../params/schema';
-import type { ParamGroup } from '../params/schema';
+import { EXPLANATIONS, STR } from '../content/i18n';
+import type { SpeedCommand } from '../midi/speed';
+import { getParam } from '../params/schema';
 import type { AppState, Store } from '../state/store';
 import { buildParamRow } from './controls';
 import type { ParamRow } from './controls';
 import { el } from './dom';
+import { ROTOR_ROWS, SYSTEM_GROUPS, TONE_ROWS } from './layout';
+import { buildScore } from './score';
 
-const GROUP_ORDER: ParamGroup[] = ['horn', 'low', 'common', 'system'];
+export interface Panels {
+  root: HTMLElement;
+  update(state: AppState): void;
+  play(cmd: SpeedCommand | null): void;
+}
 
-export function buildPanels(store: Store): { root: HTMLElement; update(state: AppState): void } {
-  const root = el('div', { class: 'edit' });
+type View = 'sound' | 'system';
+const VIEWS: View[] = ['sound', 'system'];
+
+export function buildPanels(store: Store, status: HTMLElement): Panels {
   const rows: ParamRow[] = [];
+  const add = (id: string, label?: string): HTMLElement => {
+    const row = buildParamRow(getParam(id), store, label ? { label } : {});
+    rows.push(row);
+    return row.root;
+  };
 
-  // Waiting card, shown until the first dump from the Leslie is received.
+  const score = buildScore(store);
+
+  // Waiting instructions, shown until the first dump from the Leslie.
   const steps = el('ol', { class: 'waiting-steps' });
   for (const s of STR.waiting.steps) steps.append(el('li', { text: s }));
   const waiting = el('section', { class: 'waiting', role: 'status' },
@@ -22,31 +38,76 @@ export function buildPanels(store: Store): { root: HTMLElement; update(state: Ap
     el('p', { text: STR.waiting.body }),
     steps,
     el('p', { class: 'waiting-note', text: STR.waiting.note }));
-  const blocks = el('div', { class: 'edit-blocks' });
 
-  for (const group of GROUP_ORDER) {
-    const title = STR.groups[group] ?? group;
-    const block = el('section', { class: 'block', 'aria-label': title });
-    block.append(el('h2', { text: title }));
-    for (const def of PARAMS) {
-      if (def.group !== group) continue;
-      if (def.id === 'presetNumber') continue; // lives in the header switch
-      const row = buildParamRow(def, store);
-      rows.push(row);
-      block.append(row.root);
-    }
-    blocks.append(block);
+  // Rotor settings: one row per setting, one column per rotor.
+  const rotors = el('section', { class: 'rotors', 'aria-label': STR.groups['rotors']! },
+    el('span', {}),
+    el('h2', { class: 'col-horn', text: STR.groups['horn']! }),
+    el('h2', { class: 'col-low', text: STR.groups['low']! }));
+  for (const r of ROTOR_ROWS) {
+    const horn = add(r.horn);
+    const low = add(r.low);
+    horn.classList.add('col-horn');
+    low.classList.add('col-low');
+    rotors.append(el('span', { class: 'row-label', text: STR.rows[r.key] }), horn, low);
   }
-  root.append(waiting, blocks);
+  const tone = el('section', { class: 'tone', 'aria-label': STR.groups['tone']! });
+  for (const id of TONE_ROWS) tone.append(add(id, EXPLANATIONS[id]?.title ?? id));
+  const sound = el('div', { class: 'view', id: 'view-sound', role: 'tabpanel', 'aria-labelledby': 'tab-sound' },
+    rotors, tone);
+
+  const system = el('div', { class: 'view system', id: 'view-system', role: 'tabpanel', 'aria-labelledby': 'tab-system' });
+  for (const g of SYSTEM_GROUPS) {
+    const title = STR.systemGroups[g.key];
+    const block = el('section', { class: 'system-group', 'aria-label': title }, el('h2', { text: title }));
+    for (const id of g.params) block.append(add(id, EXPLANATIONS[id]?.title ?? id));
+    system.append(block);
+  }
+  const views: Record<View, HTMLElement> = { sound, system };
+
+  let view: View = 'sound';
+  const tablist = el('div', { class: 'tabs', role: 'tablist', 'aria-label': STR.views.aria });
+  const tabs = VIEWS.map((v) => {
+    const b = el('button', { type: 'button', role: 'tab', id: `tab-${v}`, 'aria-controls': `view-${v}`, text: STR.views[v] });
+    b.addEventListener('click', () => select(v));
+    tablist.append(b);
+    return b;
+  });
+  tablist.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    select(view === 'sound' ? 'system' : 'sound');
+    tabs[VIEWS.indexOf(view)]!.focus();
+  });
+
+  function select(next: View): void {
+    view = next;
+    VIEWS.forEach((v, i) => {
+      tabs[i]!.setAttribute('aria-selected', String(v === view));
+      tabs[i]!.tabIndex = v === view ? 0 : -1;
+    });
+    paint();
+  }
+
+  function paint(): void {
+    const locked = store.locked;
+    waiting.hidden = !locked;
+    tablist.hidden = locked;
+    score.root.hidden = !locked && view !== 'sound';
+    for (const v of VIEWS) views[v].hidden = locked || v !== view;
+  }
+
+  const root = el('div', { class: 'work' },
+    el('div', { class: 'work-head' }, tablist, status), score.root, waiting, sound, system);
+  select('sound');
 
   return {
     root,
     update(state) {
-      const locked = store.locked;
-      waiting.hidden = !locked;
-      blocks.classList.toggle('is-locked', locked);
-      blocks.toggleAttribute('inert', locked);
+      paint();
+      score.update(state);
       for (const row of rows) row.update(state);
     },
+    play: (cmd) => score.play(cmd),
   };
 }

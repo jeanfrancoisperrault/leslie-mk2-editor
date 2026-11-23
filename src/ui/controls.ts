@@ -1,11 +1,12 @@
 // Parameter row controls: fader (native range input), enum key-row, or
 // channel select — all built from the schema definition.
 
-import { STR } from '../content/i18n';
+import { EXPLANATIONS, STR } from '../content/i18n';
 import { formatValue } from '../params/schema';
 import type { ParamDef } from '../params/schema';
 import type { AppState, Store } from '../state/store';
 import { el } from './dom';
+import { voiceOf } from './layout';
 
 export interface ParamRow {
   root: HTMLElement;
@@ -22,8 +23,8 @@ function scheduleFocusClear(store: Store): void {
   if (clearTimer !== null) clearTimeout(clearTimer);
   clearTimer = setTimeout(() => {
     clearTimer = null;
-    const hovered = document.querySelector('.param:hover');
-    const focused = document.activeElement?.closest('.param');
+    const hovered = document.querySelector('[data-guide]:hover');
+    const focused = document.activeElement?.closest('[data-guide]');
     if (!hovered && !focused) store.focusParam(null);
   }, CLEAR_DELAY_MS);
 }
@@ -35,43 +36,52 @@ function cancelFocusClear(): void {
   }
 }
 
+/** Hovering or focusing the element shows the parameter in the guide. */
+export function opensGuide(target: HTMLElement | SVGElement, id: string, store: Store): void {
+  target.setAttribute('data-guide', id);
+  const open = () => {
+    cancelFocusClear();
+    store.focusParam(id);
+  };
+  const leave = () => scheduleFocusClear(store);
+  target.addEventListener('focusin', open);
+  target.addEventListener('pointerenter', open);
+  target.addEventListener('focusout', leave);
+  target.addEventListener('pointerleave', leave);
+}
+
 function bigStep(def: ParamDef): number {
   const span = def.max - def.min;
   return span >= 50 ? 10 : span >= 20 ? 5 : 2;
 }
 
-/** Secondary line under the value: raw data value or display code.
-    Unverified conversion tables are not flagged here: the raw data sent over
-    MIDI is always correct, and the explainer carries the caveat in prose. */
-function secondaryText(def: ParamDef, value: number): string {
-  const m = def.mapping;
-  if (m.type === 'table') return `${STR.rawData} ${value}`;
-  if (m.type === 'enum') {
-    const opt = m.options.find((o) => o.value === value);
-    return opt?.display ? `${STR.display} ${opt.display}` : `${STR.rawData} ${value}`;
-  }
-  if (m.type === 'channel') return `1–16 · ${STR.off}`;
-  return `${def.min}–${def.max}`;
+export interface RowOptions {
+  /** Visible label; omitted when a table row already names the setting. */
+  label?: string;
 }
 
-export function buildParamRow(def: ParamDef, store: Store): ParamRow {
-  const label = el('span', { class: 'param-label', text: def.panelName ?? def.manualName });
-  const dirtyDot = el('span', { class: 'dirty-dot', role: 'img', 'aria-label': STR.modified, title: STR.modified });
-  dirtyDot.hidden = true;
-  label.append(dirtyDot);
+/** One setting: optional label, its control, its value in real units. */
+export function buildParamRow(def: ParamDef, store: Store, opts: RowOptions = {}): ParamRow {
+  // The full name (with the rotor) identifies the control to assistive tech:
+  // "Slow speed" alone exists twice on screen.
+  const name = EXPLANATIONS[def.id]?.title ?? def.manualName;
 
-  const valueMain = el('span');
-  const valueSub = el('small');
-  const valueBox = el('span', { class: 'param-value' }, valueMain, valueSub);
+  const valueMain = el('span', { class: 'value-now' });
+  const valueWas = el('small', { class: 'value-was' });
+  const valueBox = el('span', { class: 'param-value' }, valueMain, valueWas);
 
-  const row = el('div', { class: def.mapping.type === 'enum' ? 'param p-enum' : 'param', 'data-param': def.id });
+  const kind = def.mapping.type === 'enum' ? ' p-enum' : def.mapping.type === 'channel' ? ' p-select' : '';
+  const mode = voiceOf(def.id);
+  const voice = mode ? ` voice-${mode}` : '';
+  const row = el('div', { class: `param${kind}${voice}`, 'data-param': def.id });
+  if (opts.label) row.append(el('span', { class: 'param-label', text: opts.label }));
 
   let control: HTMLElement;
   let updateControl: (state: AppState) => void;
 
   const m = def.mapping;
   if (m.type === 'enum') {
-    const group = el('div', { class: 'enum', role: 'group', 'aria-label': def.panelName ?? def.manualName });
+    const group = el('div', { class: 'enum', role: 'group', 'aria-label': name });
     const buttons = m.options.map((opt) => {
       const b = el('button', { type: 'button', text: opt.label });
       b.addEventListener('click', () => store.setValue(def.id, opt.value));
@@ -84,7 +94,7 @@ export function buildParamRow(def: ParamDef, store: Store): ParamRow {
       for (const { b, value } of buttons) b.setAttribute('aria-pressed', String(value === v));
     };
   } else if (m.type === 'channel') {
-    const select = el('select', { class: 'port-select', 'aria-label': def.panelName ?? def.manualName });
+    const select = el('select', { class: 'select', 'aria-label': name });
     for (let i = 0; i <= 16; i++) {
       select.append(el('option', { value: String(i), text: i === 16 ? STR.off : `${STR.channel} ${i + 1}` }));
     }
@@ -100,7 +110,7 @@ export function buildParamRow(def: ParamDef, store: Store): ParamRow {
       min: String(def.min),
       max: String(def.max),
       step: '1',
-      'aria-label': def.panelName ?? def.manualName,
+      'aria-label': name,
     });
     input.addEventListener('input', () => store.setValue(def.id, Number(input.value)));
     input.addEventListener('keydown', (e) => {
@@ -125,30 +135,24 @@ export function buildParamRow(def: ParamDef, store: Store): ParamRow {
       const every = span <= 10 ? 1 : span <= 40 ? 5 : 10;
       scale.style.backgroundSize = `${(every / span) * 100}% 100%`;
     }
-    control = el('div', {}, input, scale);
+    // Outlined cap: where the machine's own value sits, shown once edited.
+    const was = el('span', { class: 'fader-was', 'aria-hidden': 'true' });
+    control = el('div', { class: 'fader-box' }, scale, was, input);
     updateControl = () => {
       const v = store.getValue(def.id);
       input.value = String(v);
       const pct = ((v - def.min) / (def.max - def.min)) * 100;
       input.style.setProperty('--fill', `${pct}%`);
       input.setAttribute('aria-valuetext', formatValue(def, v));
+      const loaded = store.loadedValue(def.id);
+      was.hidden = !store.isEdited(def.id);
+      if (loaded !== undefined) was.style.setProperty('--at', String((loaded - def.min) / (def.max - def.min)));
     };
   }
 
-  row.append(label, control, valueBox);
+  row.append(control, valueBox);
 
-  // Focus or hover selects the parameter in the explainer panel; leaving
-  // both clears it back to the neutral guide (checked after a short delay).
-  row.addEventListener('focusin', () => {
-    cancelFocusClear();
-    store.focusParam(def.id);
-  });
-  row.addEventListener('pointerenter', () => {
-    cancelFocusClear();
-    store.focusParam(def.id);
-  });
-  row.addEventListener('pointerleave', () => scheduleFocusClear(store));
-  row.addEventListener('focusout', () => scheduleFocusClear(store));
+  opensGuide(row, def.id, store);
   // Double-click (outside buttons) resets to the factory default.
   row.addEventListener('dblclick', (e) => {
     if ((e.target as HTMLElement).closest('button')) return;
@@ -159,8 +163,10 @@ export function buildParamRow(def: ParamDef, store: Store): ParamRow {
     const v = store.getValue(def.id);
     // Locked (no dump yet): show no value rather than factory defaults.
     valueMain.textContent = store.locked ? '—' : formatValue(def, v);
-    valueSub.textContent = store.locked ? '' : secondaryText(def, v);
-    dirtyDot.hidden = !state.dirty.has(def.id);
+    const edited = store.isEdited(def.id);
+    valueWas.hidden = !edited;
+    valueWas.textContent = edited ? STR.was(formatValue(def, store.loadedValue(def.id)!)) : '';
+    row.classList.toggle('is-edited', edited);
     row.classList.toggle('is-focused', state.focusedParam === def.id);
     updateControl(state);
   }

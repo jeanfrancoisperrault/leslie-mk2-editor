@@ -1,0 +1,31 @@
+/* The score (rotor graph): scales, ramps, rotors. Colors come from --voice (slow / fast / brake). */
+
+.score { padding: 0 2px; }
+.score-svg { display: block; width: 100%; }
+.score-svg text { font-family: var(--font); font-variant-numeric: lining-nums tabular-nums; }
+
+.score-staff { stroke: var(--rule-strong); stroke-width: 1; }
+.score-bar { stroke: var(--ink); stroke-width: 1; }
+.score-tick { stroke: var(--ink-soft); stroke-width: 1; }
+.score-scale { font-size: 13px; fill: var(--ink); }
+.score-svg .score-scale, .score-svg .score-time, .score-svg .score-held, .score-svg .score-rpm { font-family: var(--font-mono); font-weight: 200; word-spacing: 0; }
+.score-svg .score-command { font-size: 18px; font-weight: 700; fill: var(--voice); }
+
+.score-line { fill: none; stroke: var(--voice); stroke-width: 3; stroke-linejoin: round; transition: stroke-width 0.15s ease-out, opacity 0.15s ease-out; }
+.score-hit { fill: none; stroke: transparent; stroke-width: 20; pointer-events: stroke; cursor: pointer; }
+.score-seg.is-on .score-line { stroke-width: 5; }
+.score-svg.has-focus .score-line { opacity: 0.4; }
+.score-svg.has-focus .score-seg.is-on .score-line { opacity: 1; }
+.score-head { fill: var(--voice); pointer-events: none; }
+.score-was { fill: none; stroke: var(--voice); stroke-width: 1.25; stroke-dasharray: 3 4; opacity: 0.75; }
+.score-head-was { fill: var(--ground); stroke: var(--voice); stroke-width: 1.75; }
+.score-time { font-size: 15px; fill: var(--voice-text); pointer-events: none; }
+.score-held { font-size: 13px; fill: var(--ink); pointer-events: none; }
+
+.score-name { font-size: 15px; font-weight: 500; fill: var(--ink-soft); }
+.score-rpm { font-size: 20px; fill: var(--voice-text); }
+.score-disc { fill: none; stroke: var(--voice); stroke-width: 1.5; }
+.score-arm { stroke: var(--voice); stroke-width: 3; stroke-linecap: round; }
+.score-arm-tip { fill: var(--voice); }
+.score-hub { fill: var(--voice); }
+.score-playhead { stroke: var(--ink); stroke-width: 1.5; opacity: 0; transition: opacity 0.2s ease-out; pointer-events: none; }

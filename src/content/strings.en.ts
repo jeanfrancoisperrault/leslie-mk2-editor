@@ -1,14 +1,48 @@
 // UI strings, English (default language).
 
+import type { RotorSettings } from '../ui/score-model';
+
 export const STR = {
   appTitle: 'Leslie 2101 / 2103 mk2',
-  appSubtitle: 'Editor',
   groups: {
+    rotors: 'Rotor settings',
+    tone: 'Tone',
     horn: 'Horn rotor',
     low: 'Low rotor',
-    common: 'Cabinet & crossover',
-    system: 'System',
   } as Record<string, string>,
+  rows: {
+    slowSpeed: 'Slow speed',
+    fastSpeed: 'Fast speed',
+    riseTime: 'Rise time',
+    fallTime: 'Fall time',
+    brakeTime: 'Brake time',
+    level: 'Level',
+  },
+  systemGroups: {
+    channels: 'MIDI channels',
+    reception: 'MIDI reception',
+    switches: 'Pedals and switches',
+  },
+  views: { aria: 'Settings', sound: 'Sound', system: 'System' },
+  connection: {
+    label: 'MIDI connection',
+    channel: 'Channel the Leslie listens on',
+    states: {
+      unsupported: 'No Web MIDI',
+      denied: 'MIDI denied',
+      'no-port': 'No MIDI port',
+      simulator: 'Simulator',
+    },
+  },
+  score: {
+    aria: 'Rotor speeds over time',
+    rotors: { horn: 'Horn', low: 'Low rotor' },
+    empty: 'Empty graph: waiting for the Leslie’s settings.',
+    summary: (h: RotorSettings, l: RotorSettings) =>
+      `Rotor speeds over time. Horn: ${h.slow} to ${h.fast} rpm, rise ${h.rise} s, fall ${h.fall} s, brake ${h.brake} s. ` +
+      `Low rotor: ${l.slow} to ${l.fast} rpm, rise ${l.rise} s, fall ${l.fall} s, brake ${l.brake} s.`,
+  },
+  was: (value: string) => `was ${value}`,
   preset1: 'Preset 1',
   preset2: 'Preset 2',
   saveMemory: {
@@ -20,10 +54,10 @@ export const STR = {
     confirm: 'Write both presets and the system settings into the Leslie’s memory?\n\nThis replaces what is stored on the machine. Take a DUMP OUT afterwards to check.',
     sent: 'Written to the Leslie’s memory. Take a DUMP OUT to check.',
   },
-  honesty:
-    'The editor cannot read the machine. The state shown is the editor’s — take a DUMP OUT from the Leslie to load its real values.',
   loaded: {
-    lead: (time: string) => `Values read from the Leslie (dump at ${time}).`,
+    short: (time: string) => `Read from the Leslie at ${time}.`,
+    shortUnsaved: (n: number) => `${n} not in its memory.`,
+    edits: (n: number) => `${n} changed here since.`,
     unsaved: (n: number) => `${n} setting(s) of the active preset are not saved yet: press MEMORY on the Leslie to keep them. Later edits in the editor are not read back.`,
     allSaved: 'The active preset matches its memory. Later edits in the editor are not read back; take a new dump to refresh.',
   },
@@ -31,13 +65,12 @@ export const STR = {
     title: 'Waiting for the Leslie',
     body: 'The editor shows nothing until it has read the Leslie’s real settings. Send them from the Leslie:',
     steps: [
-      'Check that “In” (top bar) is the MIDI input wired to the Leslie’s MIDI OUT.',
+      'Check that the MIDI connection (top bar) uses the MIDI input wired to the Leslie’s MIDI OUT.',
       'On the Leslie, turn FUNCTION to DUMP OUT.',
       'Press VALUE until “dP” blinks. The settings appear here when the blinking stops.',
     ],
-    note: 'The Rotor buttons (Slow / Fast / Brake) already work.',
+    note: 'The Slow, Fast and Brake buttons already work.',
   },
-  honestyLead: 'The editor cannot read the machine.',
   console: 'MIDI console',
   consoleEmpty: 'No messages sent yet.',
   machineMenu: 'Machine menu',
@@ -46,7 +79,6 @@ export const STR = {
   defaultShort: 'default',
   rawData: 'data',
   display: 'display',
-  modified: 'Changed since launch',
   simulator: 'Simulator',
   simulatorNote: 'Simulator mode — messages are logged to the MIDI console, nothing is sent.',
   channel: 'Channel',
@@ -59,15 +91,10 @@ export const STR = {
     portLost: 'MIDI port lost — check the cable. Falling back to the simulator.',
   },
   vizCaptions: {
-    curve: 'The curve redraws as you adjust.',
-    rotor: 'Spinning at the real speed.',
-    rotorStopped: 'Rotor stopped (data 0).',
-    rotorReduced: 'Animation disabled (prefers-reduced-motion).',
     crossover: 'Signal split between the two ways.',
     character: 'Qualitative schematic — not a measurement.',
   },
   vizLabels: {
-    rpmLong: 'revolutions per minute',
     lowWay: 'Low rotor — below',
     hornWay: 'Horn — above',
     lows: 'lows',
@@ -94,7 +121,7 @@ export const STR = {
         'MIDI access was denied, so the editor cannot see any port. Allow MIDI in the browser (icon left of the URL), then reload.',
       noPort: 'No MIDI output port was found on this computer.',
       noLeslie:
-        'MIDI ports were found, but none of them looks like a Leslie. If one of them is wired to the Leslie, pick it in the header — the editor cannot tell on its own.',
+        'MIDI ports were found, but none of them looks like a Leslie. If one of them is wired to the Leslie, pick it under the MIDI connection button — the editor cannot tell on its own.',
     },
     howToTitle: 'Hooking up the Leslie',
     howTo: [
@@ -112,23 +139,26 @@ export const STR = {
   explainerAria: 'Parameter explanation',
   explainerEmpty: {
     title: 'Parameter guide',
-    body: 'Hover or focus any parameter: what it sets, what you hear, its range and a live visualization appear here.',
+    body: [
+      'Hover or focus any setting: what it sets, what you hear and its range appear here.',
+      'The graph shows both rotors on the same clock: what happens on Slow and Brake when the rotors turn fast, then on Fast when they turn slow. The five lines are the speed, from 0 to 400 rpm.',
+      'Green is Slow, red is Fast, white is Brake: in the graph, on the faders and on the half-moon.',
+      'It is calculated from the settings. Ramps are drawn straight; the machine’s exact curve is not documented.',
+      'A filled point is the value now. An open point, or an outlined cap on a fader, is the value read from the Leslie, shown once you change it.',
+    ],
   },
   midiPortAria: 'MIDI output port',
   midiOut: 'MIDI output (to the Leslie MIDI IN)',
   midiIn: 'MIDI input (from the Leslie MIDI OUT)',
-  outLabel: 'Out',
-  inLabel: 'In',
   noInput: 'No input',
   consoleClear: 'Clear',
+  credits: 'Credits:',
   dir: { out: '→', in: '←', echo: '↩ echo' },
   sysexDenied: 'SysEx permission refused: the editor can neither receive nor send dumps, so it cannot read the Leslie. Allow SysEx (icon left of the URL) and reload.',
   speed: {
     label: 'Rotor',
     cmds: { slow: 'Slow', fast: 'Fast', brake: 'Brake' },
     note: 'Sends immediately to the Leslie.',
-
-    reported: 'Leslie reports:',
   },
   dump: {
     receiving: (n: number) => `Receiving dump… ${n} packet(s)`,
