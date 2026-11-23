@@ -157,8 +157,9 @@ export function buildParamRow(def: ParamDef, store: Store): ParamRow {
 
   function update(state: AppState): void {
     const v = store.getValue(def.id);
-    valueMain.textContent = formatValue(def, v);
-    valueSub.textContent = secondaryText(def, v);
+    // Locked (no dump yet): show no value rather than factory defaults.
+    valueMain.textContent = store.locked ? '—' : formatValue(def, v);
+    valueSub.textContent = store.locked ? '' : secondaryText(def, v);
     dirtyDot.hidden = !state.dirty.has(def.id);
     row.classList.toggle('is-focused', state.focusedParam === def.id);
     updateControl(state);

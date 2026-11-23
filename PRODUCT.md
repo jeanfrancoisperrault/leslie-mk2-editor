@@ -22,7 +22,7 @@ par défaut du plan initial) ; structure i18n conservée, pack français disponi
 
 - Application web statique, sans backend. Chrome / Edge uniquement (Web MIDI) ; message clair sur Safari.
 - Desktop first : conçu pour 1440×900, utilisable jusqu'à 1100 px. Pas de layout mobile en v1.
-- Langue : français par défaut, i18n prête pour l'anglais. Commentaires de code en anglais.
+- Langue : projet international, interface en anglais ; i18n prête pour d'autres langues (pack français existant, traductions plus tard). Commentaires de code en anglais.
 - Édition en direct par NRPN ; SysEx réservé au dump mémoire (sauvegarde/archivage).
 - L'éditeur ne peut pas lire l'état de la machine (pas de dump request documenté) : l'UI doit être
   honnête là-dessus et offrir « Envoyer tout ».

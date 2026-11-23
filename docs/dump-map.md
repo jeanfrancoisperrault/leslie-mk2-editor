@@ -69,13 +69,25 @@ l'ordre des NRPN de preset :
 | 15 | Low Rot Level (1A) | 76 | 99 |
 | 16 | Bass Level (1B) | 90 | 90 |
 | 17 | Horn Character (1C) ✓ | 0 → Flat (afficheur « FL ») | 1 → 1.0k (afficheur « 1.0 ») |
-| 18 | Crossover (0E) ? | 1 → 0,8 kHz | 1 → 0,8 kHz |
+| 18 | Crossover (0E) ✓ | 1 → 0,8 kHz | 1 → 0,8 kHz |
 | 19 | Cabinet Character (1D) ✓ | 0 → 122 (afficheur « 12 ») | 1 → 21H (afficheur « 21 ») |
 
 Octets 17 et 19 confirmés le 2026-11-23 par lecture de la face avant : preset 1 = HORN CHAR 1.0,
 CABINET 21 ; preset 2 = HORN CHAR FL, CABINET 12. Les tables D et F du manuel s'appliquent
 telles quelles. Sur cette machine, les cabinets sont **inversés par rapport à l'usine**
 (P1 = 21H, P2 = 122) : quelqu'un a reconfiguré les presets.
+
+Rotor grave confirmé le 2026-11-23 (preset 1) : la face avant affiche slow 3, fast 1, rise 12,
+fall 5.5, brake 10, rot level 99, bass level 90, ce qui correspond exactement aux valeurs chargées
+par l'éditeur. Les vitesses s'affichent en **index** sur la face avant (3, 1), pas en rpm : la
+conversion en rpm du rotor grave (tables *3 / *4) ne peut pas être vérifiée de cette façon. Le
+rotor grave étant numérique, on ne peut pas non plus le chronométrer. Elle reste « selon le manuel ».
+
+Brake « OFF » : l'erratum ajoute une valeur OFF aux deux Brake Time, mais elle **n'existe pas**
+sur la face avant de cette Leslie (constaté le 2026-11-23). L'éditeur ne la propose donc pas.
+
+Octet 18 confirmé le 2026-11-23 : CROSS OVER changé sur la face avant, puis dump ; le curseur
+Crossover de l'éditeur a suivi.
 
 ### Rôle des blocs (confirmé par la comparaison preset 2 → preset 1)
 
@@ -108,8 +120,6 @@ Jusque-là, il contenait le preset 2, sans doute celui chargé au démarrage pr�
 ### Encore inconnu
 
 - Le rôle exact du bloc 40 (copie du preset chargé à l'allumage ?).
-- L'octet 18 (Crossover) : il vaut 1 sur les deux presets, ce qui est cohérent avec 0,8 kHz, mais
-  il n'est pas prouvé. Il faudrait lire CROSS OVER sur la face avant, ou le changer et refaire un dump.
 - Pourquoi les vitesses sont stockées sur 2 octets.
 - Le sens des octets 28–31 et 120–127 (`FF FA 00 00 00 00 06 00`).
 
@@ -121,3 +131,31 @@ les deux dumps. Tests prioritaires :
 2. Noter ce qu'affiche la face avant pour HORN CHAR et CABINET sur chaque preset.
 3. Modifier un paramètre sans appuyer sur MEMORY, puis l'enregistrer avec MEMORY : on verra
    si seul le bloc 60 change, puis le bloc 80 ou 100.
+
+## Problème connu : footswitch avec les câbles MIDI branchés
+
+Constaté le 2026-11-23, non résolu. Avec les câbles MIDI branchés (MidiSport 2x2 en USB Merge) :
+- le bouton Brake du footswitch fait passer en **Fast** et émet `B0 63 18 / B0 62 7F / B0 06 01`
+  (Leslie Mode = Fast), et le même message revient à chaque appui ;
+- le bouton Slow/Fast n'émet rien.
+
+Le problème ne se produit pas quand les câbles MIDI sont débranchés.
+
+Piste à vérifier : une **boucle MIDI**. Le MIDI OUT de la Leslie recopie son MIDI IN. Si le mode
+Merge de la MidiSport renvoie aussi son entrée MIDI IN 1 vers la sortie A, chaque message du
+footswitch revient dans la Leslie et peut être réinterprété. Test possible : refaire la manip avec
+seulement le câble « MidiSport OUT → Leslie IN » branché.
+
+## Dump In : renvoyer un dump écrit la mémoire (confirmé)
+
+Test du 2026-11-23. La mémoire contenait Preset 1 Horn Slow / Fast = 204 / 427 rpm. Le dump de ce
+matin (`fixtures/2026-11-23-leslie-dump.syx`, Preset 1 = 46 / 400 rpm, preset 2 sélectionné) a été
+envoyé à la Leslie avec SysEx Librarian. Ensuite, la Leslie a été éteinte puis rallumée, et un
+DUMP OUT a été lancé depuis la face avant : l'éditeur affiche de nouveau 46 / 400 rpm.
+
+- **Recevoir un dump écrit les presets enregistrés de façon permanente**, sans appui sur MEMORY.
+  C'est le seul moyen connu d'écrire la mémoire par MIDI.
+- **Piège de l'écho** : quand un autre logiciel envoie un dump à la Leslie, son MIDI OUT le
+  renvoie tel quel. L'éditeur le reçoit alors comme s'il venait de la machine, et le charge. Ce
+  dump-là reflète ce qui a été **envoyé**, pas l'état réel de la Leslie : il faut un DUMP OUT pour
+  le confirmer.

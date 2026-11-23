@@ -4,24 +4,23 @@
 //   60-79    edit buffer = live state of the selected preset
 //   80-99    stored Preset 1
 //   100-119  stored Preset 2
-// Byte 18 of a preset block (crossover) is consistent but not yet proven.
 
 import { PARAMS } from '../params/schema';
 import type { ParamDef } from '../params/schema';
 
 /** Offset inside a 20-byte preset block -> NRPN code of the parameter. */
-const PRESET_LAYOUT: readonly [offset: number, nrpn: number][] = [
+export const PRESET_LAYOUT: readonly [offset: number, nrpn: number][] = [
   [1, 0x00], [3, 0x01], [5, 0x02], [7, 0x03], // speeds: low byte of 2-byte fields
   [8, 0x04], [9, 0x05], [10, 0x06], [11, 0x07], [12, 0x08], [13, 0x09],
   [14, 0x19], [15, 0x1a], [16, 0x1b],
   [17, 0x1c], [18, 0x0e], [19, 0x1d],
 ];
 
-const SYSTEM_START = 32;
-const SYSTEM_FIRST_NRPN = 0x10;
-const SYSTEM_COUNT = 8; // 0x10-0x17; Leslie Mode (0x18) is not stored
-const EDIT_BUFFER = 60;
-const STORED = [80, 100] as const;
+export const SYSTEM_START = 32;
+export const SYSTEM_FIRST_NRPN = 0x10;
+export const SYSTEM_COUNT = 8; // 0x10-0x17; Leslie Mode (0x18) is not stored
+export const EDIT_BUFFER = 60;
+export const STORED = [80, 100] as const;
 
 export interface DumpState {
   /** 0 = Preset 1, 1 = Preset 2. */
@@ -37,7 +36,7 @@ export interface DumpState {
   rejected: { id: string; value: number }[];
 }
 
-const byNrpn = (scope: ParamDef['scope'], nrpn: number) =>
+export const byNrpn = (scope: ParamDef['scope'], nrpn: number) =>
   PARAMS.find((p) => p.scope === scope && p.nrpn === nrpn);
 
 export function decodeDumpState(data: Uint8Array): DumpState | null {

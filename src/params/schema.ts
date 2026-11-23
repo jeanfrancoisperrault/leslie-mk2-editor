@@ -61,11 +61,6 @@ export interface ParamDef {
    */
   defaults: readonly [number, number] | number;
   mapping: ValueMapping;
-  /**
-   * True for brake times: the unit also accepts an "OFF" setting whose raw
-   * data value is not documented. To confirm on hardware (Phase 0).
-   */
-  hasOff?: boolean;
 }
 
 const hornTime: ValueMapping = { type: 'table', unit: 's', values: HORN_TIME_S, verified: true };
@@ -101,7 +96,7 @@ export const PARAMS: readonly ParamDef[] = [
     id: 'hornBrakeTime', group: 'horn', scope: 'preset',
     manualName: 'Brake Time', panelName: 'BRAKE TIME',
     nrpn: 0x08, min: 0, max: 39, defaults: [14, 14], // 3.0 s / 3.0 s
-    mapping: hornTime, hasOff: true,
+    mapping: hornTime,
   },
   {
     id: 'hornCharacter', group: 'horn', scope: 'preset',
@@ -147,7 +142,7 @@ export const PARAMS: readonly ParamDef[] = [
     id: 'lowBrakeTime', group: 'low', scope: 'preset',
     manualName: 'Brake Time', panelName: 'BRAKE TIME',
     nrpn: 0x09, min: 0, max: 24, defaults: [19, 24], // 10 s / 14 s
-    mapping: lowTime, hasOff: true,
+    mapping: lowTime,
   },
   {
     id: 'lowRotLevel', group: 'low', scope: 'preset',
