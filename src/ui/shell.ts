@@ -32,6 +32,8 @@ export interface Shell {
   /** null = Save to memory available; otherwise the reason it is not. */
   setSaveBlocked(reason: string | null): void;
   onSaveMemory: (() => void) | null;
+  /** Problem shown in the status sentence; null clears it. */
+  setAlert(kind: 'sysex' | 'send', text: string | null): void;
   logMessage(entry: ConsoleEntry): void;
   onPortChange: ((id: string | 'sim') => void) | null;
   onInputChange: ((id: string | null) => void) | null;
@@ -61,7 +63,7 @@ export function buildShell(store: Store): Shell {
   dumpSave.addEventListener('click', () => dumpSaveHandler?.());
   const field = (id: string, label: string, control: HTMLElement) =>
     el('div', { class: 'field' }, el('label', { for: id, text: label }), control);
-  const panel = el('div', { class: 'connection-panel', id: 'connection-panel', popover: 'auto', 'aria-label': STR.connection.label },
+  const panel = el('div', { class: 'connection-panel', id: 'connection-panel', popover: 'auto', role: 'group', 'aria-label': STR.connection.label },
     connectionNote,
     field('midi-out', STR.midiOut, portSelect),
     field('midi-in', STR.midiIn, inputSelect),
@@ -77,6 +79,10 @@ export function buildShell(store: Store): Shell {
     const r = connection.getBoundingClientRect();
     panel.style.top = `${r.bottom + 8}px`;
     panel.style.right = `${document.documentElement.clientWidth - r.right}px`;
+  });
+
+  window.addEventListener('resize', () => {
+    if (panel.matches(':popover-open')) panel.hidePopover();
   });
 
   // --- Top bar ---
@@ -111,11 +117,13 @@ export function buildShell(store: Store): Shell {
   const status = el('p', { class: 'status', role: 'status' });
   let receiving: string | null = null;
   let dumpError: string | null = null;
+  const alerts = new Map<string, string>();
   const paintStatus = (state: AppState) => {
     const dev = state.loadedFromDevice;
+    const problem = dumpError ?? alerts.get('send') ?? alerts.get('sysex');
     let text = '';
     if (receiving) text = receiving;
-    else if (dumpError) text = dumpError;
+    else if (problem) text = problem;
     else if (dev) {
       const time = dev.at.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
       const edits = store.editCount();
@@ -126,7 +134,7 @@ export function buildShell(store: Store): Shell {
     }
     // Only touch the live region when the sentence changes.
     if (status.textContent !== text) status.textContent = text;
-    status.classList.toggle('is-error', !receiving && dumpError !== null);
+    status.classList.toggle('is-error', !receiving && problem !== undefined);
   };
 
   // --- Console ---
@@ -215,6 +223,13 @@ export function buildShell(store: Store): Shell {
       dumpSave.hidden = onSave === null;
       receiving = onSave === null ? text : null;
       dumpError = error ? text : null;
+      paintStatus(store.state);
+    },
+
+    setAlert(kind, text) {
+      if ((alerts.get(kind) ?? null) === text) return;
+      if (text === null) alerts.delete(kind);
+      else alerts.set(kind, text);
       paintStatus(store.state);
     },
 

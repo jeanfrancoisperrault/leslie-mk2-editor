@@ -87,6 +87,7 @@ export function buildPanels(store: Store, status: HTMLElement): Panels {
       tabs[i]!.tabIndex = v === view ? 0 : -1;
     });
     paint();
+    score.update(store.state); // the graph pauses while hidden
   }
 
   function paint(): void {

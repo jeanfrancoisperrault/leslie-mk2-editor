@@ -51,9 +51,14 @@ describe('half-moon drag: nothing is sent before the release', () => {
     expect(new LeverDrag('brake', 0.1).release()).toBeNull();
   });
 
-  it('with an unknown mode, any deliberate position is sent', () => {
+  it('with an unknown mode, the ghosted lever rests at center: pressing it sends nothing', () => {
+    expect(new LeverDrag(null, 0).release()).toBeNull();
+    expect(new LeverDrag(null, 0.3).release()).toBeNull();
+  });
+
+  it('with an unknown mode, moving to an end sends that mode', () => {
     expect(new LeverDrag(null, -0.9).release()).toBe('slow');
-    expect(new LeverDrag(null, 0).release()).toBe('brake');
+    expect(new LeverDrag(null, 0.9).release()).toBe('fast');
   });
 
   it('keeps the lever within its track', () => {

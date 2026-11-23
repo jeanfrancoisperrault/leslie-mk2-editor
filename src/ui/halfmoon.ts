@@ -38,7 +38,7 @@ export function buildHalfMoon(): HalfMoon {
   const panel = svgEl('svg', { class: 'hm-panel', viewBox: '0 0 305 90', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
     svgEl('path', { d: PANEL }));
 
-  const root = el('div', { class: 'halfmoon', role: 'group', 'aria-label': STR.speed.label }, panel, keys[0]!, lever, keys[2]!, keys[1]!);
+  const root = el('div', { class: 'halfmoon', role: 'group', 'aria-label': STR.speed.label }, panel, keys[0]!, lever, keys[1]!, keys[2]!);
 
   function drawLever(t: number): void {
     body.style.setProperty('d', `path("${leverPath(t)}")`);

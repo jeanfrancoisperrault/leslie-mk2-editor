@@ -9,8 +9,9 @@ and Brake will do with the current settings.
 
 Changes are sent live over **Web MIDI** as NRPN messages (the machine's documented
 protocol); a simulator mode logs every byte in a collapsible MIDI console when no
-hardware is connected. The editor cannot read the machine's state (the protocol is
-one-way) — the UI says so honestly and offers a "Send all" push.
+hardware is connected. The editor cannot ask the machine for its state: it stays
+locked until a DUMP OUT is started from the Leslie's front panel, so MIDI must be
+wired both ways. "Save to memory" writes the settings back as a dump.
 
 ## Status
 

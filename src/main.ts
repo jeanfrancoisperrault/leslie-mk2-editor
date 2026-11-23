@@ -69,24 +69,33 @@ function shortHex(bytes: Uint8Array): string {
   return bytes.length <= 16 ? toHex(bytes) : `${toHex(bytes.slice(0, 12))} … (${bytes.length} bytes)`;
 }
 
-/** Show the rotor mode last sent or reported, and play it on the score. */
-function showMode(cmd: SpeedCommand): void {
+/** Show the rotor mode last sent or reported, and play it on the score; null
+    when it is not known (another machine may be at the other end). */
+function showMode(cmd: SpeedCommand | null): void {
   shell.setMode(cmd);
   panels.play(cmd);
 }
 
+/** Send one message; false when the port refused it. */
+function sendOut(message: Uint8Array): boolean {
+  if (hardwareSink) {
+    try {
+      hardwareSink.send(message);
+      echo.noteSent(message, performance.now());
+    } catch (err) {
+      shell.logMessage({ dir: 'out', hex: shortHex(message), text: `ERROR: ${(err as Error).message}` });
+      shell.setAlert('send', STR.sendFailed);
+      return false;
+    }
+  }
+  shell.setAlert('send', null);
+  shell.logMessage({ dir: 'out', hex: shortHex(message), text: decodeMessage(message) });
+  return true;
+}
+
 const teeSink: MidiSink = {
   send(message) {
-    if (hardwareSink) {
-      try {
-        hardwareSink.send(message);
-        echo.noteSent(message, performance.now());
-      } catch (err) {
-        shell.logMessage({ dir: 'out', hex: shortHex(message), text: `ERROR: ${(err as Error).message}` });
-        return;
-      }
-    }
-    shell.logMessage({ dir: 'out', hex: shortHex(message), text: decodeMessage(message) });
+    sendOut(message);
   },
 };
 
@@ -100,8 +109,9 @@ shell.onSpeed = (cmd) => {
   // Close any NRPN session first so the speed command is not mis-addressed.
   queue.flush();
   const ch = store.getValue('controlChannel');
-  for (const msg of encodeSpeed(cmd, ch <= 15 ? ch : 0)) teeSink.send(msg);
-  showMode(cmd);
+  const sent = encodeSpeed(cmd, ch <= 15 ? ch : 0).map(sendOut);
+  // Never show a mode the Leslie was not told.
+  if (sent.every(Boolean)) showMode(cmd);
 };
 
 // --- Incoming: NRPN reports from the Leslie, dump capture ---------------------
@@ -135,8 +145,7 @@ shell.onSaveMemory = () => {
     system: s.systemValues,
     presets: [s.presetValues[0], s.presetValues[1]],
   });
-  teeSink.send(buildDumpPacket(data));
-  shell.logMessage({ dir: 'out', hex: '  ⤷', text: STR.saveMemory.sent });
+  if (sendOut(buildDumpPacket(data))) shell.logMessage({ dir: 'out', hex: '  ⤷', text: STR.saveMemory.sent });
 };
 
 
@@ -207,6 +216,8 @@ function selectInput(id: string | null): void {
 function selectPort(id: string | 'sim'): void {
   selectedPortId = id;
   queue.flush();
+  shell.setAlert('send', null);
+  showMode(null);
   if (id === 'sim') {
     hardwareSink = null;
     store.setConnection({ kind: 'simulator' });
@@ -252,6 +263,7 @@ midi.on((ev) => {
       break;
     case 'ready': {
       if (!ev.sysex) shell.logMessage({ dir: 'in', hex: '--', text: STR.sysexDenied });
+      shell.setAlert('sysex', ev.sysex ? null : STR.sysexShort);
       const pick = pickPort(ev.outputs);
       shell.setPorts(ev.outputs, pick ? pick.id : 'sim');
       if (pick) selectPort(pick.id);
@@ -277,6 +289,7 @@ midi.on((ev) => {
       if (!stillThere && selectedPortId !== 'sim') {
         hardwareSink = null;
         selectedPortId = 'sim';
+        showMode(null);
         store.setConnection(ports.length === 0 ? { kind: 'no-port' } : { kind: 'simulator' });
       }
       break;
@@ -298,7 +311,7 @@ store.subscribe(() => {
 const app = document.querySelector('#app');
 if (!app) throw new Error('#app mount point missing');
 
-const main = document.createElement('div');
+const main = document.createElement('main');
 main.className = 'main';
 main.append(panels.root, explainer.root);
 app.append(shell.header, main, shell.console);

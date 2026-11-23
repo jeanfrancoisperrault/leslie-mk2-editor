@@ -1,7 +1,7 @@
 // Fixed explainer panel (right column): title, machine menu name, plain
 // explanation, meta row (current value / range / default), live visualization,
 // advice. Rebuilt when the focused parameter changes; value-only changes
-// update in place so animations keep running.
+// update in place.
 
 import { EXPLANATIONS, STR } from '../content/i18n';
 import { formatValue, getParam } from '../params/schema';

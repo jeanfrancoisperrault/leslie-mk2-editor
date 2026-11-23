@@ -74,6 +74,8 @@ export class LeverDrag {
   /** Command to send, or null when the lever is back where it was. */
   release(): SpeedCommand | null {
     const cmd = nearestMode(this.position);
-    return cmd === this.#from ? null : cmd;
+    // Unknown mode: the ghosted lever rests at center, so center is no choice.
+    // Brake stays available on its own key.
+    return cmd === (this.#from ?? 'brake') ? null : cmd;
   }
 }

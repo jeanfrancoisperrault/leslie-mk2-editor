@@ -19,7 +19,7 @@ export interface ParamRow {
 const CLEAR_DELAY_MS = 300;
 let clearTimer: ReturnType<typeof setTimeout> | null = null;
 
-function scheduleFocusClear(store: Store): void {
+export function scheduleFocusClear(store: Store): void {
   if (clearTimer !== null) clearTimeout(clearTimer);
   clearTimer = setTimeout(() => {
     clearTimer = null;

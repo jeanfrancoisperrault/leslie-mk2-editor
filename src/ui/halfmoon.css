@@ -25,12 +25,12 @@
 .hm-key:hover, .hm-key[aria-pressed="true"] { color: var(--ink); }
 .hm-key[aria-pressed="true"] { background: var(--ground); }
 .hm-key .lamp { width: 8px; height: 8px; }
-.hm-slow { --led: var(--slow); justify-self: start; }
-.hm-fast { --led: var(--fast); justify-self: end; }
+.hm-slow { --led: var(--slow); grid-area: 1 / 1; justify-self: start; }
+.hm-fast { --led: var(--fast); grid-area: 1 / 3; justify-self: end; }
 .hm-key[aria-pressed="true"] .lamp { box-shadow: 0 0 4px var(--led); }
 .halfmoon > .hm-brake { position: absolute; left: 50%; top: 52px; translate: -50% 0; }
 
-.hm-lever { width: 135px; height: 32px; flex-shrink: 0; overflow: visible; cursor: grab; touch-action: none; }
+.hm-lever { grid-area: 1 / 2; width: 135px; height: 32px; flex-shrink: 0; overflow: visible; cursor: grab; touch-action: none; }
 .hm-lever.is-dragging { cursor: grabbing; }
 .hm-slot-rim { fill: var(--surface-press); }
 .hm-slot { fill: var(--ground); }

@@ -39,6 +39,16 @@ describe('edits compared with the values read from the Leslie', () => {
     expect(store.editCount()).toBe(1); // preset switch is not an edit
   });
 
+  it('counts the edits of both presets and of the system', () => {
+    load(store);
+    store.setValue('hornRiseTime', 6);
+    store.setValue('controlChannel', 3);
+    store.selectPreset(1);
+    store.setValue('hornRiseTime', 2);
+    store.setValue('hornFallTime', 3);
+    expect(store.editCount()).toBe(4);
+  });
+
   it('does not count the rotor mode, a live state, as an edit', () => {
     load(store);
     store.setValue('leslieMode', 1, { send: false });

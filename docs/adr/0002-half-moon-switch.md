@@ -15,7 +15,8 @@ Slow / Fast / Brake keys of the top bar. On a half-moon, Brake sits between Slow
    `src/ui/halfmoon-model.ts`, covered by tests). An interrupted gesture sends nothing.
 3. The keyboard never moves the lever step by step, for the same reason.
 4. Mode unknown (a dump does not hold it): the lever is ghosted and no LED is lit. A plain center lever
-   would read as Brake.
+   would read as Brake. Pressing that ghosted lever sends nothing: it rests at center, and Brake has its
+   own key. The mode becomes unknown again when the MIDI output changes or is lost.
 5. LEDs are green for Slow and red for Fast, as drawn by the owner. Position and names carry the
    meaning as well.
 6. The lever outline is sampled with a fixed number of points, so CSS animates `d` without a library.

@@ -6,7 +6,7 @@
 import { EXPLANATIONS, STR } from '../content/i18n';
 import type { SpeedCommand } from '../midi/speed';
 import type { AppState, Store } from '../state/store';
-import { opensGuide } from './controls';
+import { opensGuide, scheduleFocusClear } from './controls';
 import { el, svgEl } from './dom';
 import { SEGMENT_PARAM, SPAN_S, rampPoints, rotorSettings, stepSpeed } from './score-model';
 import type { Rotor } from './score-model';
@@ -170,6 +170,8 @@ export function buildScore(store: Store): Score {
     svg.setAttribute('aria-label', store.locked ? STR.score.empty : STR.score.summary(settings('horn'), settings('low')));
     paintMotion();
     paintFocus(store.state.focusedParam);
+    // A redrawn stretch never sees the pointer leave it.
+    scheduleFocusClear(store);
   }
 
   function paintFocus(id: string | null): void {
@@ -200,31 +202,38 @@ export function buildScore(store: Store): Score {
     }
   }
 
-  function tick(time: number): void {
-    // A long gap (hidden tab) is caught up in one step.
+  /** Bring the rotors and the playhead up to date; true while they change. */
+  function advance(time: number): boolean {
     const dt = Math.max(0, (time - lastFrame) / 1000);
     lastFrame = time;
-    let moving = false;
+    if (mode === null || store.locked) return false;
+    let changing = false;
     for (const rotor of ROTORS) {
       const s = settings(rotor);
       // First command from an unknown state: assume the speed the measure starts at.
-      const now = stepSpeed(speed[rotor] ?? rampPoints(mode!, s)[0]![1], mode!, s, dt);
-      speed[rotor] = now;
-      if (!reduced.matches) angle[rotor] = (angle[rotor] + now * 6 * dt) % 360;
-      if (now > 0) moving = true;
+      const from = speed[rotor] ?? rampPoints(mode, s)[0]![1];
+      const to = stepSpeed(from, mode, s, dt);
+      speed[rotor] = to;
+      if (!reduced.matches) angle[rotor] = (angle[rotor] + to * 6 * dt) % 360;
+      if (to !== from || (to > 0 && !reduced.matches)) changing = true;
     }
     if (playTime !== null) {
       playTime += dt;
       if (playTime > SPAN_S) playTime = null;
-      else moving = true;
+      else changing = true;
     }
+    return changing;
+  }
+
+  function tick(time: number): void {
+    const changing = advance(time);
     paintMotion();
-    frame = moving ? requestAnimationFrame(tick) : 0;
+    // Paused in the System view: the next frame catches up the elapsed time.
+    frame = changing && !root.hidden ? requestAnimationFrame(tick) : 0;
   }
 
   function wake(): void {
-    if (frame || mode === null || store.locked) return;
-    lastFrame = performance.now();
+    if (frame || mode === null || store.locked || root.hidden) return;
     frame = requestAnimationFrame(tick);
   }
 
@@ -260,8 +269,15 @@ export function buildScore(store: Store): Score {
       wake();
     },
     play(cmd) {
+      advance(performance.now());
+      // The footswitch may report the mode already running: no restart then.
+      if (cmd !== mode) playTime = cmd === null ? null : 0;
       mode = cmd;
-      playTime = cmd === null ? null : 0;
+      if (cmd === null) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        for (const rotor of ROTORS) speed[rotor] = null;
+      }
       paintMotion();
       wake();
     },
