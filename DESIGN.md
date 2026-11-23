@@ -130,7 +130,7 @@ Everything else is the stock component it looks like.
 Semantic shadcn pairs only; no raw hex in component styles.
 
 ### Primary
-- **primary / primary-foreground**: the amber action color — "Send all", fader fill and
+- **primary / primary-foreground**: the amber action color — "Save to memory", fader fill and
   thumb, viz strokes, the "changed" dot. The amber is the preset's brand voice.
 
 ### Neutral
@@ -199,7 +199,7 @@ thumbs 5px.
 ## Components
 
 ### Buttons (shadcn Button)
-- **Primary** ("Send all"): `primary` bg, `primary-foreground` text, h-36px, radius-md,
+- **Primary** ("Save to memory"): `primary` bg, `primary-foreground` text, h-36px, radius-md,
   shadow-xs; hover = 90% primary.
 - **Outline**: transparent, `input` border; hover = `accent` bg.
 

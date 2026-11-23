@@ -1,0 +1,8 @@
+#!/bin/sh
+# Fast quality gate before every commit (versioned hook; enabled by
+# `npm install` through the "prepare" script, or `git config core.hooksPath .githooks`).
+# Skip once with: git commit --no-verify
+set -e
+echo "pre-commit: typecheck + tests"
+npm run --silent typecheck
+npx vitest run --reporter=dot
