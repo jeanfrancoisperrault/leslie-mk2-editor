@@ -1,254 +1,215 @@
 ---
 name: Leslie 2101/2103 mk2 Editor
-description: shadcn/ui, user preset b1GdzAEwU (stone + amber) — a shadcn instrument editor with one custom control family (engraved faders) and vector visualizations
+description: Neutral black and white editor; green and red code the rotor mode, slow and fast
 colors:
-  background: "oklch(0.147 0.004 49.25)"
-  foreground: "oklch(0.985 0.001 106.423)"
-  card: "oklch(0.216 0.006 56.043)"
-  card-foreground: "oklch(0.985 0.001 106.423)"
-  popover: "oklch(0.216 0.006 56.043)"
-  popover-foreground: "oklch(0.985 0.001 106.423)"
-  primary: "oklch(0.473 0.137 46.201)"
-  primary-foreground: "oklch(0.987 0.022 95.277)"
-  secondary: "oklch(0.274 0.006 286.033)"
-  secondary-foreground: "oklch(0.985 0 0)"
-  muted: "oklch(0.268 0.007 34.298)"
-  muted-foreground: "oklch(0.709 0.01 56.259)"
-  accent: "oklch(0.268 0.007 34.298)"
-  accent-foreground: "oklch(0.985 0.001 106.423)"
-  destructive: "oklch(0.704 0.191 22.216)"
-  border: "oklch(1 0 0 / 10%)"
-  input: "oklch(1 0 0 / 15%)"
-  ring: "oklch(0.553 0.013 58.071)"
-  chart-1: "oklch(0.879 0.169 91.605)"
-  chart-2: "oklch(0.769 0.188 70.08)"
-  chart-3: "oklch(0.666 0.179 58.318)"
-  chart-4: "oklch(0.555 0.163 48.998)"
-  chart-5: "oklch(0.473 0.137 46.201)"
-  success: "oklch(0.723 0.219 149.579)"
+  ground: "oklch(0.17 0 0)"
+  surface: "oklch(0.265 0 0)"
+  surface-soft: "oklch(0.225 0 0)"
+  surface-press: "oklch(0.38 0 0)"
+  ink: "oklch(0.97 0 0)"
+  ink-soft: "oklch(0.755 0 0)"
+  ink-dim: "oklch(0.66 0 0)"
+  rule-strong: "oklch(0.37 0 0)"
+  control: "oklch(0.56 0 0)"
+  backdrop: "oklch(0 0 0 / 0.65)"
+  slow: "oklch(0.8 0.21 147)"
+  fast: "oklch(0.65 0.235 27)"
+  fast-text: "oklch(0.735 0.165 25)"
+  warn: "oklch(0.8 0.145 72)"
 typography:
+  display:
+    fontFamily: "Plus Jakarta Sans, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "24px"
+    fontWeight: 700
+    lineHeight: 1.2
   brand:
-    fontFamily: "ui-sans-serif, system-ui, sans-serif"
-    fontSize: "15px"
-    fontWeight: 600
-  caption:
-    fontFamily: "ui-sans-serif, system-ui, sans-serif"
-    fontSize: "11px"
-    fontWeight: 400
+    fontFamily: "Plus Jakarta Sans, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "20px"
+    fontWeight: 700
+    lineHeight: 1.2
   title:
-    fontFamily: "ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Plus Jakarta Sans, ui-sans-serif, system-ui, sans-serif"
     fontSize: "18px"
-    fontWeight: 600
-    letterSpacing: "-0.01em"
-  card-title:
-    fontFamily: "ui-sans-serif, system-ui, sans-serif"
-    fontSize: "14px"
-    fontWeight: 600
-  label:
-    fontFamily: "ui-sans-serif, system-ui, sans-serif"
-    fontSize: "12px"
-    fontWeight: 500
-    letterSpacing: "0.03em"
-  value:
-    fontFamily: "ui-sans-serif, system-ui, sans-serif"
-    fontSize: "14px"
-    fontWeight: 600
+    fontWeight: 700
+    lineHeight: 1.2
   body:
-    fontFamily: "ui-sans-serif, system-ui, sans-serif"
-    fontSize: "13.5px"
+    fontFamily: "Plus Jakarta Sans, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "15px"
     fontWeight: 400
-    lineHeight: 1.5
-  mono:
-    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace"
-    fontSize: "12px"
+    lineHeight: 1.45
+  readout:
+    fontFamily: "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    fontSize: "20px"
+    fontWeight: 200
+  value:
+    fontFamily: "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    fontSize: "18px"
+    fontWeight: 200
+  key:
+    fontFamily: "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    fontSize: "15px"
+    fontWeight: 200
+  scale:
+    fontFamily: "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    fontSize: "13px"
+    fontWeight: 200
 rounded:
-  sm: "calc(0.625rem - 4px)"
-  md: "calc(0.625rem - 2px)"
-  lg: "0.625rem"
-  xl: "calc(0.625rem + 4px)"
+  mark: "1px"
+  cap: "3px"
+  key: "4px"
+  control: "6px"
+  dialog: "12px"
 spacing:
-  row: "6px 10px"
-  block: "16px 20px 18px"
-  gutter: "24px"
-  block-gap: "16px"
+  row: "2px 10px"
+  bar: "0 24px"
+  work: "30px 28px 16px"
+  guide: "24px 28px"
 components:
   button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.primary-foreground}"
-    rounded: "{rounded.md}"
-    height: "36px"
-    padding: "0 16px"
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.ground}"
+    rounded: "{rounded.control}"
+    height: "38px"
+    padding: "0 18px"
   button-outline:
+    backgroundColor: "{colors.ground}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    height: "38px"
+    padding: "0 18px"
+  lamp-key:
     backgroundColor: "transparent"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.md}"
+    textColor: "{colors.ink-dim}"
+    height: "38px"
+    padding: "0 12px"
+  lamp-key-on:
+    backgroundColor: "{colors.ground}"
+    rounded: "{rounded.control}"
+    textColor: "{colors.ink}"
+  enum-key:
+    backgroundColor: "{colors.ground}"
+    textColor: "{colors.ink-soft}"
     height: "36px"
-    padding: "0 16px"
-  toggle-item:
-    backgroundColor: "transparent"
-    textColor: "{colors.foreground}"
-    height: "30px"
-    padding: "0 10px"
-  toggle-item-on:
-    backgroundColor: "{colors.accent}"
-    textColor: "{colors.accent-foreground}"
-  card:
-    backgroundColor: "{colors.card}"
-    textColor: "{colors.card-foreground}"
-    rounded: "{rounded.xl}"
-    padding: "16px 20px 18px"
+    padding: "0 12px"
+  enum-key-on:
+    backgroundColor: "{colors.surface-press}"
+    textColor: "{colors.ink}"
 ---
 
 # Design System: Leslie 2101/2103 mk2 Editor
 
 ## Overview
 
-**Creative North Star: "shadcn, one custom instrument"**
+**Creative North Star: "The half-moon in the dark"**
 
-The editor is a **shadcn/ui application** themed by the user's **shadcn/create preset
-`b1GdzAEwU`** — stone neutrals with an amber primary and an amber chart ramp — on
-shadcn's CSS-variable token system (user decisions, 2026-11-20; this replaces the earlier
-hand-built "night amp facade" world). Both preset modes are installed in `:root`/`.dark`;
-the app runs dark (`html.dark`), and the light pair is ready for a future toggle. Every visual decision routes through the semantic tokens
-(`background`, `card`, `primary`, `muted-foreground`, `accent`, `destructive`, `border`,
-`input`, `ring`, `radius`) exactly as shadcn's theming docs define them, so the app can be
-re-themed by swapping token values alone. The stack stays vanilla TypeScript: components
-follow shadcn's visual recipes rather than importing its React code.
-
-Exactly one control family is custom by design: the **engraved fader** (slider restyled
-as an instrument fader with detent-true tick scales), plus the vector visualizations.
-Everything else is the stock component it looks like.
-
-**Key Characteristics:**
-- Token values verbatim from the user's shadcn/create preset (light + dark installed, dark active).
-- `--success` is the one added token (connected LED), added per shadcn's "Adding New Tokens" pattern; the preset ships no green.
-- Real-world units lead (46 rpm, 1.8 s); raw MIDI data secondary in `muted-foreground`.
-- `destructive` is reserved for honest flags: unverified tables, MIDI errors.
+A dark, strictly neutral panel where color means only one thing: slow or fast. Black, white and grey
+for everything else, engraved faders for the hand, one graph that shows both rotors on the same
+clock. Layout and controls stay standard. History in `docs/adr/0001-score-design.md`.
 
 ## Colors
 
-Semantic shadcn pairs only; no raw hex in component styles.
-
-### Primary
-- **primary / primary-foreground**: the amber action color — "Save to memory", fader fill and
-  thumb, viz strokes, the "changed" dot. The amber is the preset's brand voice.
-
-### Neutral
-- **background / foreground**: page shell and default text.
-- **card / card-foreground**: parameter blocks, explainer panel, banners, console.
-- **secondary**: the fader groove. **muted / muted-foreground**: labels, secondary text,
-  kbd chips. **accent / accent-foreground**: hover and selected states (toggle items,
-  focused parameter row at 50%).
-- **border / input / ring**: separators, control outlines, focus rings (3px ring at 50%).
-- **chart-1…5**: the preset's amber ramp, reserved for future charts. Fader tick marks
-  and scrollbar thumbs use `muted-foreground` color-mixes instead (the amber ramp is too
-  loud for graduations).
-
-### Tertiary
-- **success** (project token): connected-LED only. **destructive**: alerts, unverified
-  flags, error states — never decoration.
-
-### Named Rules
-**The Token Rule.** No color that is not a theme token. Re-theming the app must require
-touching `:root` only.
-**The Destructive Honesty Rule.** `destructive` marks real uncertainty or failure
-("table unverified", MIDI denied) and nothing else.
+- **Neutral rule**: every ground, surface, text and outline has zero chroma. No warm or cool tint
+  (user decision, 2026-11-23).
+- **Mode rule**: green is Slow, red is Fast, Brake and everything else are `ink`, through `--voice`
+  (`docs/adr/0003-color-by-mode.md`). Slow speed and fall time are green, fast speed and rise time red.
+  Horn and low rotor are told apart by place and name, never by color.
+- **LED rule**: `slow` and `fast` also light the half-moon LEDs. Unlit, the lens keeps a dark tint.
+  Position and names always say it too, so the hue is never alone. Preset lights are `ink`: the front
+  panel uses green and red for them, but here those colors mean slow and fast (user decision).
+- Thin Geist Mono figures in red use `fast-text`, lighter. `warn` amber is for the square marker of the
+  connection only.
+- `ground` for the work area, `surface` for the bar, `surface-soft` for the guide and the focused
+  row, `surface-press` for the chosen option. Only the primary action is solid `ink`.
+- Errors are `ground` text on an `ink` strip. `control` (4:1) outlines controls; `rule-strong` is for
+  graph lines only.
 
 ## Typography
 
-**Font:** shadcn stock system stack (`ui-sans-serif, system-ui…`); mono stack for real
-MIDI bytes only.
+Two faces, one job each (user decision, 2026-11-23), all bundled through `@fontsource`, no CDN.
 
-### Hierarchy
-- **Title** (600, 18px, -0.01em): explainer heading.
-- **Card title** (600, 14px): block headers, sentence case.
-- **Label** (500, 12px, +0.03em, uppercase): parameter names — the machine's own menu
-  names (RISE TIME…), kept uppercase as product truth.
-- **Value** (600, 14px, tabular-nums): converted real-unit readouts; 11px
-  `muted-foreground` line beneath for the raw data value.
-- **Body** (400, 13.5px): explainer prose, `muted-foreground` with `foreground` lead-ins.
-- **Mono** (12px): console bytes.
+- **Plus Jakarta Sans** (400, 500, 600, 700): all words. Titles and tabs in 600 and 700, labels and buttons in
+  500, prose in 400.
+- **Geist Mono 200**: figures and the contents of keys. Values, past values, score times and scales,
+  guide figures, enum keys, selects, MIDI bytes (received bytes in 400). At this weight text under
+  18px uses full `ink` or the mode color; only unchosen enum keys go down to `ink-soft`.
 
-### Named Rules
-**The Machine's Words Rule.** Parameter labels are the unit's own menu names.
-**The Tabular Rule.** Changing numbers sit in tabular numerals.
+Single-line interface text is centered on its capitals (`text-box: trim-both cap alphabetic`), so
+both faces share one axis; boxes keep whole-pixel heights (bar controls 38px, keys and selects 36px).
+
+Scale: 13, 15, 18, 20, 24. Sentence case everywhere; capitals appear only on the preset and half-moon keys and where the machine's own
+menu prints them.
 
 ## Layout
 
-Fixed app frame: header → banners → `1fr / minmax(360px, 430px)` main grid → collapsible
-console. Edit zone scrolls internally; two Card columns above 1260px, one below; floor
-1100px (no mobile by product decision). Rows: `118px / 1fr / 86px` grids, enum rows move
-their ToggleGroup to a full-width second line. Rhythm: 24px gutters, 16px block gaps.
+One bar (name, preset, rotor, connection, save), then work area and guide
+(`clamp(320px, 26vw, 400px)`), then the closed MIDI console. Two views: Sound and System.
+Rotor settings are one matrix, grouped by mode in half-moon order (slow speed, fall time; brake time;
+fast speed, rise time; level), not in the order of the machine menu: one row per setting, one column per rotor, with a spacer wide
+enough (64px or more) that the horn's figures never read as labels of the low rotor's faders. The graphs grow with
+the window height (64 to 124 px); at 1440x900 Sound fits without scrolling. Below 1260 px the tone
+and system groups take one column. Minimum width 1100 px.
 
-## Elevation & Depth
+## Elevation
 
-shadcn's flat-with-hairlines model: `border` separators on `card` surfaces, shadcn's
-`shadow-xs` (`0 1px 2px rgb(0 0 0 / 0.05)`) on Cards and the primary button. The fader is
-the deliberate exception (see Components): its groove uses an inset shadow
-(`inset 0 1px 2px rgb(0 0 0 / 0.6)`) and its thumb a drop shadow
-(`0 2px 4px rgb(0 0 0 / 0.4)`) — the engraved instrument detail carried over by user
-decision, in zinc colors.
-
-## Shapes
-
-shadcn radius scale from the preset's `--radius: 0.45rem` (sm/md/lg/xl derived). Buttons and selects
-`radius-md`, Cards `radius-xl`, viz insets `radius-lg`, kbd and fader thumb `radius-sm`.
-Component-internal micro-radii: the 4px fader track and its fill use 2px; scrollbar
-thumbs 5px.
+Flat surfaces, told apart by grey steps and 1px lines. Besides the LED glow, the fader is the only exception: an inset
+shadow in its groove, a drop shadow under its cap.
 
 ## Components
 
-### Buttons (shadcn Button)
-- **Primary** ("Save to memory"): `primary` bg, `primary-foreground` text, h-36px, radius-md,
-  shadow-xs; hover = 90% primary.
-- **Outline**: transparent, `input` border; hover = `accent` bg.
+### Score (signature)
+- Two graphs, one per rotor, 64px apart. The five lines of each are the speed, 0 to 400 rpm by 100.
+- Three measures, 56px apart, in half-moon order: Slow and Brake (both from fast), Fast (from slow). Each starts at its command, lasts 17 s and
+  carries its own speed and time scale, so no scale is read against a neighbour's curve.
+- Ramps are straight and the guide says so: the machine's exact curve is not documented.
+- A measure takes its command's color, its first point the color of the speed it starts from; the
+  rotors take the color of the mode they follow.
+- Filled point: value now. Open point and dashed line: value read from the Leslie.
+- Hovering a stretch opens its guide, clicking it focuses its fader. Never the only way in.
+- Slow / Fast / Brake runs a playhead and turns the rotors at the calculated speed. Before a
+  command is sent or reported the speed reads "— rpm": a dump does not hold the rotor mode.
 
-### Toggle groups (shadcn ToggleGroup, outline)
-- Joined items in one `input`-bordered radius-md group, 30px tall; `input` separators;
-  hover `muted`; on-state `accent` + `accent-foreground`. Used for every enum parameter
-  and the Preset 1/2 switch (36px tall in the header).
+### Fader
+- Native range input: 5px engraved groove filled in the mode color, upright white cap with an index
+  line, ticks at real detents, outlined cap at the value read from the machine once edited. Arrows, Shift+arrows, Delete or double-click.
 
-### Select (native select, shadcn Select trigger look)
-- `input` border, radius-md, h-36px, chevron icon in `muted-foreground`; used for MIDI
-  port and channel pickers.
+### Keys, selects, buttons
+- Lamp keys (presets): no outline, no fill. A point that lights `ink` plus a name; inactive name
+  in `ink-dim`, `ink` on hover. The active key sits on `ground`, with the control radius, darker than
+  the bar. A faint 1px rule separates them from the half-moon.
+- Enum keys: one `control` outline around the options. Others in `ink-soft`; the chosen one is `ink` on
+  `surface-press`. No solid white fill outside the primary button.
+- Primary button: ink. Disabled: outline and `ink-soft`, no opacity tricks.
+- Connection: one button with the state in words, opening a popover with ports, channel and dump.
 
-### Cards (shadcn Card)
-- `card` bg, `border`, radius-xl, shadow-xs; 14px/600 titles with a `border` underline.
+### Half-moon (rotor switch)
+- A panel in the bar's color that hangs 30px below it, with a three-position lever: Slow left, Brake
+  center, Fast right (`docs/adr/0002-half-moon-switch.md`). Drawn by the owner in Figma.
+- Slow, Brake and Fast are real keys in capitals; the lit LED has a 4px glow, the only one in the app.
+- Lever: `ground` body, `ink-soft` top, leaning outwards at both ends. Drag, or press the slot. The
+  command leaves on release, never while crossing Brake. Unknown mode: dashed, ghosted, no LED.
 
-### Alerts (full-width strips)
-- `card` bg strip with `border-bottom`; lead text `card-foreground` 500; destructive
-  variant in `destructive` text. Honesty banner is permanent.
+### Credits
+- One 13px `ink-dim` line at the right end of the console bar; the link turns `ink` on hover.
 
-### Engraved fader (custom; the one bespoke control)
-- Native range input: 4px groove in `secondary` with inset shadow, fill and 14×22px
-  thumb in `primary` (amber), tick scale under the track in `muted-foreground` 60%
-  hairlines at the parameter's real detents. Keyboard: arrows, Shift+arrows, Delete/double-click reset;
-  `aria-valuetext` speaks the converted value.
+### Guide
+- Fixed right column, never a tooltip. Title in the mode color, machine menu name, what it sets,
+  what you hear, value (with raw data or display code) / range / default, figure for tone settings.
 
-### Visualizations (custom, token-fed SVG)
-- Rotor (spins at real rpm, reduced-motion aware), speed-time curve, crossover diagram,
-  character schematic. Strokes in `primary`, grids in `muted-foreground` 45%, labels in
-  `muted-foreground`, on `background` insets. Qualitative diagrams say so in captions.
+## Motion
 
-### Console (shadcn Collapsible)
-- `card` strip, ghost toggle with chevron, mono byte log (`foreground` hex,
-  `muted-foreground` decode), 180px ScrollArea-style log.
-
-### Kbd (shadcn Kbd)
-- `muted` bg, `border`, radius-sm, 11px mono.
+The playhead, the rotors and the half-moon lever are the only motion, and they carry state. Transitions 150 to 200 ms.
+With reduced motion the rotors do not turn; the figures still update.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** express every color through the shadcn tokens; add new semantic tokens (like
-  `--success`) via the official pattern instead of inlining values.
-- **Do** keep real units first (46 rpm, 1.8 s) with raw data beneath.
-- **Do** keep `destructive` for honest flags and failures only.
-- **Do** keep the fader family and the SVG visualizations as the only custom visuals.
+- **Do** keep green for Slow and red for Fast everywhere, and nothing else in color.
+- **Do** show real units first; raw data lives in the guide.
+- **Do** say what is calculated and what was read from the machine.
+- **Do** keep every setting reachable through a standard control.
 
 ### Don't:
-- **Don't** hand-pick colors outside the preset; evolve the theme by regenerating the
-  shadcn/create preset, not by editing component styles.
-- **Don't** use raw hex/oklch in component styles — tokens only.
-- **Don't** replace the fixed explainer with tooltips or popovers.
-- **Don't** load fonts or assets from a CDN — system stack, offline-safe.
+- **Don't** tint the neutrals, or add wood, tolex or metal texture; every mark on the score is data.
+- **Don't** add a toolbar strip; a state is one sentence above the score or a line in the popover.
+- **Don't** use raw colors in components; tokens only.
+- **Don't** load fonts or assets from a CDN.
