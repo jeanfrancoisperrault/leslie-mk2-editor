@@ -125,8 +125,9 @@ export const STR = {
     },
     howToTitle: 'Hooking up the Leslie',
     howTo: [
-      'Connect a USB-MIDI interface to this computer (or use the MIDI OUT of your organ or keyboard).',
-      'Run a MIDI cable from the interface’s MIDI OUT to the MIDI IN of the Leslie (5-pin DIN, rear panel).',
+      'Connect a USB-MIDI interface with one input and one output to this computer.',
+      'Run a MIDI cable from the interface’s MIDI OUT to the Leslie’s MIDI IN (5-pin DIN, rear panel): it carries your changes.',
+      'Run a second cable from the Leslie’s MIDI OUT back to the interface’s MIDI IN: the editor reads the Leslie’s settings through it and stays locked without it.',
       'Power the Leslie on. Out of the box it listens on channel 1 (CONTROL CH).',
     ],
     autoDetect: 'This window closes by itself as soon as a MIDI port appears.',
@@ -134,7 +135,11 @@ export const STR = {
       'Meanwhile, everything works in simulator mode: each change is encoded and logged in the MIDI console.',
     continueSim: 'Continue with the simulator',
     reload: 'Reload',
-    diagram: { computer: 'Computer', interface: 'USB-MIDI interface', leslie: 'MIDI IN · Leslie', usb: 'USB', din: 'DIN' },
+    diagram: {
+      computer: 'Computer', interface: 'USB-MIDI interface', leslie: 'Leslie',
+      in: 'MIDI IN', out: 'MIDI OUT', usb: 'USB',
+      aria: 'The computer and the USB-MIDI interface are linked by USB. Interface MIDI OUT goes to Leslie MIDI IN. Leslie MIDI OUT goes back to interface MIDI IN.',
+    },
   },
   explainerAria: 'Parameter explanation',
   explainerEmpty: {

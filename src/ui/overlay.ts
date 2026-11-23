@@ -7,36 +7,36 @@ import { el, svgEl } from './dom';
 
 export type OverlayKind = 'unsupported' | 'denied' | 'no-port' | 'no-leslie';
 
-/** Small connection-chain diagram: computer -> USB-MIDI interface -> Leslie. */
+/** Connection diagram: computer <-> USB-MIDI interface, then one MIDI cable each
+    way (the editor needs the return cable to read the Leslie). */
 function chainDiagram(): SVGElement {
   const d = STR.overlay.diagram;
-  const box = (x: number, w: number, label: string) =>
-    [
-      svgEl('rect', {
-        x: String(x), y: '14', width: String(w), height: '34', rx: '4',
-        fill: 'var(--ground)', stroke: 'var(--rule-strong)',
-      }),
-      svgEl('text', {
-        x: String(x + w / 2), y: '35', 'text-anchor': 'middle',
-        fill: 'var(--ink)', 'font-size': '13', 'font-weight': '500',
-      }, label),
+  const TOP = 46; // cable to the Leslie
+  const BOTTOM = 78; // cable back from the Leslie
+  const text = (x: number, y: number, label: string, size: number, anchor = 'middle', fill = 'var(--ink)') =>
+    svgEl('text', { x: String(x), y: String(y), 'text-anchor': anchor, fill, 'font-size': String(size),
+      'font-weight': size > 12 ? '500' : '400' }, label);
+  const box = (x: number, w: number, label: string, titleY: number) => [
+    svgEl('rect', { x: String(x), y: '4', width: String(w), height: '92', rx: '4', fill: 'var(--ground)', stroke: 'var(--rule-strong)' }),
+    text(x + w / 2, titleY, label, 13),
+  ];
+  const arrow = (from: number, to: number, y: number) => {
+    const back = to > from ? -6 : 6;
+    return [
+      svgEl('line', { x1: String(from), y1: String(y), x2: String(to), y2: String(y), stroke: 'var(--ink)', 'stroke-width': '2' }),
+      svgEl('path', { d: `M${to + back} ${y - 4}L${to} ${y}L${to + back} ${y + 4}`, fill: 'none', stroke: 'var(--ink)', 'stroke-width': '2' }),
     ];
-  const link = (x1: number, x2: number, label: string) =>
-    [
-      svgEl('line', { x1: String(x1), y1: '31', x2: String(x2), y2: '31', stroke: 'var(--ink)', 'stroke-width': '2' }),
-      svgEl('text', {
-        x: String((x1 + x2) / 2), y: '24', 'text-anchor': 'middle',
-        fill: 'var(--ink-soft)', 'font-size': '12',
-      }, label),
-    ];
+  };
   return svgEl(
     'svg',
-    { viewBox: '0 0 460 62', role: 'img', 'aria-label': `${d.computer} → ${d.interface} → ${d.leslie}` },
-    ...box(4, 96, d.computer),
-    ...link(100, 148, d.usb),
-    ...box(148, 150, d.interface),
-    ...link(298, 346, d.din),
-    ...box(346, 110, d.leslie),
+    { viewBox: '0 0 520 100', role: 'img', 'aria-label': d.aria },
+    ...box(2, 92, d.computer, 55),
+    ...arrow(118, 96, 50), ...arrow(118, 150, 50), text(123, 42, d.usb, 12, 'middle', 'var(--ink-soft)'),
+    ...box(152, 152, d.interface, 24),
+    text(296, TOP + 4, d.out, 12, 'end'), text(296, BOTTOM + 4, d.in, 12, 'end'),
+    ...arrow(306, 408, TOP), ...arrow(408, 306, BOTTOM),
+    ...box(410, 108, d.leslie, 24),
+    text(418, TOP + 4, d.in, 12, 'start'), text(418, BOTTOM + 4, d.out, 12, 'start'),
   );
 }
 
