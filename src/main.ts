@@ -12,6 +12,7 @@ import { encodeSpeed } from './midi/speed';
 import type { SpeedCommand } from './midi/speed';
 import { NrpnParser } from './midi/nrpn-parser';
 import { DumpCollector, toSyx } from './sysex/dump';
+import { decodeDumpState } from './sysex/dump-state';
 import { PARAMS, formatValue } from './params/schema';
 import { STR } from './content/i18n';
 import { Store } from './state/store';
@@ -96,6 +97,16 @@ dump.onComplete = (packets) => {
   const bad = packets.filter((p) => p.checksum === null).length;
   const mode = packets.find((p) => p.checksum)?.checksum ?? '-';
   const snapshot = packets.slice();
+  // Load the machine's values into the editor (sends nothing).
+  const first = snapshot[0];
+  const decoded = first?.checksum && first.data ? decodeDumpState(first.data) : null;
+  if (decoded) {
+    store.loadFromDevice(decoded);
+    const names = decoded.unsaved.map((id) => PARAMS.find((d) => d.id === id)?.manualName ?? id);
+    shell.logMessage({ dir: 'in', hex: '  ⤷', text: `Editor loaded from dump · preset ${decoded.selectedPreset + 1}` +
+      (names.length ? ` · not saved with MEMORY: ${names.join(', ')}` : '') +
+      (decoded.rejected.length ? ` · ignored out-of-range: ${decoded.rejected.map((r) => r.id).join(', ')}` : '') });
+  }
   shell.setDump(STR.dump.done(snapshot.length, bad, mode), () => {
     const blob = new Blob([toSyx(snapshot)], { type: 'application/octet-stream' });
     const stamp = new Date().toISOString().slice(0, 19).replace(/[-:]/g, '').replace('T', '-');

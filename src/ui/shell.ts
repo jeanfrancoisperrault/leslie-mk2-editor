@@ -112,8 +112,17 @@ export function buildShell(store: Store): Shell {
 
   // --- Banners ---
   const honesty = el('p', { class: 'notice' });
-  honesty.append(el('b', { text: STR.honestyLead + ' ' }),
-    STR.honesty.slice(STR.honestyLead.length + 1));
+  const paintHonesty = (state: AppState) => {
+    const dev = state.loadedFromDevice;
+    honesty.replaceChildren();
+    if (!dev) {
+      honesty.append(el('b', { text: STR.honestyLead + ' ' }), STR.honesty.slice(STR.honestyLead.length + 1));
+      return;
+    }
+    const time = dev.at.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    honesty.append(el('b', { text: STR.loaded.lead(time) + ' ' }),
+      dev.unsaved.length ? STR.loaded.unsaved(dev.unsaved.length) : STR.loaded.allSaved);
+  };
   const stateBanner = el('p', { class: 'notice alert' });
   stateBanner.hidden = true;
 
@@ -149,6 +158,7 @@ export function buildShell(store: Store): Shell {
     onSpeed: null,
 
     update(state: AppState) {
+      paintHonesty(state);
       p1.setAttribute('aria-pressed', String(state.editedPreset === 0));
       p2.setAttribute('aria-pressed', String(state.editedPreset === 1));
       channelSelect.value = String(store.getValue('controlChannel'));

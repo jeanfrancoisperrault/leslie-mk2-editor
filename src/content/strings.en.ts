@@ -14,6 +14,11 @@ export const STR = {
   sendAll: 'Send all',
   honesty:
     'The editor cannot read the machine. The state shown is the editor’s — “Send all” pushes the full configuration to the Leslie.',
+  loaded: {
+    lead: (time: string) => `Values read from the Leslie (dump at ${time}).`,
+    unsaved: (n: number) => `${n} setting(s) of the active preset are not saved yet: press MEMORY on the Leslie to keep them. Later edits in the editor are not read back.`,
+    allSaved: 'The active preset matches its memory. Later edits in the editor are not read back; take a new dump to refresh.',
+  },
   honestyLead: 'The editor cannot read the machine.',
   console: 'MIDI console',
   consoleEmpty: 'No messages sent yet.',

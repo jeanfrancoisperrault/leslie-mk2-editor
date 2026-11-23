@@ -14,6 +14,11 @@ export const STR = {
   sendAll: 'Envoyer tout',
   honesty:
     "L'éditeur ne peut pas lire la machine. L'état affiché est celui de l'éditeur — « Envoyer tout » pousse la configuration complète vers la Leslie.",
+  loaded: {
+    lead: (time: string) => `Valeurs lues sur la Leslie (dump de ${time}).`,
+    unsaved: (n: number) => `${n} réglage(s) du preset actif ne sont pas enregistrés : appuyez sur MEMORY sur la Leslie pour les garder. Les modifications faites ensuite ne sont pas relues.`,
+    allSaved: 'Le preset actif correspond à sa mémoire. Les modifications faites ensuite ne sont pas relues ; refaites un dump pour actualiser.',
+  },
   honestyLead: "L'éditeur ne peut pas lire la machine.",
   console: 'Console MIDI',
   consoleEmpty: 'Aucun message envoyé pour l’instant.',
