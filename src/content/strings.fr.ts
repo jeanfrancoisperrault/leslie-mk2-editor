@@ -53,4 +53,30 @@ export const STR = {
   hearLabel: "Ce qu'on entend.",
   adviceLabel: 'Conseil.',
   off: 'Off',
+  midiPortAria: 'Port MIDI de sortie',
+  midiOut: 'Sortie MIDI (vers le MIDI IN de la Leslie)',
+  midiIn: 'Entrée MIDI (depuis le MIDI OUT de la Leslie)',
+  outLabel: 'Sortie',
+  inLabel: 'Entrée',
+  noInput: 'Aucune entrée',
+  consoleClear: 'Effacer',
+  dir: { out: '→', in: '←', echo: '↩ écho' },
+  sysexDenied: 'Permission SysEx refusée : messages de vitesse Roland et dumps indisponibles ; CC et NRPN fonctionnent.',
+  speed: {
+    label: 'Rotor',
+    cmds: { slow: 'Slow', fast: 'Fast', brake: 'Brake' },
+    method: 'Méthode d’envoi',
+    via: 'via',
+    methods: { sysex: 'SysEx Roland', cc: 'CC 82 / 83', nrpn: 'NRPN Leslie Mode' },
+    noSysexBrake: 'Aucune valeur SysEx connue pour Brake',
+    note: 'Envoi immédiat vers la Leslie.',
+
+    reported: 'La Leslie indique :',
+  },
+  dump: {
+    receiving: (n: number) => `Réception du dump… ${n} paquet(s)`,
+    done: (n: number, bad: number, mode: string) =>
+      `Dump reçu : ${n} paquet(s), ` + (bad === 0 ? `checksum OK (${mode})` : `${bad} erreur(s) de checksum`),
+    save: 'Enregistrer le dump (.syx)',
+  },
 };

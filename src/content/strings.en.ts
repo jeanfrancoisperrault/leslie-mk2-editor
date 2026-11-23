@@ -91,7 +91,32 @@ export const STR = {
     title: 'Parameter guide',
     body: 'Hover or focus any parameter: what it sets, what you hear, its range and a live visualization appear here.',
   },
-  midiPortAria: 'MIDI port',
+  midiPortAria: 'MIDI output port',
+  midiOut: 'MIDI output (to the Leslie MIDI IN)',
+  midiIn: 'MIDI input (from the Leslie MIDI OUT)',
+  outLabel: 'Out',
+  inLabel: 'In',
+  noInput: 'No input',
+  consoleClear: 'Clear',
+  dir: { out: '→', in: '←', echo: '↩ echo' },
+  sysexDenied: 'SysEx permission refused: Roland speed messages and dumps are unavailable; CC and NRPN still work.',
+  speed: {
+    label: 'Rotor',
+    cmds: { slow: 'Slow', fast: 'Fast', brake: 'Brake' },
+    method: 'Transport method',
+    via: 'via',
+    methods: { sysex: 'SysEx Roland', cc: 'CC 82 / 83', nrpn: 'NRPN Leslie Mode' },
+    noSysexBrake: 'No known SysEx value for Brake',
+    note: 'Sends immediately to the Leslie.',
+
+    reported: 'Leslie reports:',
+  },
+  dump: {
+    receiving: (n: number) => `Receiving dump… ${n} packet(s)`,
+    done: (n: number, bad: number, mode: string) =>
+      `Dump received: ${n} packet(s), ` + (bad === 0 ? `checksum OK (${mode})` : `${bad} checksum error(s)`),
+    save: 'Save dump (.syx)',
+  },
   presetAria: 'Preset',
   fallbackPortName: 'MIDI port',
 };
