@@ -1,9 +1,11 @@
-// Application shell: header (port picker, preset switch, send-all), honesty
-// banner, connection-state banner, and the collapsible MIDI console.
+// Application shell: one top bar (preset, rotor, connection, save), the status
+// sentence shown above the score, and the collapsible MIDI console.
 
 import { STR } from '../content/i18n';
 import type { AppState, Store } from '../state/store';
+import { opensGuide } from './controls';
 import { el } from './dom';
+import { buildHalfMoon } from './halfmoon';
 import type { PortInfo } from '../midi/webmidi';
 import type { SpeedCommand } from '../midi/speed';
 
@@ -17,20 +19,21 @@ export interface ConsoleEntry {
 
 export interface Shell {
   header: HTMLElement;
-  honesty: HTMLElement;
-  stateBanner: HTMLElement;
+  /** One-sentence state of the values on screen. */
+  status: HTMLElement;
   console: HTMLElement;
   update(state: AppState): void;
-  transport: HTMLElement;
   setPorts(ports: PortInfo[], selected: string | 'sim'): void;
   setInputs(ports: PortInfo[], selected: string | null): void;
-  /** Rotor mode last reported by the Leslie (null = unknown). */
-  setReportedMode(cmd: SpeedCommand | null): void;
+  /** Rotor mode last sent or reported by the Leslie (null = unknown). */
+  setMode(cmd: SpeedCommand | null): void;
   /** Dump capture status; onSave enables the save button. */
-  setDump(text: string | null, onSave: (() => void) | null): void;
+  setDump(text: string | null, onSave: (() => void) | null, error?: boolean): void;
   /** null = Save to memory available; otherwise the reason it is not. */
   setSaveBlocked(reason: string | null): void;
   onSaveMemory: (() => void) | null;
+  /** Problem shown in the status sentence; null clears it. */
+  setAlert(kind: 'sysex' | 'send', text: string | null): void;
   logMessage(entry: ConsoleEntry): void;
   onPortChange: ((id: string | 'sim') => void) | null;
   onInputChange: ((id: string | null) => void) | null;
@@ -42,87 +45,118 @@ const NO_INPUT = 'none';
 const MAX_LOG = 200;
 
 export function buildShell(store: Store): Shell {
-  // --- Header ---
-  const led = el('span', { class: 'led', 'data-state': 'off', 'aria-hidden': 'true' });
-  const portSelect = el('select', { class: 'port-select', 'aria-label': STR.midiPortAria, title: STR.midiOut });
-  const inputSelect = el('select', { class: 'port-select', 'aria-label': STR.midiIn, title: STR.midiIn });
-  const channelSelect = el('select', { class: 'port-select port-channel', 'aria-label': STR.channel });
+  // --- Connection panel (ports, channel, dump) ---
+  const portSelect = el('select', { class: 'select', id: 'midi-out', title: STR.midiOut });
+  const inputSelect = el('select', { class: 'select', id: 'midi-in', title: STR.midiIn });
+  const channelSelect = el('select', { class: 'select', id: 'midi-channel' });
   for (let ch = 0; ch < 16; ch++) channelSelect.append(el('option', { value: String(ch), text: `${STR.channel} ${ch + 1}` }));
   channelSelect.append(el('option', { value: '16', text: `${STR.channel} ${STR.off}` }));
   // Tells the editor which channel the Leslie listens on; sends nothing.
   channelSelect.addEventListener('change', () => {
     store.setValue('controlChannel', Number(channelSelect.value), { send: false });
   });
-  const portGroup = el('div', { class: 'port-group' },
-    led, el('span', { class: 'port-label', text: STR.outLabel }), portSelect);
-  const inputGroup = el('div', { class: 'port-group' },
-    el('span', { class: 'port-label', text: STR.inLabel }), inputSelect);
-  const channelGroup = el('div', { class: 'port-group' }, channelSelect);
+  const connectionNote = el('p', { class: 'connection-note' });
+  const dumpStatus = el('p', { class: 'connection-note' });
+  const dumpSave = el('button', { type: 'button', class: 'btn btn-outline', text: STR.dump.save });
+  dumpSave.hidden = true;
+  let dumpSaveHandler: (() => void) | null = null;
+  dumpSave.addEventListener('click', () => dumpSaveHandler?.());
+  const field = (id: string, label: string, control: HTMLElement) =>
+    el('div', { class: 'field' }, el('label', { for: id, text: label }), control);
+  const panel = el('div', { class: 'connection-panel', id: 'connection-panel', popover: 'auto', role: 'group', 'aria-label': STR.connection.label },
+    connectionNote,
+    field('midi-out', STR.midiOut, portSelect),
+    field('midi-in', STR.midiIn, inputSelect),
+    field('midi-channel', STR.connection.channel, channelSelect),
+    dumpStatus, dumpSave);
 
-  const p1 = el('button', { type: 'button', text: STR.preset1 });
-  const p2 = el('button', { type: 'button', text: STR.preset2 });
+  const led = el('span', { class: 'led', 'data-state': 'off', 'aria-hidden': 'true' });
+  const connectionText = el('span', { class: 'connection-text' });
+  const connection = el('button', { type: 'button', class: 'btn btn-outline connection', popovertarget: 'connection-panel', title: STR.connection.label },
+    led, connectionText);
+  // The popover lives in the top layer: line its right edge up with the button.
+  panel.addEventListener('beforetoggle', () => {
+    const r = connection.getBoundingClientRect();
+    panel.style.top = `${r.bottom + 8}px`;
+    panel.style.right = `${document.documentElement.clientWidth - r.right}px`;
+  });
+
+  window.addEventListener('resize', () => {
+    if (panel.matches(':popover-open')) panel.hidePopover();
+  });
+
+  // --- Top bar ---
+  // Lamp keys: a point that lights up, and a name. No outline, no fill.
+  const lampKey = (label: string) =>
+    el('button', { type: 'button' },
+      el('span', { class: 'lamp', 'aria-hidden': 'true' }), el('span', { class: 'lamp-name', text: label }));
+  const lampGroup = (label: string, ...keys: HTMLElement[]) =>
+    el('div', { class: 'lamps', role: 'group', 'aria-label': label }, ...keys);
+
+  // Neutral lights: green and red are kept for slow and fast.
+  const p1 = lampKey(STR.preset1);
+  const p2 = lampKey(STR.preset2);
   p1.addEventListener('click', () => store.selectPreset(0));
   p2.addEventListener('click', () => store.selectPreset(1));
-  const presetSwitch = el('div', { class: 'preset-switch', role: 'group', 'aria-label': STR.presetAria }, p1, p2);
+
+  const halfMoon = buildHalfMoon();
+  halfMoon.onSelect = (cmd) => shell.onSpeed?.(cmd);
+  opensGuide(halfMoon.root, 'leslieMode', store);
 
   const saveMemory = el('button', { type: 'button', class: 'btn', text: STR.saveMemory.label });
   saveMemory.addEventListener('click', () => shell.onSaveMemory?.());
 
-  const brand = el('div', { class: 'brand', text: STR.appTitle });
-  brand.append(el('small', { text: STR.appSubtitle }));
+  const header = el('header', { class: 'bar' },
+    el('h1', { class: 'brand', text: STR.appTitle }),
+    lampGroup(STR.presetAria, p1, p2),
+    el('span', { class: 'bar-rule', 'aria-hidden': 'true' }),
+    halfMoon.root,
+    el('div', { class: 'spacer' }), connection, saveMemory, panel);
 
-  const header = el('header', { class: 'header' },
-    brand, portGroup, inputGroup, channelGroup, el('div', { class: 'spacer' }), presetSwitch, saveMemory);
-
-  // --- Rotor transport (Slow / Fast / Brake) ---
-  const speedButtons = (['slow', 'fast', 'brake'] as const).map((cmd) => {
-    const b = el('button', { type: 'button', 'data-cmd': cmd, text: STR.speed.cmds[cmd] });
-    b.addEventListener('click', () => shell.onSpeed?.(cmd));
-    return b;
-  });
-  const reported = el('span', { class: 'transport-note reported' });
-  const dumpStatus = el('span', { class: 'transport-note dump-status' });
-  const dumpSave = el('button', { type: 'button', class: 'btn btn-outline btn-sm', text: STR.dump.save });
-  dumpSave.hidden = true;
-  let dumpSaveHandler: (() => void) | null = null;
-  dumpSave.addEventListener('click', () => dumpSaveHandler?.());
-  const transport = el('div', { class: 'transport' },
-    el('span', { class: 'transport-label', text: STR.speed.label }),
-    el('div', { class: 'preset-switch speed-switch', role: 'group', 'aria-label': STR.speed.label }, ...speedButtons),
-    el('span', { class: 'transport-note', text: STR.speed.note }),
-    reported,
-    el('div', { class: 'spacer' }),
-    dumpStatus, dumpSave);
-
-  // --- Banners ---
-  const honesty = el('p', { class: 'notice' });
-  const paintHonesty = (state: AppState) => {
+  // --- Status sentence ---
+  const status = el('p', { class: 'status', role: 'status' });
+  let receiving: string | null = null;
+  let dumpError: string | null = null;
+  const alerts = new Map<string, string>();
+  const paintStatus = (state: AppState) => {
     const dev = state.loadedFromDevice;
-    honesty.replaceChildren();
-    honesty.hidden = !dev;
-    if (!dev) return;
-    const time = dev.at.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-    honesty.append(el('b', { text: STR.loaded.lead(time) + ' ' }),
-      dev.unsaved.length ? STR.loaded.unsaved(dev.unsaved.length) : STR.loaded.allSaved);
+    const problem = dumpError ?? alerts.get('send') ?? alerts.get('sysex');
+    let text = '';
+    if (receiving) text = receiving;
+    else if (problem) text = problem;
+    else if (dev) {
+      const time = dev.at.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+      const edits = store.editCount();
+      const written = dev.source === 'written';
+      text = [written ? STR.loaded.written(time) : STR.loaded.short(time),
+        dev.unsaved.length ? STR.loaded.shortUnsaved(dev.unsaved.length) : '',
+        edits ? STR.loaded.edits(edits) : ''].filter(Boolean).join(' ');
+      status.title = written ? STR.loaded.checkWrite
+        : dev.unsaved.length ? STR.loaded.unsaved(dev.unsaved.length) : STR.loaded.allSaved;
+    }
+    // Only touch the live region when the sentence changes.
+    if (status.textContent !== text) status.textContent = text;
+    status.classList.toggle('is-error', !receiving && problem !== undefined);
   };
-  const stateBanner = el('p', { class: 'notice alert' });
-  stateBanner.hidden = true;
 
   // --- Console ---
   const chevron = document.createRange().createContextualFragment(
     `<svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 5l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`,
   );
-  const toggle = el('button', { type: 'button', class: 'console-toggle', 'aria-expanded': 'true' });
-  toggle.append(chevron, STR.console);
+  const toggle = el('button', { type: 'button', class: 'console-toggle', 'aria-expanded': 'false' });
+  toggle.append(chevron, el('span', { text: STR.console }));
   const last = el('span', { class: 'console-last', text: STR.consoleEmpty });
   const log = el('div', { class: 'console-log', role: 'log', 'aria-label': STR.console });
-  const clear = el('button', { type: 'button', class: 'console-toggle console-clear', text: STR.consoleClear });
+  const clear = el('button', { type: 'button', class: 'console-toggle console-clear' });
+  clear.append(el('span', { text: STR.consoleClear }));
   clear.addEventListener('click', () => {
     log.replaceChildren();
     last.textContent = STR.consoleEmpty;
   });
-  const consoleRoot = el('div', { class: 'console', 'data-open': 'true' },
-    el('div', { class: 'console-bar' }, toggle, last, el('div', { class: 'spacer' }), clear), log);
+  const credits = el('p', { class: 'credits' }, `${STR.credits} `,
+    el('a', { href: 'https://jf.cool', target: '_blank', rel: 'noopener', text: 'jf.cool' }));
+  const consoleRoot = el('div', { class: 'console', 'data-open': 'false' },
+    el('div', { class: 'console-bar' }, toggle, last, el('div', { class: 'spacer' }), clear, credits), log);
   toggle.addEventListener('click', () => {
     const open = consoleRoot.dataset['open'] !== 'true';
     consoleRoot.dataset['open'] = String(open);
@@ -131,32 +165,34 @@ export function buildShell(store: Store): Shell {
 
   const shell: Shell = {
     header,
-    honesty,
-    stateBanner,
+    status,
     console: consoleRoot,
-    transport,
     onPortChange: null,
     onInputChange: null,
     onSpeed: null,
     onSaveMemory: null,
 
     update(state: AppState) {
-      paintHonesty(state);
+      paintStatus(state);
       p1.disabled = p2.disabled = store.locked;
-      p1.setAttribute('aria-pressed', String(state.editedPreset === 0));
-      p2.setAttribute('aria-pressed', String(state.editedPreset === 1));
-      channelSelect.value = String(store.getValue('controlChannel'));
+      p1.setAttribute('aria-pressed', String(!store.locked && state.editedPreset === 0));
+      p2.setAttribute('aria-pressed', String(!store.locked && state.editedPreset === 1));
+      const ch = store.getValue('controlChannel');
+      channelSelect.value = String(ch);
 
       const c = state.connection;
       led.dataset['state'] = c.kind === 'port' ? 'on' : c.kind === 'simulator' ? 'off' : 'warn';
-      stateBanner.hidden = false;
+      const label = c.kind === 'port' ? c.name : STR.connection.states[c.kind];
+      connectionText.textContent = c.kind === 'port'
+        ? `${label}, ${STR.channel.toLowerCase()} ${ch <= 15 ? ch + 1 : STR.off}` : label;
       switch (c.kind) {
-        case 'unsupported': stateBanner.textContent = STR.states.unsupported; break;
-        case 'denied': stateBanner.textContent = STR.states.denied; break;
-        case 'no-port': stateBanner.textContent = STR.states.noPort; break;
-        case 'simulator': stateBanner.textContent = STR.simulatorNote; break;
-        case 'port': stateBanner.hidden = true; break;
+        case 'unsupported': connectionNote.textContent = STR.states.unsupported; break;
+        case 'denied': connectionNote.textContent = STR.states.denied; break;
+        case 'no-port': connectionNote.textContent = STR.states.noPort; break;
+        case 'simulator': connectionNote.textContent = STR.simulatorNote; break;
+        case 'port': connectionNote.textContent = ''; break;
       }
+      connectionNote.hidden = c.kind === 'port';
     },
 
     setPorts(ports, selected) {
@@ -173,9 +209,8 @@ export function buildShell(store: Store): Shell {
       inputSelect.value = selected ?? NO_INPUT;
     },
 
-    setReportedMode(cmd) {
-      for (const b of speedButtons) b.setAttribute('aria-pressed', String(b.dataset['cmd'] === cmd));
-      reported.textContent = cmd ? `${STR.speed.reported} ${STR.speed.cmds[cmd]}` : '';
+    setMode(cmd) {
+      halfMoon.setMode(cmd);
     },
 
     setSaveBlocked(reason) {
@@ -183,16 +218,28 @@ export function buildShell(store: Store): Shell {
       saveMemory.title = reason ?? STR.saveMemory.hint;
     },
 
-    setDump(text, onSave) {
+    setDump(text, onSave, error = false) {
       dumpStatus.textContent = text ?? '';
+      dumpStatus.hidden = !text;
       dumpSaveHandler = onSave;
       dumpSave.hidden = onSave === null;
+      receiving = onSave === null ? text : null;
+      dumpError = error ? text : null;
+      paintStatus(store.state);
+    },
+
+    setAlert(kind, text) {
+      if ((alerts.get(kind) ?? null) === text) return;
+      if (text === null) alerts.delete(kind);
+      else alerts.set(kind, text);
+      paintStatus(store.state);
     },
 
     logMessage(entry) {
       const time = new Date().toLocaleTimeString(undefined, { hour12: false }) +
         '.' + String(Date.now() % 1000).padStart(3, '0');
-      last.textContent = `${STR.dir[entry.dir]} ${entry.hex}`;
+      // Notes (no bytes) read better as their text.
+      last.textContent = `${STR.dir[entry.dir]} ${/^[0-9A-F]{2} /.test(entry.hex) ? `${entry.hex}  ${entry.text}` : entry.text}`;
       const line = el('div', { class: `log-${entry.dir}` });
       line.append(el('span', { class: 'time', text: time }), ' ',
         el('span', { class: 'dir', text: STR.dir[entry.dir] }), ' ',
