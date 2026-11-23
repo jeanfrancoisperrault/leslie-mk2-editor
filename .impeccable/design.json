@@ -1,34 +1,152 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T15:00:00+01:00",
+  "generatedAt": "2026-11-23T17:21:47+00:00",
   "title": "Design System: Leslie 2101/2103 mk2 Editor",
   "extensions": {
     "colorMeta": {
-      "primary": { "role": "primary", "displayName": "Preset Amber", "canonical": "oklch(0.473 0.137 46.201)", "tonalRamp": ["oklch(0.28 0.08 46)", "oklch(0.37 0.11 46)", "oklch(0.473 0.137 46.201)", "oklch(0.555 0.163 48.998)", "oklch(0.666 0.179 58.318)", "oklch(0.769 0.188 70.08)", "oklch(0.879 0.169 91.605)", "oklch(0.95 0.08 95)"] },
-      "background": { "role": "neutral", "displayName": "Warm Stone Ground", "canonical": "oklch(0.147 0.004 49.25)", "tonalRamp": ["oklch(0.147 0.004 49.25)", "oklch(0.216 0.006 56.043)", "oklch(0.268 0.007 34.298)", "oklch(0.37 0.01 50)", "oklch(0.47 0.012 52)", "oklch(0.553 0.013 58.071)", "oklch(0.709 0.01 56.259)", "oklch(0.985 0.001 106.423)"] },
-      "card": { "role": "neutral", "displayName": "Stone Card", "canonical": "oklch(0.216 0.006 56.043)" },
-      "muted-foreground": { "role": "neutral", "displayName": "Warm Gray Ink", "canonical": "oklch(0.709 0.01 56.259)" },
-      "destructive": { "role": "tertiary", "displayName": "Alert Red", "canonical": "oklch(0.704 0.191 22.216)" },
-      "success": { "role": "tertiary", "displayName": "Connected Green", "canonical": "oklch(0.723 0.219 149.579)" }
+      "primary": {
+        "role": "primary",
+        "displayName": "Preset Amber",
+        "canonical": "oklch(0.473 0.137 46.201)",
+        "tonalRamp": [
+          "oklch(0.28 0.08 46)",
+          "oklch(0.37 0.11 46)",
+          "oklch(0.473 0.137 46.201)",
+          "oklch(0.555 0.163 48.998)",
+          "oklch(0.666 0.179 58.318)",
+          "oklch(0.769 0.188 70.08)",
+          "oklch(0.879 0.169 91.605)",
+          "oklch(0.95 0.08 95)"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Warm Stone Ground",
+        "canonical": "oklch(0.147 0.004 49.25)",
+        "tonalRamp": [
+          "oklch(0.147 0.004 49.25)",
+          "oklch(0.216 0.006 56.043)",
+          "oklch(0.268 0.007 34.298)",
+          "oklch(0.37 0.01 50)",
+          "oklch(0.47 0.012 52)",
+          "oklch(0.553 0.013 58.071)",
+          "oklch(0.709 0.01 56.259)",
+          "oklch(0.985 0.001 106.423)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Stone Card",
+        "canonical": "oklch(0.216 0.006 56.043)"
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Warm Gray Ink",
+        "canonical": "oklch(0.709 0.01 56.259)"
+      },
+      "destructive": {
+        "role": "tertiary",
+        "displayName": "Alert Red",
+        "canonical": "oklch(0.704 0.191 22.216)"
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Connected Green",
+        "canonical": "oklch(0.723 0.219 149.579)"
+      },
+      "primary-foreground": {
+        "role": "primary",
+        "displayName": "Amber Cream",
+        "canonical": "oklch(0.987 0.022 95.277)"
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Fader Groove",
+        "canonical": "oklch(0.274 0.006 286.033)"
+      },
+      "accent": {
+        "role": "neutral",
+        "displayName": "Selected Stone",
+        "canonical": "oklch(0.268 0.007 34.298)"
+      }
     },
     "typographyMeta": {
-      "card-title": { "displayName": "Card title", "purpose": "Block headers, sentence case, 600." },
-      "label": { "displayName": "Label", "purpose": "Parameter names, uppercase machine-menu names." },
-      "value": { "displayName": "Value", "purpose": "Converted real-unit readouts, tabular numerals." },
-      "mono": { "displayName": "Mono", "purpose": "Real MIDI bytes in the console only." }
+      "card-title": {
+        "displayName": "Card title",
+        "purpose": "Block headers, sentence case, 600."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Parameter names, uppercase machine-menu names."
+      },
+      "value": {
+        "displayName": "Value",
+        "purpose": "Converted real-unit readouts, tabular numerals."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Real MIDI bytes in the console only."
+      },
+      "brand": {
+        "displayName": "Brand",
+        "purpose": "App name in the header."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Explainer heading."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Explainer prose, muted-foreground with foreground lead-ins."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Raw MIDI data line under a value."
+      }
     },
     "shadows": [
-      { "name": "shadow-xs", "value": "0 1px 2px rgb(0 0 0 / 0.05)", "purpose": "shadcn Card and primary Button." },
-      { "name": "groove", "value": "inset 0 1px 2px rgb(0 0 0 / 0.6)", "purpose": "Engraved fader track (the one custom depth)." },
-      { "name": "thumb", "value": "0 2px 4px rgb(0 0 0 / 0.4)", "purpose": "Fader thumb." }
+      {
+        "name": "shadow-xs",
+        "value": "0 1px 2px rgb(0 0 0 / 0.05)",
+        "purpose": "shadcn Card and primary Button."
+      },
+      {
+        "name": "groove",
+        "value": "inset 0 1px 2px rgb(0 0 0 / 0.6)",
+        "purpose": "Engraved fader track (the one custom depth)."
+      },
+      {
+        "name": "thumb",
+        "value": "0 2px 4px rgb(0 0 0 / 0.4)",
+        "purpose": "Fader thumb."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent)",
+        "purpose": "Focus ring (3px ring at 50%)."
+      }
     ],
     "motion": [
-      { "name": "rotor-turn", "value": "rotation, linear, period = 60/rpm seconds", "purpose": "Rotor viz at real machine speed; off under prefers-reduced-motion." },
-      { "name": "console-chevron", "value": "transform 0.15s ease-out", "purpose": "Console open/close." }
+      {
+        "name": "rotor-turn",
+        "value": "rotation, linear, period = 60/rpm seconds",
+        "purpose": "Rotor viz at real machine speed; off under prefers-reduced-motion."
+      },
+      {
+        "name": "console-chevron",
+        "value": "transform 0.15s ease-out",
+        "purpose": "Console open/close."
+      }
     ],
     "breakpoints": [
-      { "name": "single-column", "value": "1260px" },
-      { "name": "app-floor", "value": "1100px" }
+      {
+        "name": "single-column",
+        "value": "1260px"
+      },
+      {
+        "name": "app-floor",
+        "value": "1100px"
+      }
     ]
   },
   "components": [
@@ -36,9 +154,17 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "shadcn Button default: amber primary. Used for Send all.",
-      "html": "<button class=\"ds-btn\">Send all</button>",
-      "css": ".ds-btn { background: var(--primary, oklch(0.473 0.137 46.201)); color: var(--primary-foreground, oklch(0.987 0.022 95.277)); font: 500 14px ui-sans-serif, system-ui, sans-serif; height: 36px; padding: 0 16px; border: none; border-radius: 0.325rem; cursor: pointer; box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); } .ds-btn:hover { filter: brightness(1.1); } .ds-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.553 0.013 58.071)) 50%, transparent); }"
+      "description": "shadcn Button default: amber primary. Used for Save to memory; disabled until a dump has been read.",
+      "html": "<button class=\"ds-btn\">Save to memory</button> <button class=\"ds-btn\" disabled>Save to memory</button>",
+      "css": ".ds-btn { background: var(--primary, oklch(0.473 0.137 46.201)); color: var(--primary-foreground, oklch(0.987 0.022 95.277)); font: 500 14px ui-sans-serif, system-ui, sans-serif; height: 36px; padding: 0 16px; border: none; border-radius: var(--radius-md, calc(0.45rem - 2px)); cursor: pointer; box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); } .ds-btn:hover { background: color-mix(in oklab, var(--primary, oklch(0.473 0.137 46.201)) 90%, transparent); } .ds-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.553 0.013 58.071)) 50%, transparent); } .ds-btn:disabled { opacity: 0.45; cursor: not-allowed; } .ds-btn:disabled:hover { background: var(--primary, oklch(0.473 0.137 46.201)); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "shadcn Button outline: transparent with input border; hover accent.",
+      "html": "<button class=\"ds-btn-outline\">Continue with the simulator</button>",
+      "css": ".ds-btn-outline { background: transparent; color: var(--foreground, oklch(0.985 0.001 106.423)); font: 500 14px ui-sans-serif, system-ui, sans-serif; height: 36px; padding: 0 16px; border: 1px solid var(--input, oklch(1 0 0 / 15%)); border-radius: var(--radius-md, calc(0.45rem - 2px)); cursor: pointer; } .ds-btn-outline:hover { background: var(--accent, oklch(0.268 0.007 34.298)); color: var(--accent-foreground, oklch(0.985 0.001 106.423)); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.553 0.013 58.071)) 50%, transparent); }"
     },
     {
       "name": "Toggle Group",
@@ -46,7 +172,15 @@
       "refersTo": "toggle-item",
       "description": "shadcn ToggleGroup outline: joined equal keys, accent on-state. Used for enum parameters and the preset switch.",
       "html": "<div class=\"ds-toggles\"><button aria-pressed=\"true\">Flat</button><button>1.0k</button><button>1.6k</button><button>2.0k</button></div>",
-      "css": ".ds-toggles { display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(52px, 104px); border: 1px solid var(--input, oklch(1 0 0 / 15%)); border-radius: 0.325rem; overflow: hidden; } .ds-toggles button { background: none; border: none; font: 500 13px ui-sans-serif, system-ui, sans-serif; height: 30px; padding: 0 10px; color: var(--foreground, oklch(0.985 0.001 106.423)); cursor: pointer; } .ds-toggles button + button { border-left: 1px solid var(--input, oklch(1 0 0 / 15%)); } .ds-toggles button:hover { background: var(--muted, oklch(0.268 0.007 34.298)); color: var(--muted-foreground, oklch(0.709 0.01 56.259)); } .ds-toggles button[aria-pressed=\"true\"] { background: var(--accent, oklch(0.268 0.007 34.298)); color: var(--accent-foreground, oklch(0.985 0.001 106.423)); }"
+      "css": ".ds-toggles { display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(52px, 104px); border: 1px solid var(--input, oklch(1 0 0 / 15%)); border-radius: var(--radius-md, calc(0.45rem - 2px)); overflow: hidden; } .ds-toggles button { background: none; border: none; font: 500 13px ui-sans-serif, system-ui, sans-serif; height: 30px; padding: 0 10px; color: var(--foreground, oklch(0.985 0.001 106.423)); cursor: pointer; } .ds-toggles button + button { border-left: 1px solid var(--input, oklch(1 0 0 / 15%)); } .ds-toggles button:hover { background: var(--muted, oklch(0.268 0.007 34.298)); color: var(--muted-foreground, oklch(0.709 0.01 56.259)); } .ds-toggles button[aria-pressed=\"true\"] { background: var(--accent, oklch(0.268 0.007 34.298)); color: var(--accent-foreground, oklch(0.985 0.001 106.423)); }"
+    },
+    {
+      "name": "Select",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "Native select with the shadcn Select trigger look: MIDI port and channel pickers.",
+      "html": "<label class=\"ds-select\"><span>Out</span><select><option>MidiSport 2x2 Port A</option></select></label>",
+      "css": ".ds-select { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 12px; border: 1px solid var(--input, oklch(1 0 0 / 15%)); border-radius: var(--radius-md, calc(0.45rem - 2px)); font: 500 14px ui-sans-serif, system-ui, sans-serif; color: var(--foreground, oklch(0.985 0.001 106.423)); } .ds-select span { font-size: 12px; font-weight: 400; color: var(--muted-foreground, oklch(0.709 0.01 56.259)); } .ds-select select { appearance: none; background: transparent; border: none; color: inherit; font: inherit; padding-right: 18px; background-image: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center; cursor: pointer; } .ds-select:focus-within { box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring, oklch(0.553 0.013 58.071)) 50%, transparent); }"
     },
     {
       "name": "Engraved Fader",
@@ -54,7 +188,7 @@
       "refersTo": "fader",
       "description": "The one custom control: range input as an instrument fader, amber fill, detent tick scale.",
       "html": "<div class=\"ds-fader-wrap\"><input class=\"ds-fader\" type=\"range\" min=\"0\" max=\"39\" value=\"20\" style=\"--fill:51%\" /><div class=\"ds-fader-scale\" style=\"background-size: 12.8% 100%\"></div></div>",
-      "css": ".ds-fader-wrap { width: 240px; } .ds-fader { appearance: none; -webkit-appearance: none; width: 100%; height: 24px; background: transparent; cursor: pointer; --fill: 50%; } .ds-fader::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--primary, oklch(0.473 0.137 46.201)) var(--fill), var(--secondary, oklch(0.274 0.006 286.033)) var(--fill)); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.6); } .ds-fader::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 22px; margin-top: -9px; border-radius: 0.2rem; background: var(--primary, oklch(0.473 0.137 46.201)); border: 1px solid oklch(1 0 0 / 10%); box-shadow: 0 2px 4px rgb(0 0 0 / 0.4); } .ds-fader-scale { height: 6px; margin: -2px 13px 0 1px; background-image: linear-gradient(to right, color-mix(in oklab, var(--muted-foreground, oklch(0.709 0.01 56.259)) 60%, transparent) 0 1px, transparent 1px); background-repeat: repeat-x; }"
+      "css": ".ds-fader-wrap { width: 240px; } .ds-fader { appearance: none; -webkit-appearance: none; width: 100%; height: 24px; background: transparent; cursor: pointer; --fill: 50%; } .ds-fader::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--primary, oklch(0.473 0.137 46.201)) var(--fill), var(--secondary, oklch(0.274 0.006 286.033)) var(--fill)); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.6); } .ds-fader::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 22px; margin-top: -9px; border-radius: var(--radius-sm, calc(0.45rem - 4px)); background: var(--primary, oklch(0.473 0.137 46.201)); border: 1px solid oklch(1 0 0 / 10%); box-shadow: 0 2px 4px rgb(0 0 0 / 0.4); } .ds-fader-scale { height: 6px; margin: -2px 13px 0 1px; background-image: linear-gradient(to right, color-mix(in oklab, var(--muted-foreground, oklch(0.709 0.01 56.259)) 60%, transparent) 0 1px, transparent 1px); background-repeat: repeat-x; }"
     },
     {
       "name": "Value Readout",
@@ -70,7 +204,15 @@
       "refersTo": "card",
       "description": "shadcn Card: parameter block with sentence-case title.",
       "html": "<section class=\"ds-card\"><h2>Horn rotor</h2><p>Block content…</p></section>",
-      "css": ".ds-card { background: var(--card, oklch(0.216 0.006 56.043)); color: var(--card-foreground, oklch(0.985 0.001 106.423)); border: 1px solid var(--border, oklch(1 0 0 / 10%)); border-radius: 0.7rem; padding: 16px 20px 18px; font: 400 13.5px ui-sans-serif, system-ui, sans-serif; box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); } .ds-card h2 { font-size: 14px; font-weight: 600; padding-bottom: 10px; margin: 0 0 8px; border-bottom: 1px solid var(--border, oklch(1 0 0 / 10%)); }"
+      "css": ".ds-card { background: var(--card, oklch(0.216 0.006 56.043)); color: var(--card-foreground, oklch(0.985 0.001 106.423)); border: 1px solid var(--border, oklch(1 0 0 / 10%)); border-radius: var(--radius-xl, calc(0.45rem + 4px)); padding: 16px 20px 18px; font: 400 13.5px ui-sans-serif, system-ui, sans-serif; box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); } .ds-card h2 { font-size: 14px; font-weight: 600; padding-bottom: 10px; margin: 0 0 8px; border-bottom: 1px solid var(--border, oklch(1 0 0 / 10%)); }"
+    },
+    {
+      "name": "Alert Strip",
+      "kind": "custom",
+      "refersTo": "alert",
+      "description": "Full-width strip: card bg, border-bottom, lead in card-foreground 500; destructive variant for failures.",
+      "html": "<p class=\"ds-alert\"><b>Values read from the Leslie (dump at 16:10).</b> The active preset matches its memory.</p><p class=\"ds-alert ds-alert-destructive\">MIDI access denied. Allow MIDI in the browser, then reload.</p>",
+      "css": ".ds-alert { margin: 0; padding: 8px 24px; font: 400 13px ui-sans-serif, system-ui, sans-serif; color: var(--muted-foreground, oklch(0.709 0.01 56.259)); background: var(--card, oklch(0.216 0.006 56.043)); border-bottom: 1px solid var(--border, oklch(1 0 0 / 10%)); } .ds-alert b { color: var(--card-foreground, oklch(0.985 0.001 106.423)); font-weight: 500; } .ds-alert-destructive { color: var(--destructive, oklch(0.704 0.191 22.216)); }"
     },
     {
       "name": "Console Bar",
@@ -78,35 +220,59 @@
       "refersTo": "mono",
       "description": "shadcn Collapsible strip with mono MIDI bytes.",
       "html": "<div class=\"ds-console\"><button class=\"ds-console-toggle\">MIDI console</button><span class=\"ds-console-hex\">B0 63 04 · B0 62 7F · B0 06 14</span></div>",
-      "css": ".ds-console { display: flex; align-items: center; gap: 16px; background: var(--card, oklch(0.216 0.006 56.043)); border-top: 1px solid var(--border, oklch(1 0 0 / 10%)); padding: 8px 24px; font: 400 13px ui-sans-serif, system-ui, sans-serif; color: var(--muted-foreground, oklch(0.709 0.01 56.259)); } .ds-console-toggle { background: none; border: none; cursor: pointer; color: var(--card-foreground, oklch(0.985 0.001 106.423)); font: 500 13px ui-sans-serif, system-ui, sans-serif; padding: 4px 8px; border-radius: 0.2rem; } .ds-console-toggle:hover { background: var(--accent, oklch(0.268 0.007 34.298)); } .ds-console-hex { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }"
+      "css": ".ds-console { display: flex; align-items: center; gap: 16px; background: var(--card, oklch(0.216 0.006 56.043)); border-top: 1px solid var(--border, oklch(1 0 0 / 10%)); padding: 8px 24px; font: 400 13px ui-sans-serif, system-ui, sans-serif; color: var(--muted-foreground, oklch(0.709 0.01 56.259)); } .ds-console-toggle { background: none; border: none; cursor: pointer; color: var(--card-foreground, oklch(0.985 0.001 106.423)); font: 500 13px ui-sans-serif, system-ui, sans-serif; padding: 4px 8px; border-radius: var(--radius-sm, calc(0.45rem - 4px)); } .ds-console-toggle:hover { background: var(--accent, oklch(0.268 0.007 34.298)); } .ds-console-hex { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }"
+    },
+    {
+      "name": "Kbd",
+      "kind": "chip",
+      "refersTo": "kbd",
+      "description": "shadcn Kbd: keyboard hints in the explainer.",
+      "html": "<span class=\"ds-kbd-row\"><kbd class=\"ds-kbd\">Shift</kbd> + <kbd class=\"ds-kbd\">↑ ↓</kbd> big step</span>",
+      "css": ".ds-kbd-row { font: 400 12px ui-sans-serif, system-ui, sans-serif; color: var(--muted-foreground, oklch(0.709 0.01 56.259)); } .ds-kbd { display: inline-block; background: var(--muted, oklch(0.268 0.007 34.298)); border: 1px solid var(--border, oklch(1 0 0 / 10%)); border-radius: var(--radius-sm, calc(0.45rem - 4px)); padding: 1px 5px; font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--foreground, oklch(0.985 0.001 106.423)); }"
     }
   ],
   "narrative": {
     "northStar": "shadcn, one custom instrument",
-    "overview": "The editor is a shadcn/ui application themed by the user's shadcn/create preset b1GdzAEwU — stone neutrals with an amber primary and an amber chart ramp — on shadcn's CSS-variable token system. Both preset modes are installed; the app runs dark (html.dark). The stack stays vanilla TypeScript: components follow shadcn's visual recipes rather than importing its React code. Exactly one control family is custom by design: the engraved fader with detent-true tick scales, plus the vector visualizations.",
+    "overview": "The editor is a **shadcn/ui application** themed by the user's **shadcn/create preset `b1GdzAEwU`** — stone neutrals with an amber primary and an amber chart ramp — on shadcn's CSS-variable token system (user decisions, 2026-11-20; this replaces the earlier hand-built \"night amp facade\" world). Both preset modes are installed in `:root`/`.dark`; the app runs dark (`html.dark`), and the light pair is ready for a future toggle. Every visual decision routes through the semantic tokens (`background`, `card`, `primary`, `muted-foreground`, `accent`, `destructive`, `border`, `input`, `ring`, `radius`) exactly as shadcn's theming docs define them, so the app can be re-themed by swapping token values alone. The stack stays vanilla TypeScript: components follow shadcn's visual recipes rather than importing its React code.\n\nExactly one control family is custom by design: the **engraved fader** (slider restyled as an instrument fader with detent-true tick scales), plus the vector visualizations. Everything else is the stock component it looks like.",
     "keyCharacteristics": [
       "Token values verbatim from the user's shadcn/create preset (light + dark installed, dark active).",
-      "--success is the one added token (connected LED), added per shadcn's Adding New Tokens pattern.",
-      "Real-world units lead (46 rpm, 1.8 s); raw MIDI data secondary in muted-foreground.",
-      "destructive is reserved for honest flags: unverified tables, MIDI errors."
+      "`--success` is the one added token (connected LED), added per shadcn's \"Adding New Tokens\" pattern; the preset ships no green.",
+      "Real-world units lead (46 rpm, 1.8 s); raw MIDI data secondary in `muted-foreground`.",
+      "`destructive` is reserved for honest flags: unverified tables, MIDI errors."
     ],
     "rules": [
-      { "name": "The Token Rule", "body": "No color that is not a theme token. Re-theming the app must require touching :root/.dark only.", "section": "colors" },
-      { "name": "The Destructive Honesty Rule", "body": "destructive marks real uncertainty or failure (\"table unverified\", MIDI denied) and nothing else.", "section": "colors" },
-      { "name": "The Machine's Words Rule", "body": "Parameter labels are the unit's own menu names, uppercase, mapping 1:1 to the front panel display.", "section": "typography" },
-      { "name": "The Tabular Rule", "body": "Every number that can change sits in tabular numerals so values never jitter while dragging.", "section": "typography" }
+      {
+        "name": "The Token Rule",
+        "body": "No color that is not a theme token. Re-theming the app must require touching `:root` only.",
+        "section": "colors"
+      },
+      {
+        "name": "The Destructive Honesty Rule",
+        "body": "`destructive` marks real uncertainty or failure (\"table unverified\", MIDI denied) and nothing else.",
+        "section": "colors"
+      },
+      {
+        "name": "The Machine's Words Rule",
+        "body": "Parameter labels are the unit's own menu names.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Changing numbers sit in tabular numerals.",
+        "section": "typography"
+      }
     ],
     "dos": [
-      "Do express every color through the shadcn tokens; add new semantic tokens (like --success) via the official pattern instead of inlining values.",
-      "Do keep real units first (46 rpm, 1.8 s) with raw data beneath.",
-      "Do keep destructive for honest flags and failures only.",
-      "Do keep the fader family and the SVG visualizations as the only custom visuals."
+      "**Do** express every color through the shadcn tokens; add new semantic tokens (like `--success`) via the official pattern instead of inlining values.",
+      "**Do** keep real units first (46 rpm, 1.8 s) with raw data beneath.",
+      "**Do** keep `destructive` for honest flags and failures only.",
+      "**Do** keep the fader family and the SVG visualizations as the only custom visuals."
     ],
     "donts": [
-      "Don't hand-pick colors outside the preset; evolve the theme by regenerating the shadcn/create preset.",
-      "Don't use raw hex/oklch in component styles — tokens only.",
-      "Don't replace the fixed explainer with tooltips or popovers.",
-      "Don't load fonts or assets from a CDN — system stack, offline-safe."
+      "**Don't** hand-pick colors outside the preset; evolve the theme by regenerating the shadcn/create preset, not by editing component styles.",
+      "**Don't** use raw hex/oklch in component styles — tokens only.",
+      "**Don't** replace the fixed explainer with tooltips or popovers.",
+      "**Don't** load fonts or assets from a CDN — system stack, offline-safe."
     ]
   }
 }

@@ -11,3 +11,9 @@ dist/
 docs/manual-extraction.md
 docs/manual-mk1-extraction.md
 docs/service-manual-extraction.md
+
+# Impeccable: machine-local link to the global skill (hook manifest needs it) and local hook state
+.claude/skills/impeccable
+.claude/settings.local.json
+.impeccable/config.local.json
+.impeccable/hook.cache.json

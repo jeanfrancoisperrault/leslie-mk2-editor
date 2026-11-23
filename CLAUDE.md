@@ -35,9 +35,12 @@ Chrome/Edge only. Read `PRODUCT.md` (goals), `DESIGN.md` (visual system), `docs/
 **Before every push / pull request**
 - Run `code-review-and-quality` on the diff and fix what it finds; `code-simplification` if the
   change grew complex.
-- If the diff touches `src/ui/` or styles: run the Impeccable detector once
-  (`~/.agents/skills/impeccable/scripts/impeccable detect --json <changed files>`), then
-  `/impeccable audit` and `web-design-guidelines`.
+- If the diff touches `src/ui/` or styles: `/impeccable audit` and `web-design-guidelines`.
+  The Impeccable design hook already runs the detector after each UI edit and on Stop
+  (`.impeccable/config.json`; machine setup: link `.claude/skills/impeccable` to the global skill,
+  then `impeccable hooks on`, which writes the gitignored `.claude/settings.local.json`).
+  Fix real findings; add ignores only through `impeccable hooks ignore-*` with a reason.
+- When `DESIGN.md` changes, regenerate `.impeccable/design.json` (`/impeccable document`).
 - If a user-visible behavior or a design decision changed: update the docs and record the
   decision as an ADR in `docs/adr/` (`documentation-and-adrs`).
 - CI pipeline changes: `ci-cd-and-automation`.
