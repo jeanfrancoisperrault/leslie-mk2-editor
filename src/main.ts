@@ -13,6 +13,7 @@ import type { SpeedCommand } from './midi/speed';
 import { NrpnParser } from './midi/nrpn-parser';
 import { DumpCollector, toSyx } from './sysex/dump';
 import { decodeDumpState } from './sysex/dump-state';
+import { buildDumpPacket, encodeDumpData } from './sysex/dump-build';
 import { PARAMS, formatValue } from './params/schema';
 import { STR } from './content/i18n';
 import { Store } from './state/store';
@@ -54,6 +55,10 @@ function toHex(bytes: Uint8Array): string {
   return Array.from(bytes, (b) => b.toString(16).toUpperCase().padStart(2, '0')).join(' ');
 }
 
+function shortHex(bytes: Uint8Array): string {
+  return bytes.length <= 16 ? toHex(bytes) : `${toHex(bytes.slice(0, 12))} … (${bytes.length} bytes)`;
+}
+
 const teeSink: MidiSink = {
   send(message) {
     if (hardwareSink) {
@@ -61,11 +66,11 @@ const teeSink: MidiSink = {
         hardwareSink.send(message);
         echo.noteSent(message, performance.now());
       } catch (err) {
-        shell.logMessage({ dir: 'out', hex: toHex(message), text: `ERROR: ${(err as Error).message}` });
+        shell.logMessage({ dir: 'out', hex: shortHex(message), text: `ERROR: ${(err as Error).message}` });
         return;
       }
     }
-    shell.logMessage({ dir: 'out', hex: toHex(message), text: decodeMessage(message) });
+    shell.logMessage({ dir: 'out', hex: shortHex(message), text: decodeMessage(message) });
   },
 };
 
@@ -75,11 +80,11 @@ store.onSend = (def, value) => {
   queue.push(def.nrpn, value);
 };
 
-shell.onSpeed = (cmd, method) => {
+shell.onSpeed = (cmd) => {
   // Close any NRPN session first so the speed command is not mis-addressed.
   queue.flush();
   const ch = store.getValue('controlChannel');
-  for (const msg of encodeSpeed(method, cmd, ch <= 15 ? ch : 0)) teeSink.send(msg);
+  for (const msg of encodeSpeed(cmd, ch <= 15 ? ch : 0)) teeSink.send(msg);
 };
 
 // --- Incoming: NRPN reports from the Leslie, dump capture ---------------------
@@ -88,9 +93,36 @@ const nrpnIn = new NrpnParser();
 const dump = new DumpCollector();
 const MODES: SpeedCommand[] = ['slow', 'fast', 'brake'];
 
-function shortHex(bytes: Uint8Array): string {
-  return bytes.length <= 16 ? toHex(bytes) : `${toHex(bytes.slice(0, 12))} … (${bytes.length} bytes)`;
+// --- Save to memory: send a dump built from a real one + editor values ----
+
+/** Data (128 bytes) of the last valid dump received from the machine. */
+let lastDumpData: Uint8Array | null = null;
+
+function saveBlockedReason(): string | null {
+  if (!hardwareSink) return STR.saveMemory.needPort;
+  if (!midi.sysex) return STR.saveMemory.needSysex;
+  if (!lastDumpData) return STR.saveMemory.needDump;
+  return null;
 }
+
+function refreshSave(): void {
+  shell.setSaveBlocked(saveBlockedReason());
+}
+
+shell.onSaveMemory = () => {
+  if (saveBlockedReason() !== null || !lastDumpData) return;
+  if (!window.confirm(STR.saveMemory.confirm)) return;
+  queue.flush();
+  const s = store.state;
+  const data = encodeDumpData(lastDumpData, {
+    selectedPreset: s.editedPreset,
+    system: s.systemValues,
+    presets: [s.presetValues[0], s.presetValues[1]],
+  });
+  teeSink.send(buildDumpPacket(data));
+  shell.logMessage({ dir: 'out', hex: '  ⤷', text: STR.saveMemory.sent });
+};
+
 
 dump.onProgress = (packets) => shell.setDump(STR.dump.receiving(packets.length), null);
 dump.onComplete = (packets) => {
@@ -101,6 +133,8 @@ dump.onComplete = (packets) => {
   const first = snapshot[0];
   const decoded = first?.checksum && first.data ? decodeDumpState(first.data) : null;
   if (decoded) {
+    lastDumpData = first!.data;
+    refreshSave();
     store.loadFromDevice(decoded);
     const names = decoded.unsaved.map((id) => PARAMS.find((d) => d.id === id)?.manualName ?? id);
     shell.logMessage({ dir: 'in', hex: '  ⤷', text: `Editor loaded from dump · preset ${decoded.selectedPreset + 1}` +
@@ -173,7 +207,10 @@ function selectPort(id: string | 'sim'): void {
   store.setConnection({ kind: 'port', id, name });
 }
 
-shell.onPortChange = selectPort;
+shell.onPortChange = (id) => {
+  selectPort(id);
+  refreshSave();
+};
 shell.onInputChange = selectInput;
 
 function syncInputs(inputs: PortInfo[]): void {
@@ -188,18 +225,15 @@ midi.on((ev) => {
       store.setConnection({ kind: 'unsupported' });
       shell.setPorts([], 'sim');
       shell.setInputs([], null);
-      shell.setSysexAvailable(false);
       overlay.show('unsupported');
       break;
     case 'denied':
       store.setConnection({ kind: 'denied' });
       shell.setPorts([], 'sim');
       shell.setInputs([], null);
-      shell.setSysexAvailable(false);
       overlay.show('denied');
       break;
     case 'ready': {
-      shell.setSysexAvailable(ev.sysex);
       if (!ev.sysex) shell.logMessage({ dir: 'in', hex: '--', text: STR.sysexDenied });
       const pick = pickPort(ev.outputs);
       shell.setPorts(ev.outputs, pick ? pick.id : 'sim');
@@ -233,6 +267,8 @@ midi.on((ev) => {
   }
 });
 
+midi.on(() => refreshSave());
+
 // Follow the control channel setting (16 = Off keeps the last valid channel;
 // the explainer for that parameter says why nothing reaches the machine then).
 store.subscribe(() => {
@@ -259,5 +295,6 @@ store.subscribe((state) => {
 // Initial paint, then ask for MIDI access.
 shell.setPorts([], 'sim');
 shell.setInputs([], null);
+refreshSave();
 store.setConnection({ kind: 'simulator' });
 void midi.init();

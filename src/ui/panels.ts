@@ -14,6 +14,16 @@ export function buildPanels(store: Store): { root: HTMLElement; update(state: Ap
   const root = el('div', { class: 'edit' });
   const rows: ParamRow[] = [];
 
+  // Waiting card, shown until the first dump from the Leslie is received.
+  const steps = el('ol', { class: 'waiting-steps' });
+  for (const s of STR.waiting.steps) steps.append(el('li', { text: s }));
+  const waiting = el('section', { class: 'waiting', role: 'status' },
+    el('h2', { text: STR.waiting.title }),
+    el('p', { text: STR.waiting.body }),
+    steps,
+    el('p', { class: 'waiting-note', text: STR.waiting.note }));
+  const blocks = el('div', { class: 'edit-blocks' });
+
   for (const group of GROUP_ORDER) {
     const title = STR.groups[group] ?? group;
     const block = el('section', { class: 'block', 'aria-label': title });
@@ -25,12 +35,17 @@ export function buildPanels(store: Store): { root: HTMLElement; update(state: Ap
       rows.push(row);
       block.append(row.root);
     }
-    root.append(block);
+    blocks.append(block);
   }
+  root.append(waiting, blocks);
 
   return {
     root,
     update(state) {
+      const locked = store.locked;
+      waiting.hidden = !locked;
+      blocks.classList.toggle('is-locked', locked);
+      blocks.toggleAttribute('inert', locked);
       for (const row of rows) row.update(state);
     },
   };

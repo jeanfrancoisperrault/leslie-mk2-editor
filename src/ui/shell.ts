@@ -5,8 +5,7 @@ import { STR } from '../content/i18n';
 import type { AppState, Store } from '../state/store';
 import { el } from './dom';
 import type { PortInfo } from '../midi/webmidi';
-import { methodSupports } from '../midi/speed';
-import type { SpeedCommand, SpeedMethod } from '../midi/speed';
+import type { SpeedCommand } from '../midi/speed';
 
 export type Direction = 'out' | 'in' | 'echo';
 
@@ -25,15 +24,17 @@ export interface Shell {
   transport: HTMLElement;
   setPorts(ports: PortInfo[], selected: string | 'sim'): void;
   setInputs(ports: PortInfo[], selected: string | null): void;
-  setSysexAvailable(ok: boolean): void;
   /** Rotor mode last reported by the Leslie (null = unknown). */
   setReportedMode(cmd: SpeedCommand | null): void;
   /** Dump capture status; onSave enables the save button. */
   setDump(text: string | null, onSave: (() => void) | null): void;
+  /** null = Save to memory available; otherwise the reason it is not. */
+  setSaveBlocked(reason: string | null): void;
+  onSaveMemory: (() => void) | null;
   logMessage(entry: ConsoleEntry): void;
   onPortChange: ((id: string | 'sim') => void) | null;
   onInputChange: ((id: string | null) => void) | null;
-  onSpeed: ((cmd: SpeedCommand, method: SpeedMethod) => void) | null;
+  onSpeed: ((cmd: SpeedCommand) => void) | null;
 }
 
 const SIM_VALUE = 'sim';
@@ -64,37 +65,21 @@ export function buildShell(store: Store): Shell {
   p2.addEventListener('click', () => store.selectPreset(1));
   const presetSwitch = el('div', { class: 'preset-switch', role: 'group', 'aria-label': STR.presetAria }, p1, p2);
 
-  const sendAll = el('button', { type: 'button', class: 'btn', text: STR.sendAll });
-  sendAll.addEventListener('click', () => store.sendAll());
+  const saveMemory = el('button', { type: 'button', class: 'btn', text: STR.saveMemory.label });
+  saveMemory.addEventListener('click', () => shell.onSaveMemory?.());
 
   const brand = el('div', { class: 'brand', text: STR.appTitle });
   brand.append(el('small', { text: STR.appSubtitle }));
 
   const header = el('header', { class: 'header' },
-    brand, portGroup, inputGroup, channelGroup, el('div', { class: 'spacer' }), presetSwitch, sendAll);
+    brand, portGroup, inputGroup, channelGroup, el('div', { class: 'spacer' }), presetSwitch, saveMemory);
 
-  // --- Rotor transport (Slow / Fast / Brake, method picker) ---
-  const methodSelect = el('select', { class: 'port-select', 'aria-label': STR.speed.method });
-  for (const m of ['sysex', 'cc', 'nrpn'] as const) {
-    methodSelect.append(el('option', { value: m, text: STR.speed.methods[m] }));
-  }
+  // --- Rotor transport (Slow / Fast / Brake) ---
   const speedButtons = (['slow', 'fast', 'brake'] as const).map((cmd) => {
     const b = el('button', { type: 'button', 'data-cmd': cmd, text: STR.speed.cmds[cmd] });
-    b.addEventListener('click', () => shell.onSpeed?.(cmd, methodSelect.value as SpeedMethod));
+    b.addEventListener('click', () => shell.onSpeed?.(cmd));
     return b;
   });
-  let sysexOk = true;
-  const refreshSpeed = () => {
-    const m = methodSelect.value as SpeedMethod;
-    if (m === 'sysex' && !sysexOk) methodSelect.value = 'cc';
-    for (const b of speedButtons) {
-      const supported = methodSupports(methodSelect.value as SpeedMethod, b.dataset['cmd'] as SpeedCommand);
-      b.disabled = !supported;
-      b.title = supported ? '' : STR.speed.noSysexBrake;
-    }
-  };
-  methodSelect.addEventListener('change', refreshSpeed);
-  refreshSpeed();
   const reported = el('span', { class: 'transport-note reported' });
   const dumpStatus = el('span', { class: 'transport-note dump-status' });
   const dumpSave = el('button', { type: 'button', class: 'btn btn-outline btn-sm', text: STR.dump.save });
@@ -104,7 +89,6 @@ export function buildShell(store: Store): Shell {
   const transport = el('div', { class: 'transport' },
     el('span', { class: 'transport-label', text: STR.speed.label }),
     el('div', { class: 'preset-switch speed-switch', role: 'group', 'aria-label': STR.speed.label }, ...speedButtons),
-    el('div', { class: 'port-group' }, el('span', { class: 'port-label', text: STR.speed.via }), methodSelect),
     el('span', { class: 'transport-note', text: STR.speed.note }),
     reported,
     el('div', { class: 'spacer' }),
@@ -115,10 +99,8 @@ export function buildShell(store: Store): Shell {
   const paintHonesty = (state: AppState) => {
     const dev = state.loadedFromDevice;
     honesty.replaceChildren();
-    if (!dev) {
-      honesty.append(el('b', { text: STR.honestyLead + ' ' }), STR.honesty.slice(STR.honestyLead.length + 1));
-      return;
-    }
+    honesty.hidden = !dev;
+    if (!dev) return;
     const time = dev.at.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
     honesty.append(el('b', { text: STR.loaded.lead(time) + ' ' }),
       dev.unsaved.length ? STR.loaded.unsaved(dev.unsaved.length) : STR.loaded.allSaved);
@@ -156,9 +138,11 @@ export function buildShell(store: Store): Shell {
     onPortChange: null,
     onInputChange: null,
     onSpeed: null,
+    onSaveMemory: null,
 
     update(state: AppState) {
       paintHonesty(state);
+      p1.disabled = p2.disabled = store.locked;
       p1.setAttribute('aria-pressed', String(state.editedPreset === 0));
       p2.setAttribute('aria-pressed', String(state.editedPreset === 1));
       channelSelect.value = String(store.getValue('controlChannel'));
@@ -189,16 +173,14 @@ export function buildShell(store: Store): Shell {
       inputSelect.value = selected ?? NO_INPUT;
     },
 
-    setSysexAvailable(ok) {
-      sysexOk = ok;
-      const opt = methodSelect.querySelector<HTMLOptionElement>('option[value="sysex"]');
-      if (opt) opt.disabled = !ok;
-      refreshSpeed();
-    },
-
     setReportedMode(cmd) {
       for (const b of speedButtons) b.setAttribute('aria-pressed', String(b.dataset['cmd'] === cmd));
       reported.textContent = cmd ? `${STR.speed.reported} ${STR.speed.cmds[cmd]}` : '';
+    },
+
+    setSaveBlocked(reason) {
+      saveMemory.disabled = reason !== null;
+      saveMemory.title = reason ?? STR.saveMemory.hint;
     },
 
     setDump(text, onSave) {

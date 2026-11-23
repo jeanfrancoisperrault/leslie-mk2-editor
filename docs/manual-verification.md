@@ -46,7 +46,7 @@ Extraction complète : docs/manual-extraction.md (local, non versionné — text
 - **Table \*4** (Low Fast Speed, 1–21 → rpm) : plage annoncée « 372–431 rpm » mais A2[1]=376 et
   A2[20]=431 → la table exacte diffère peut-être de A2. Défaut « 1 (376 rpm) » colle avec A2[1].
   Marquée non vérifiée dans le schéma.
-- **Valeur numérique de « OFF »** pour Horn/Low Brake Time (au-delà de 39 / 24 ? valeur dédiée ?).
+- ~~**Valeur numérique de « OFF »** pour Horn/Low Brake Time~~ : OFF n'existe pas sur la face avant de la machine testée (2026-11-23) ; non proposé dans l'éditeur.
 - Les NRPN modifient-ils le preset sélectionné ou le preset courant ? Survivent-ils à l'extinction ?
 
 

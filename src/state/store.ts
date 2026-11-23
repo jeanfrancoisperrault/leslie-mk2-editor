@@ -62,6 +62,15 @@ export class Store {
     return this.#state;
   }
 
+  /**
+   * Settings stay locked until the machine's real values are known (a dump
+   * was received): editing factory defaults would overwrite the Leslie's
+   * live state with values it never had.
+   */
+  get locked(): boolean {
+    return this.#state.loadedFromDevice === null;
+  }
+
   subscribe(fn: Listener): () => void {
     this.#listeners.add(fn);
     return () => this.#listeners.delete(fn);
@@ -80,6 +89,7 @@ export class Store {
 
   /** Set a raw value (clamped), mark dirty, and send it over MIDI. */
   setValue(id: string, value: number, { send = true } = {}): void {
+    if (send && this.locked) return;
     const def = getParam(id);
     const v = clampValue(def, value);
     if (this.getValue(id) === v) return;
@@ -110,6 +120,7 @@ export class Store {
 
   /** Switch the edited preset; also updates the Preset Number system value. */
   selectPreset(preset: PresetIndex): void {
+    if (this.locked) return;
     if (this.#state.editedPreset === preset) return;
     this.#state.editedPreset = preset;
     this.#state.systemValues['presetNumber'] = preset;
@@ -144,21 +155,6 @@ export class Store {
     this.#emit();
   }
 
-  /** Push the whole editor state to the device ("Envoyer tout"). */
-  sendAll(): void {
-    if (!this.onSend) return;
-    // Address the machine's edit target first so preset values land in the
-    // right preset (behavior to confirm in Phase 0; harmless either way).
-    this.onSend(getParam('presetNumber'), this.#state.editedPreset);
-    for (const p of SYSTEM_PARAMS) {
-      if (p.id === 'presetNumber') continue;
-      this.onSend(p, this.#state.systemValues[p.id]!);
-    }
-    for (const p of PRESET_PARAMS) {
-      this.onSend(p, this.#state.presetValues[this.#state.editedPreset][p.id]!);
-    }
-    this.#emit();
-  }
 }
 
 export { PARAMS };

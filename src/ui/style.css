@@ -563,3 +563,34 @@ button { font: inherit; color: inherit; }
 .btn.btn-sm { height: 30px; padding: 0 12px; font-size: 13px; }
 .transport { flex-wrap: wrap; row-gap: 8px; }
 .transport-note { white-space: nowrap; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:disabled:hover { background: var(--primary); }
+
+/* ---------- Locked until the first dump ---------- */
+.edit { grid-template-columns: 1fr; }
+.edit-blocks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-content: start;
+  transition: opacity 0.2s ease-out;
+}
+@media (max-width: 1260px) {
+  .edit-blocks { grid-template-columns: 1fr; }
+}
+.edit-blocks.is-locked { opacity: 0.35; filter: grayscale(1); pointer-events: none; }
+.edit-blocks.is-locked .fader::-webkit-slider-thumb { visibility: hidden; }
+.edit-blocks.is-locked .fader { --fill: 0% !important; }
+.edit-blocks.is-locked .enum button[aria-pressed="true"] { background: none; color: inherit; }
+.waiting {
+  background: var(--card);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-xl);
+  padding: 18px 22px;
+}
+.waiting h2 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.waiting p { font-size: 13px; color: var(--muted-foreground); }
+.waiting-steps { margin: 10px 0 10px 18px; font-size: 13px; line-height: 1.7; }
+.waiting-note { font-size: 12px; }
+.preset-switch button:disabled { opacity: 0.4; cursor: not-allowed; }
+.preset-switch button:disabled:hover { background: none; color: var(--foreground); }
