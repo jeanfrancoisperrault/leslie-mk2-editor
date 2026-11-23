@@ -56,6 +56,8 @@ export const STR = {
   },
   loaded: {
     short: (time: string) => `Read from the Leslie at ${time}.`,
+    written: (time: string) => `Written to the Leslie at ${time}. Take a DUMP OUT to check.`,
+    checkWrite: 'The Leslie does not confirm a write. A DUMP OUT from its front panel shows what it really holds.',
     shortUnsaved: (n: number) => `${n} not in its memory.`,
     edits: (n: number) => `${n} changed here since.`,
     unsaved: (n: number) => `${n} setting(s) of the active preset are not saved yet: press MEMORY on the Leslie to keep them. Later edits in the editor are not read back.`,
@@ -149,7 +151,7 @@ export const STR = {
       'The graph shows both rotors on the same clock: what happens on Slow and Brake when the rotors turn fast, then on Fast when they turn slow. The five lines are the speed, from 0 to 400 rpm.',
       'Green is Slow, red is Fast, white is Brake: in the graph, on the faders and on the half-moon.',
       'It is calculated from the settings. Ramps are drawn straight; the machine’s exact curve is not documented.',
-      'A filled point is the value now. An open point, or an outlined cap on a fader, is the value read from the Leslie, shown once you change it.',
+      'A filled point is the value now. An open point, or an outlined cap on a fader, is what the Leslie last had in memory (read from it, or saved to it), shown once you change it.',
     ],
   },
   midiOut: 'MIDI output (to the Leslie MIDI IN)',

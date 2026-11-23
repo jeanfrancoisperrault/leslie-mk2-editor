@@ -145,7 +145,9 @@ shell.onSaveMemory = () => {
     system: s.systemValues,
     presets: [s.presetValues[0], s.presetValues[1]],
   });
-  if (sendOut(buildDumpPacket(data))) shell.logMessage({ dir: 'out', hex: '  ⤷', text: STR.saveMemory.sent });
+  if (!sendOut(buildDumpPacket(data))) return;
+  store.markWritten();
+  shell.logMessage({ dir: 'out', hex: '  ⤷', text: STR.saveMemory.sent });
 };
 
 

@@ -163,14 +163,16 @@ shadow in its groove, a drop shadow under its cap.
 - Ramps are straight and the guide says so: the machine's exact curve is not documented.
 - A measure takes its command's color, its first point the color of the speed it starts from; the
   rotors take the color of the mode they follow.
-- Filled point: value now. Open point and dashed line: value read from the Leslie.
+- Filled point: value now. Open point and dashed line: value last read from the
+  Leslie or saved to its memory.
 - Hovering a stretch opens its guide, clicking it focuses its fader. Never the only way in.
 - Slow / Fast / Brake runs a playhead and turns the rotors at the calculated speed. Before a
   command is sent or reported the speed reads "— rpm": a dump does not hold the rotor mode.
 
 ### Fader
 - Native range input: 5px engraved groove filled in the mode color, upright white cap with an index
-  line, ticks at real detents, outlined cap at the value read from the machine once edited. Arrows, Shift+arrows, Delete or double-click.
+  line, ticks at real detents, outlined cap at the value last read from the
+  machine or saved to it, once edited. Arrows, Shift+arrows, Delete or double-click.
 
 ### Keys, selects, buttons
 - Lamp keys (presets): no outline, no fill. A point that lights `ink` plus a name; inactive name

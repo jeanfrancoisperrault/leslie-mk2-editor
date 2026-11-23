@@ -22,8 +22,9 @@ export interface AppState {
   /** Parameter shown in the explainer panel; null shows the neutral guide. */
   focusedParam: string | null;
   connection: ConnectionKind;
-  /** Set once values were loaded from a Leslie dump (null = editor defaults). */
-  loadedFromDevice: { at: Date; unsaved: string[] } | null;
+  /** Set once values were loaded from a Leslie dump (null = editor defaults).
+      `source` tells whether the reference is a reading or our last write. */
+  loadedFromDevice: { at: Date; unsaved: string[]; source: 'read' | 'written' } | null;
 }
 
 function defaultsForPreset(preset: PresetIndex): Record<string, number> {
@@ -54,7 +55,7 @@ export class Store {
     connection: { kind: 'unsupported' },
     loadedFromDevice: null,
   };
-  /** Values at the last dump, to show what was changed since. */
+  /** Values at the last dump or write to memory, to show what was changed since. */
   #loaded: { presets: AppState['presetValues']; system: AppState['systemValues'] } | null = null;
   #listeners = new Set<Listener>();
   /** Called with (def, rawValue) whenever a value change must reach MIDI. */
@@ -89,20 +90,21 @@ export class Store {
       : this.#state.presetValues[this.#state.editedPreset][id]!;
   }
 
-  /** Raw value read from the Leslie for the edited preset; undefined before a dump. */
+  /** Raw value last read from the Leslie, or written to it, for the edited preset;
+      undefined before a dump. */
   loadedValue(id: string): number | undefined {
     return getParam(id).scope === 'system'
       ? this.#loaded?.system[id]
       : this.#loaded?.presets[this.#state.editedPreset][id];
   }
 
-  /** Whether the value differs from the one read from the Leslie. */
+  /** Whether the value differs from the one the Leslie holds in memory. */
   isEdited(id: string): boolean {
     const loaded = this.loadedValue(id);
     return !STATE_PARAMS.has(id) && loaded !== undefined && loaded !== this.getValue(id);
   }
 
-  /** Number of settings changed since the dump, both presets and system. */
+  /** Number of settings changed since the dump or write, both presets and system. */
   editCount(): number {
     const was = this.#loaded;
     if (!was) return 0;
@@ -170,8 +172,22 @@ export class Store {
     Object.assign(this.#state.presetValues[dev.selectedPreset], dev.active);
     Object.assign(this.#state.presetValues[other], dev.stored[other]);
     this.#state.editedPreset = dev.selectedPreset;
+    this.#takeReference('read', dev.unsaved);
+  }
+
+  /**
+   * The editor's values were just written to the Leslie's memory: they become
+   * the reference. A write leaves nothing unsaved (it also sets the active
+   * preset). The Leslie does not acknowledge it; only a dump checks it.
+   */
+  markWritten(): void {
+    if (this.locked) return;
+    this.#takeReference('written', []);
+  }
+
+  #takeReference(source: 'read' | 'written', unsaved: string[]): void {
     this.#loaded = structuredClone({ presets: this.#state.presetValues, system: this.#state.systemValues });
-    this.#state.loadedFromDevice = { at: new Date(), unsaved: dev.unsaved };
+    this.#state.loadedFromDevice = { at: new Date(), unsaved, source };
     this.#emit();
   }
 

@@ -19,8 +19,9 @@ owner asked for a new visual world and left the choice of direction open.
    figures. It is a pure function of the settings (`src/ui/score-model.ts`).
 3. Horn and low rotor settings share one matrix; system settings move to a second view; ports,
    channel and dump status move to a popover; the console starts closed.
-4. "Changed" now means "differs from the value read in the last dump", per preset, instead of
-   "touched since launch".
+4. "Changed" now means "differs from the last dump, or from the last successful Save to memory", per
+   preset, instead of "touched since launch". The status says "Written" and not "Read" after a save: the
+   Leslie does not acknowledge it, only a DUMP OUT checks it.
 5. Plus Jakarta Sans (words) and Geist Mono 200 (figures and keys), chosen by the owner, are bundled
    through `@fontsource` (OFL), no CDN.
 

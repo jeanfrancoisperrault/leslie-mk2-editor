@@ -50,7 +50,7 @@ export const STR = {
       'Le graphique montre les deux rotors sur la même horloge : ce qui se passe avec Slow et Brake quand les rotors tournent vite, puis avec Fast quand ils tournent lentement. Les cinq lignes sont la vitesse, de 0 à 400 rpm.',
       'Vert : Slow, rouge : Fast, blanc : Brake, sur le graphique, les curseurs et le half-moon.',
       'Il est calculé d’après les réglages. Les rampes sont tracées droites ; la courbe exacte de la machine n’est pas documentée.',
-      'Un point plein est la valeur actuelle. Un point creux, ou un curseur en contour, est la valeur lue sur la Leslie, visible dès que vous la changez.',
+      'Un point plein est la valeur actuelle. Un point creux, ou un curseur en contour, est la dernière valeur en mémoire dans la Leslie (lue ou enregistrée), visible dès que vous la changez.',
     ],
   },
   preset1: 'Preset 1',
@@ -66,6 +66,8 @@ export const STR = {
   },
   loaded: {
     short: (time: string) => `Lu sur la Leslie à ${time}.`,
+    written: (time: string) => `Écrit dans la Leslie à ${time}. Faites un DUMP OUT pour vérifier.`,
+    checkWrite: 'La Leslie ne confirme pas une écriture. Un DUMP OUT depuis sa face avant montre ce qu’elle contient vraiment.',
     shortUnsaved: (n: number) => `${n} absent(s) de sa mémoire.`,
     edits: (n: number) => `${n} modifié(s) ici depuis.`,
     unsaved: (n: number) => `${n} réglage(s) du preset actif ne sont pas enregistrés : appuyez sur MEMORY sur la Leslie pour les garder. Les modifications faites ensuite ne sont pas relues.`,

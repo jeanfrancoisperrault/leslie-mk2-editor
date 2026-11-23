@@ -55,6 +55,33 @@ describe('edits compared with the values read from the Leslie', () => {
     expect(store.editCount()).toBe(0);
   });
 
+  it('a write to memory becomes the new reference, for both presets and the system', () => {
+    load(store);
+    store.setValue('hornRiseTime', 6);
+    store.setValue('controlChannel', 3);
+    store.selectPreset(1);
+    store.setValue('hornRiseTime', 2);
+    store.markWritten();
+    expect(store.editCount()).toBe(0);
+    expect(store.loadedValue('hornRiseTime')).toBe(2);
+    expect(store.state.loadedFromDevice).toMatchObject({ source: 'written', unsaved: [] });
+    store.setValue('hornRiseTime', 3);
+    expect(store.isEdited('hornRiseTime')).toBe(true);
+    expect(store.loadedValue('hornRiseTime')).toBe(2);
+  });
+
+  it('a dump after a write is a reading again', () => {
+    load(store);
+    store.markWritten();
+    load(store);
+    expect(store.state.loadedFromDevice?.source).toBe('read');
+  });
+
+  it('a write cannot unlock the editor: without a dump it changes nothing', () => {
+    store.markWritten();
+    expect(store.locked).toBe(true);
+  });
+
   it('a new dump resets the comparison', () => {
     load(store);
     store.setValue('hornRiseTime', 6);

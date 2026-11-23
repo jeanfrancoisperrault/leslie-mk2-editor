@@ -127,10 +127,12 @@ export function buildShell(store: Store): Shell {
     else if (dev) {
       const time = dev.at.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
       const edits = store.editCount();
-      text = [STR.loaded.short(time),
+      const written = dev.source === 'written';
+      text = [written ? STR.loaded.written(time) : STR.loaded.short(time),
         dev.unsaved.length ? STR.loaded.shortUnsaved(dev.unsaved.length) : '',
         edits ? STR.loaded.edits(edits) : ''].filter(Boolean).join(' ');
-      status.title = dev.unsaved.length ? STR.loaded.unsaved(dev.unsaved.length) : STR.loaded.allSaved;
+      status.title = written ? STR.loaded.checkWrite
+        : dev.unsaved.length ? STR.loaded.unsaved(dev.unsaved.length) : STR.loaded.allSaved;
     }
     // Only touch the live region when the sentence changes.
     if (status.textContent !== text) status.textContent = text;
