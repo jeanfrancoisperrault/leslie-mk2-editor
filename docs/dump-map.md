@@ -132,19 +132,18 @@ les deux dumps. Tests prioritaires :
 3. Modifier un paramètre sans appuyer sur MEMORY, puis l'enregistrer avec MEMORY : on verra
    si seul le bloc 60 change, puis le bloc 80 ou 100.
 
-## Problème connu : footswitch avec les câbles MIDI branchés
+## Problème résolu : footswitch, faux contact dans un câble
 
-Constaté le 2026-11-23, non résolu. Avec les câbles MIDI branchés (MidiSport 2x2 en USB Merge) :
-- le bouton Brake du footswitch fait passer en **Fast** et émet `B0 63 18 / B0 62 7F / B0 06 01`
-  (Leslie Mode = Fast), et le même message revient à chaque appui ;
-- le bouton Slow/Fast n'émet rien.
+Constaté le 2026-11-23 avec les câbles MIDI branchés (MidiSport 2x2 en USB Merge) :
+- le bouton Brake du footswitch faisait passer en **Fast** et émettait `B0 63 18 / B0 62 7F / B0 06 01`
+  (Leslie Mode = Fast), et le même message revenait à chaque appui ;
+- le bouton Slow/Fast n'émettait rien.
 
-Le problème ne se produit pas quand les câbles MIDI sont débranchés.
+Cause trouvée par le propriétaire le 2026-11-24 : un **faux contact dans son câble**. Aucun changement
+dans l'éditeur. La piste d'une boucle MIDI (MidiSport en Merge) est abandonnée sans avoir été testée.
 
-Piste à vérifier : une **boucle MIDI**. Le MIDI OUT de la Leslie recopie son MIDI IN. Si le mode
-Merge de la MidiSport renvoie aussi son entrée MIDI IN 1 vers la sortie A, chaque message du
-footswitch revient dans la Leslie et peut être réinterprété. Test possible : refaire la manip avec
-seulement le câble « MidiSport OUT → Leslie IN » branché.
+Conséquence : le format du message reste valable (Leslie Mode en NRPN), mais pas la correspondance entre
+bouton et mode relevée ce jour-là. Elle reste à relever avec un câble sain.
 
 ## Dump In : renvoyer un dump écrit la mémoire (confirmé)
 
