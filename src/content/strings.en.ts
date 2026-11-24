@@ -67,10 +67,11 @@ export const STR = {
     title: 'Waiting for the Leslie',
     body: 'The editor shows nothing until it has read the Leslie’s real settings. Send them from the Leslie:',
     steps: [
-      'Check that the MIDI connection (top bar) uses the MIDI input wired to the Leslie’s MIDI OUT.',
+      'Check that the MIDI connection (top bar) uses the output and the input wired to the Leslie.',
       'On the Leslie, turn FUNCTION to DUMP OUT.',
       'Press VALUE until “dP” blinks. The settings appear here when the blinking stops.',
     ],
+    wiring: 'Show the wiring',
     note: 'The Slow, Fast and Brake buttons already work.',
   },
   console: 'MIDI console',
@@ -121,9 +122,7 @@ export const STR = {
         'This browser has no Web MIDI support, so the editor cannot reach a Leslie from here. Use Chrome or Edge on desktop.',
       denied:
         'MIDI access was denied, so the editor cannot see any port. Allow MIDI in the browser (icon left of the URL), then reload.',
-      noPort: 'No MIDI output port was found on this computer.',
-      noLeslie:
-        'MIDI ports were found, but none of them looks like a Leslie. If one of them is wired to the Leslie, pick it under the MIDI connection button — the editor cannot tell on its own.',
+      'no-port': 'No MIDI output port was found on this computer.',
     },
     howToTitle: 'Hooking up the Leslie',
     howTo: [
@@ -133,9 +132,9 @@ export const STR = {
       'Power the Leslie on. Out of the box it listens on channel 1 (CONTROL CH).',
     ],
     autoDetect: 'This window closes by itself as soon as a MIDI port appears.',
-    simulatorNote:
-      'Meanwhile, everything works in simulator mode: each change is encoded and logged in the MIDI console.',
-    continueSim: 'Continue with the simulator',
+    lockedNote: 'The settings stay hidden until the editor receives a dump from the Leslie.',
+    continueWithout: 'Continue without the Leslie',
+    close: 'Close',
     reload: 'Reload',
     diagram: {
       computer: 'Computer', interface: 'USB-MIDI interface', leslie: 'Leslie',
