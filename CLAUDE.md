@@ -43,4 +43,4 @@ Chrome/Edge only. Read `PRODUCT.md` (goals), `DESIGN.md` (visual system), `docs/
 - When `DESIGN.md` changes, regenerate `.impeccable/design.json` (`/impeccable document`).
 - If a user-visible behavior or a design decision changed: update the docs and record the
   decision as an ADR in `docs/adr/` (`documentation-and-adrs`).
-- CI pipeline changes: `ci-cd-and-automation`.
+- CI pipeline changes: `ci-cd-and-automation`. Pushing `main` publishes the site (`.github/workflows/pages.yml`, ADR 0005).
