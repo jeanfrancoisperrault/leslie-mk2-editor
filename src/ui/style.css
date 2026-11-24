@@ -65,7 +65,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; text-wrap: balance; }
 /* Single-line interface text is centered on its capitals, not on the font's
    line box: Plus Jakarta Sans and Geist Mono sit at different heights in theirs.
    Boxes have whole-pixel heights so borders stay even. */
-.brand, .btn, .connection-text, .lamp-name, .tabs button, .status, .column h2, .system-group h2,
+.brand, .btn, .connection-text, .lamp-name, .tabs button, .status, .column h2 span, .system-group h2,
 .enum button, .param-label, .value-now, .value-was, .console-toggle span, .console-last {
   text-box: trim-both cap alphabetic;
 }
@@ -190,7 +190,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; text-wrap: balance; }
 .status.is-error { background: var(--ink); color: var(--ground); padding: 10px 12px; border-radius: var(--radius); }
 
 /* ---------- Rotor settings ---------- */
-/* Every rule has 10px on both sides. */
+/* Rules of this view keep 10px on both sides. */
 .sound { margin-top: 10px; border-top: 1px solid var(--surface-soft); }
 .pair {
   display: grid;
@@ -266,9 +266,9 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; text-wrap: balance; }
   width: 6px;
   height: 22px;
   margin-top: -11px;
-  border: 1.5px solid var(--voice);
+  border: 1.5px solid var(--voice-text);
   border-radius: 2px;
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 /* ---------- Tone and system ---------- */
@@ -304,7 +304,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; text-wrap: balance; }
 /* Chosen option: a raised grey. */
 .enum button[aria-pressed="true"] { background: var(--surface-press); color: var(--ink); }
 .enum button:focus-visible { outline-offset: -4px; }
-.enum .is-was::after { content: ""; position: absolute; inset: 4px; border: 1.5px solid var(--ink); border-radius: 2px; opacity: 0.5; }
+.enum .is-was::after { content: ""; position: absolute; inset: 4px; border: 1.5px solid var(--ink); border-radius: 2px; opacity: 0.6; }
 
 .system { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 85px; margin-top: 20px; }
 .system-group h2 { font-size: 18px; height: 32px; padding-top: 8px; margin-bottom: 6px; border-bottom: 1px solid var(--surface-soft); }
@@ -378,7 +378,7 @@ kbd { font-family: var(--font); font-size: 15px; font-weight: 500; border: 1px s
   .connection-text { max-width: 150px; }
   .system { grid-template-columns: 1fr; }
   .pair { column-gap: 16px; }
-  .pair .param { grid-template-columns: 92px minmax(0, 1fr) 80px; gap: 12px; }
+  .pair .param { grid-template-columns: 92px minmax(0, 1fr) 88px; gap: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }

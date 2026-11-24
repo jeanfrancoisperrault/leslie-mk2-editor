@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-23T19:21:47+00:00",
+  "generatedAt": "2026-11-24T10:00:00+00:00",
   "title": "Design System: Leslie 2101/2103 mk2 Editor",
   "extensions": {
     "colorMeta": {
@@ -81,7 +81,7 @@
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Column and group headings, tabs, score commands."
+        "purpose": "Column and group headings, tabs."
       },
       "body": {
         "displayName": "Body",
@@ -130,6 +130,10 @@
     ],
     "breakpoints": [
       {
+        "name": "keys",
+        "value": "1300px"
+      },
+      {
         "name": "single-column-groups",
         "value": "1260px"
       },
@@ -170,7 +174,7 @@
       "refersTo": "enum",
       "description": "Options of a tone or system setting; contents in Geist Mono 200.",
       "html": "<div class=\"ds-enum\"><button aria-pressed=\"true\">0.7 kHz</button><button>0.8 kHz</button><button>1.0 kHz</button></div>",
-      "css": ".ds-enum{display:inline-flex;border:1px solid var(--control, oklch(0.56 0 0));border-radius:6px;overflow:hidden}.ds-enum button{font:200 15px 'Geist Mono',ui-monospace,monospace;height:32px;padding:0 12px;border:0;background:var(--ground, oklch(0.17 0 0));color:var(--ink-soft, oklch(0.755 0 0))}.ds-enum button+button{border-left:1px solid var(--control, oklch(0.56 0 0))}.ds-enum [aria-pressed=true]{background:var(--surface-press, oklch(0.38 0 0));color:var(--ink, oklch(0.97 0 0))}"
+      "css": ".ds-enum{display:inline-flex;border:1px solid var(--control, oklch(0.56 0 0));border-radius:6px;overflow:hidden}.ds-enum button{font:200 15px 'Geist Mono',ui-monospace,monospace;height:36px;padding:0 12px;border:0;background:var(--ground, oklch(0.17 0 0));color:var(--ink-soft, oklch(0.755 0 0))}.ds-enum button+button{border-left:1px solid var(--control, oklch(0.56 0 0))}.ds-enum [aria-pressed=true]{background:var(--surface-press, oklch(0.38 0 0));color:var(--ink, oklch(0.97 0 0))}"
     },
     {
       "name": "Half-moon Keys",

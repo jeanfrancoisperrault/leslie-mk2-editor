@@ -17,7 +17,7 @@ export const STR = {
     level: 'Niveau',
   },
   toneGroups: { character: 'Caractère', bass: 'Réglages des basses' },
-  toneRows: { horn: 'Cornet', cabinet: 'Cabine', level: 'Niveau', crossover: 'Coupure' },
+  toneRows: { horn: 'Cornet', cabinet: 'Cabine', level: 'Niveau', crossover: 'Croisement' },
   systemGroups: {
     channels: 'Canaux MIDI',
     reception: 'Réception MIDI',

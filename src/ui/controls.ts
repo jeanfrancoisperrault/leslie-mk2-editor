@@ -152,9 +152,10 @@ export function buildParamRow(def: ParamDef, store: Store, label: string): Param
   row.append(control, valueBox);
 
   opensGuide(row, def.id, store);
-  // Double-click (outside buttons) resets to the factory default.
+  // Double-click on the control or its value resets to the factory default. Not
+  // on the name: selecting a word must never send anything.
   row.addEventListener('dblclick', (e) => {
-    if ((e.target as HTMLElement).closest('button')) return;
+    if ((e.target as HTMLElement).closest('button, .param-label')) return;
     store.resetToDefault(def.id);
   });
 

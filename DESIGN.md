@@ -55,14 +55,14 @@ typography:
     fontWeight: 200
 rounded:
   mark: "1px"
-  cap: "3px"
+  cap: "2px"
   key: "4px"
   control: "6px"
   dialog: "12px"
 spacing:
-  row: "2px 10px"
+  row: "0 10px"
   bar: "0 24px"
-  work: "30px 28px 16px"
+  work: "30px 28px 10px"
   guide: "24px 28px"
 components:
   button-primary:
@@ -148,10 +148,11 @@ Rotor settings are two columns, one per rotor, split by a 1px `surface-soft` rul
 (16px below 1260 px). Each column has its title and repeats the name of every row, so no figure reads as the label of
 the other rotor (drawn by the owner in Figma, 2026-11-24). Rows are grouped by mode in half-moon order (slow speed, fall time; brake time;
 fast speed, rise time; level), not in the order of the machine menu. The tone settings follow the same two columns,
-titled Character (Horn, Cabinet) and Bass settings (Level, Crossover); keys and fader line up with the rotor faders.
+titled Character (Horn, Cabinet) and Bass settings (Level, Crossover); keys and fader line up with the rotor faders
+(6px key padding at 1300 px and below).
 Rows are 36px, column titles 42px, so that all of it fits at 1440x900 (chosen by the owner over three columns, with
 shorter faders, and over a third tab).
-Section rules are soft (`surface-soft`, `surface` on the guide) and keep 10px on both sides; only the console keeps an
+Section rules are soft (`surface-soft`, `surface` on the guide); in Sound they keep 10px on both sides; only the console keeps an
 `ink` line. The graphs grow with the window height (56 to 124 px); at 1440x900 Sound fits without scrolling. Below 1260 px the system
 groups take one column. Minimum width 1100 px.
 
@@ -178,8 +179,9 @@ Flat surfaces, told apart by grey steps and 1px lines. The LED glow is the only 
 
 ### Fader
 - Native range input: 2px line filled in the mode color up to a 2x22px upright stroke of the same color
-  (4px on hover and while dragging, 14px target), ticks at real detents, 6px outline at half opacity at the
-  value last read from the machine or saved to it, once edited. Arrows, Shift+arrows, Delete or double-click.
+  (4px on hover and while dragging, 14px target), ticks at real detents, 6px outline (`--voice-text`, 60% opacity) at the
+  value last read from the machine or saved to it, once edited. Arrows, Shift+arrows, Delete or double-click
+  (not on the name).
 
 ### Keys, selects, buttons
 - Lamp keys (presets): no outline, no fill. A point that lights `ink` plus a name; inactive name
@@ -187,7 +189,7 @@ Flat surfaces, told apart by grey steps and 1px lines. The LED glow is the only 
   the bar. A faint 1px rule separates them from the half-moon.
 - Enum keys: one `control` outline around the options. Others in `ink-soft`; the chosen one is `ink` on
   `surface-press`. No solid white fill outside the primary button. Once edited, the key of the machine's own value is
-  outlined at half opacity, like the outline on a fader; no "was" text next to keys (assistive tech still gets it).
+  outlined at 60% opacity, like the outline on a fader; no "was" text next to keys (assistive tech still gets it).
 - Primary button: ink. Disabled: outline and `ink-soft`, no opacity tricks.
 - Connection: one button with the state in words, opening a popover with ports, channel and dump.
 

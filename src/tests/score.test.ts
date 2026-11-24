@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PARAMS } from '../params/schema';
 import { ROTOR_ROWS, SYSTEM_GROUPS, TONE_GROUPS, voiceOf } from '../ui/layout';
-import { rampPoints, rotorSettings, stepSpeed, SPAN_S } from '../ui/score-model';
+import { RotorMotion, rampPoints, rotorSettings, stepSpeed, SPAN_S } from '../ui/score-model';
 
 const s = { slow: 46, fast: 400, rise: 1, fall: 2, brake: 4 };
 
@@ -18,12 +18,12 @@ describe('score model', () => {
   });
 
   it('reaches the target exactly after the set time, without overshoot', () => {
-    expect(stepSpeed(46, 'fast', s, 0.5)).toBeCloseTo(223);
-    expect(stepSpeed(46, 'fast', s, 1)).toBeCloseTo(400);
-    expect(stepSpeed(46, 'fast', s, 9)).toBe(400);
-    expect(stepSpeed(400, 'slow', s, 1)).toBeCloseTo(223);
-    expect(stepSpeed(400, 'brake', s, 2)).toBeCloseTo(200);
-    expect(stepSpeed(0, 'slow', s, 9)).toBe(46);
+    expect(stepSpeed(46, 'fast', s, 0.5, 400)).toBeCloseTo(223);
+    expect(stepSpeed(46, 'fast', s, 1, 400)).toBeCloseTo(400);
+    expect(stepSpeed(46, 'fast', s, 9, 400)).toBe(400);
+    expect(stepSpeed(400, 'slow', s, 1, 400)).toBeCloseTo(223);
+    expect(stepSpeed(400, 'brake', s, 2, 400)).toBeCloseTo(200);
+    expect(stepSpeed(0, 'slow', s, 9, 400)).toBe(46);
   });
 
   it('brakes over the whole brake time from any speed, like the drawn ramp', () => {
@@ -36,7 +36,48 @@ describe('score model', () => {
   });
 
   it('follows a setting changed while the rotor holds its speed', () => {
-    expect(stepSpeed(400, 'fast', { ...s, fast: 378 }, 9)).toBe(378);
+    expect(stepSpeed(400, 'fast', { ...s, fast: 378 }, 9, 400)).toBe(378);
+  });
+});
+
+describe('rotor motion', () => {
+  const after = (m: RotorMotion, cmd: 'slow' | 'fast' | 'brake', seconds: number) => {
+    for (let i = 0; i < Math.round(seconds * 10); i++) m.step(cmd, s, 0.1);
+    return m.speed!;
+  };
+
+  it('assumes the speed the measure starts at when the rotor speed is unknown', () => {
+    const m = new RotorMotion();
+    m.start();
+    expect(after(m, 'brake', 2)).toBeCloseTo(200);
+  });
+
+  it('brakes from Slow over the whole brake time', () => {
+    const m = new RotorMotion();
+    m.settle('slow', s);
+    m.start();
+    expect(after(m, 'brake', 2)).toBeCloseTo(23);
+    expect(after(m, 'brake', 2.1)).toBe(0);
+  });
+
+  it('brakes over the whole brake time from a ramp that had not finished', () => {
+    const m = new RotorMotion();
+    m.settle('slow', s);
+    m.start();
+    expect(after(m, 'fast', 0.5)).toBeCloseTo(223);
+    m.start();
+    expect(after(m, 'brake', 2)).toBeCloseTo(111.5);
+    expect(after(m, 'brake', 2.1)).toBe(0);
+  });
+
+  it('settles on the speed of the command, and forgets it', () => {
+    const m = new RotorMotion();
+    m.settle('fast', s);
+    expect(m.speed).toBe(400);
+    m.settle('brake', s);
+    expect(m.speed).toBe(0);
+    m.forget();
+    expect(m.speed).toBeNull();
   });
 });
 

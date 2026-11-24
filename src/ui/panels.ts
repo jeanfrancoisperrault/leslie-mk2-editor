@@ -43,14 +43,14 @@ export function buildPanels(store: Store, status: HTMLElement): Panels {
   const rotors = el('div', { class: 'pair' });
   for (const rotor of ['horn', 'low'] as const) {
     const title = STR.groups[rotor]!;
-    const block = el('section', { class: 'column', 'aria-label': title }, el('h2', { text: title }));
+    const block = el('section', { class: 'column', 'aria-label': title }, el('h2', {}, el('span', { text: title })));
     for (const r of ROTOR_ROWS) block.append(add(r[rotor], STR.rows[r.key]));
     rotors.append(block);
   }
   const tone = el('div', { class: 'pair tone' });
   for (const g of TONE_GROUPS) {
     const title = STR.toneGroups[g.key];
-    const block = el('section', { class: 'column', 'aria-label': title }, el('h2', { text: title }));
+    const block = el('section', { class: 'column', 'aria-label': title }, el('h2', {}, el('span', { text: title })));
     for (const r of g.rows) block.append(add(r.param, STR.toneRows[r.key]));
     tone.append(block);
   }

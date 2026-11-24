@@ -21,7 +21,7 @@ settings. Refuses four stacked toolbars, equal cards and a per-parameter widget.
 OWN-WORLD: Strictly neutral black and white (zero chroma, user decision), Plus Jakarta Sans
 words, Geist Mono 200 figures and keys, fine-line faders
 with an upright stroke in the mode color. Green is Slow, red is Fast, Brake and the rest
-are ink; nothing else is colored. Filled point = value now, open point or outlined cap = value read from the machine.
+are ink; nothing else is colored. Filled point = value now, open point, outlined cap or outlined key = value read from the machine.
 
 STORY: Press Fast, watch horn and low rotor climb at their own rate while hearing it; change a
 time, the ramp redraws in the same place; see at a glance what differs from the machine.

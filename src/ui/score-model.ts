@@ -46,7 +46,7 @@ export function rampPoints(cmd: SpeedCommand, s: RotorSettings): [number, number
 /** Speed after dt seconds of following a command, from any current speed.
     A brake lasts its whole time from `brakeFrom`, the speed when it was asked:
     the manual only gives the time from fast to stop. */
-export function stepSpeed(current: number, cmd: SpeedCommand, s: RotorSettings, dt: number, brakeFrom = s.fast): number {
+export function stepSpeed(current: number, cmd: SpeedCommand, s: RotorSettings, dt: number, brakeFrom: number): number {
   const target = cmd === 'fast' ? s.fast : cmd === 'slow' ? s.slow : 0;
   const span = Math.abs(s.fast - s.slow);
   const rate = current < target ? span / s.rise
@@ -55,4 +55,35 @@ export function stepSpeed(current: number, cmd: SpeedCommand, s: RotorSettings, 
   // A zero or missing time means an immediate change.
   if (!Number.isFinite(max) || Math.abs(target - current) <= max) return target;
   return current + Math.sign(target - current) * max;
+}
+
+/** Calculated speed of one rotor; null until a command is sent or reported (a
+    dump does not hold the rotor mode). */
+export class RotorMotion {
+  speed: number | null = null;
+  /** Speed when the current command came; null = it was unknown. */
+  private from: number | null = null;
+
+  /** A new command comes. */
+  start(): void {
+    this.from = this.speed;
+  }
+
+  /** Follow the command for dt seconds; the speed before and after. */
+  step(cmd: SpeedCommand, s: RotorSettings, dt: number): { before: number; after: number } {
+    // First command from an unknown state: assume the speed the measure starts at.
+    const before = this.speed ?? rampPoints(cmd, s)[0]![1];
+    const after = stepSpeed(before, cmd, s, dt, this.from ?? s.fast);
+    this.speed = after;
+    return { before, after };
+  }
+
+  /** The command has run its course. */
+  settle(cmd: SpeedCommand, s: RotorSettings): void {
+    this.speed = stepSpeed(0, cmd, s, Infinity, 0);
+  }
+
+  forget(): void {
+    this.speed = null;
+  }
 }
