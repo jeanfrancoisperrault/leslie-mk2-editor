@@ -154,7 +154,8 @@ export function buildShell(store: Store): Shell {
     log.replaceChildren();
     last.textContent = STR.consoleEmpty;
   });
-  const credits = el('p', { class: 'credits' }, el('span', { class: 'version', text: STR.version(version) }), ` ${STR.credits} `,
+  const credits = el('p', { class: 'credits' }, el('span', { class: 'version', text: STR.version(version) }), ' ',
+    el('a', { class: 'licenses', href: `${import.meta.env.BASE_URL}licenses.txt`, target: '_blank', text: STR.licenses }), ` ${STR.credits} `,
     el('a', { href: 'https://jf.cool', target: '_blank', rel: 'noopener', text: 'jf.cool' }));
   const consoleRoot = el('div', { class: 'console', 'data-open': 'false' },
     el('div', { class: 'console-bar' }, toggle, last, el('div', { class: 'spacer' }), clear, credits), log);

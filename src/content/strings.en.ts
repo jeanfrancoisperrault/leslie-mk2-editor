@@ -171,6 +171,7 @@ export const STR = {
   noInput: 'No input',
   consoleClear: 'Clear',
   version: (n: string) => `v${n} beta`,
+  licenses: 'Licenses',
   credits: 'Credits:',
   dir: { out: '→', in: '←', echo: '↩ echo' },
   sysexShort: 'SysEx refused: the editor cannot read the Leslie. Allow it (icon left of the URL), then reload.',

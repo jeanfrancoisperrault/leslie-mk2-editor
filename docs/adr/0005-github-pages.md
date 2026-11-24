@@ -12,7 +12,8 @@ MIDI needs HTTPS, which Pages provides.
 1. `.github/workflows/pages.yml` checks every push and pull request (types, tests, build) and deploys `main`.
    Actions are pinned to a commit. A failed check does not deploy.
 2. The build uses relative links (`base: './'`): the same files work in the Pages folder, or later on a domain.
-3. The licenses of the bundled fonts are published with the site (`public/third-party-licenses.txt`).
+3. The licenses of the editor and of the bundled fonts are published with the site (`public/licenses.txt`) and linked
+   next to the credits: the OFL asks for its text with every copy of the fonts.
 
 ## Consequences
 
