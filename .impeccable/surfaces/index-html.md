@@ -19,16 +19,17 @@ THESIS: One graph shows what Slow, Fast and Brake will do to both rotors, drawn 
 settings. Refuses four stacked toolbars, equal cards and a per-parameter widget.
 
 OWN-WORLD: Strictly neutral black and white (zero chroma, user decision), Plus Jakarta Sans
-words, Geist Mono 200 figures and keys, engraved faders
-with upright white caps. Green is Slow, red is Fast, Brake and the rest
-are ink; nothing else is colored. Filled point = value now, open point or outlined cap = value read from the machine.
+words, Geist Mono 200 figures and keys, fine-line faders
+with an upright stroke in the mode color. Green is Slow, red is Fast, Brake and the rest
+are ink; nothing else is colored. Filled point = value now, open point, outlined cap or outlined key = value read from the machine.
 
 STORY: Press Fast, watch horn and low rotor climb at their own rate while hearing it; change a
 time, the ramp redraws in the same place; see at a glance what differs from the machine.
 
 FIRST VIEWPORT: One grey bar (name, Preset 1/2, half-moon rotor switch, connection, Save). Below,
 left: Sound/System tabs with a one-line status, the score (about 270 px), then a Horn | Low
-matrix with shared row labels, then four tone settings. Right: the guide on dark grey.
+pair of columns, each with its own row labels, then Character and Bass
+settings in the same two columns. Right: the guide on dark grey.
 Console closed as a 36 px foot bar. No scrolling at 1440x900.
 
 FORM: Structure from the engraved score direction (candidate 3, seed key 745285e8); its light skin

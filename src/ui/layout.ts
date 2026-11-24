@@ -33,7 +33,17 @@ export const ROTOR_ROWS: readonly RotorRow[] = [
   { key: 'level', horn: 'hornRotLevel', low: 'lowRotLevel' },
 ];
 
-export const TONE_ROWS: readonly string[] = ['hornCharacter', 'bassLevel', 'cabinetCharacter', 'crossover'];
+export interface ToneGroup {
+  /** Key into STR.toneGroups. */
+  key: 'character' | 'bass';
+  /** Each row: key into STR.toneRows, parameter. */
+  rows: readonly { key: 'horn' | 'cabinet' | 'level' | 'crossover'; param: string }[];
+}
+
+export const TONE_GROUPS: readonly ToneGroup[] = [
+  { key: 'character', rows: [{ key: 'horn', param: 'hornCharacter' }, { key: 'cabinet', param: 'cabinetCharacter' }] },
+  { key: 'bass', rows: [{ key: 'level', param: 'bassLevel' }, { key: 'crossover', param: 'crossover' }] },
+];
 
 export interface SystemGroup {
   /** Key into STR.systemGroups. */

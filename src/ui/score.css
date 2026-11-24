@@ -9,7 +9,7 @@
 .score-tick { stroke: var(--ink-soft); stroke-width: 1; }
 .score-scale { font-size: 13px; fill: var(--ink); }
 .score-svg .score-scale, .score-svg .score-time, .score-svg .score-held, .score-svg .score-rpm { font-family: var(--font-mono); font-weight: 200; word-spacing: 0; }
-.score-svg .score-command { font-size: 18px; font-weight: 700; fill: var(--voice); }
+.score-svg .score-command { font-size: 15px; font-weight: 700; fill: var(--voice); }
 
 .score-line { fill: none; stroke: var(--voice); stroke-width: 3; stroke-linejoin: round; transition: stroke-width 0.15s ease-out, opacity 0.15s ease-out; }
 .score-hit { fill: none; stroke: transparent; stroke-width: 20; pointer-events: stroke; cursor: pointer; }

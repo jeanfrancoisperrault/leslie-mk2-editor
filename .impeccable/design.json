@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-23T19:21:47+00:00",
+  "generatedAt": "2026-11-24T10:00:00+00:00",
   "title": "Design System: Leslie 2101/2103 mk2 Editor",
   "extensions": {
     "colorMeta": {
@@ -81,7 +81,7 @@
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Column and group headings, tabs, score commands."
+        "purpose": "Column and group headings, tabs."
       },
       "body": {
         "displayName": "Body",
@@ -106,16 +106,6 @@
     },
     "shadows": [
       {
-        "name": "fader-groove",
-        "value": "inset 0 1px 2px oklch(0 0 0 / 0.5)",
-        "purpose": "Engraved fader groove."
-      },
-      {
-        "name": "fader-cap",
-        "value": "0 2px 4px oklch(0 0 0 / 0.5)",
-        "purpose": "Fader cap."
-      },
-      {
         "name": "led-glow",
         "value": "0 0 4px led color",
         "purpose": "Lit half-moon LED."
@@ -139,6 +129,10 @@
       }
     ],
     "breakpoints": [
+      {
+        "name": "keys",
+        "value": "1300px"
+      },
       {
         "name": "single-column-groups",
         "value": "1260px"
@@ -167,12 +161,12 @@
       "css": ".ds-lamps{display:flex;gap:8px;background:var(--surface, oklch(0.265 0 0));padding:4px}.ds-lamps button{display:flex;align-items:center;gap:10px;height:38px;padding:0 12px;border:0;border-radius:6px;background:none;color:var(--ink-dim, oklch(0.66 0 0));font:500 15px 'Plus Jakarta Sans',system-ui,sans-serif}.ds-lamps i{width:10px;height:10px;border-radius:50%;background:oklch(0.46 0 0)}.ds-lamps [aria-pressed=true],.ds-lamps button:hover{color:var(--ink, oklch(0.97 0 0))}.ds-lamps [aria-pressed=true]{background:var(--ground, oklch(0.17 0 0))}.ds-lamps [aria-pressed=true] i{background:var(--ink, oklch(0.97 0 0))}"
     },
     {
-      "name": "Engraved Fader",
+      "name": "Fine-line Fader",
       "kind": "input",
       "refersTo": "fader",
-      "description": "Native range input, groove in the mode color, white cap with an index line.",
+      "description": "Native range input: 2px line and upright stroke in the mode color.",
       "html": "<input class=\"ds-fader\" type=\"range\" min=\"0\" max=\"39\" value=\"14\" aria-label=\"Horn rise time\">",
-      "css": ".ds-fader{appearance:none;width:240px;height:30px;background:transparent}.ds-fader::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--control, oklch(0.56 0 0));box-shadow:inset 0 1px 2px oklch(0 0 0 / 0.5)}.ds-fader::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:22px;margin-top:-8.5px;border-radius:3px;background:linear-gradient(to right,transparent 6px,var(--ground, oklch(0.17 0 0)) 6px 8px,transparent 8px),var(--ink, oklch(0.97 0 0))}"
+      "css": ".ds-fader{appearance:none;width:240px;height:30px;background:transparent}.ds-fader::-webkit-slider-runnable-track{height:2px;background:var(--control, oklch(0.56 0 0))}.ds-fader::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:22px;margin-top:-10px;background:linear-gradient(var(--fast, oklch(0.65 0.235 27)) 0 0) center/2px 100% no-repeat}"
     },
     {
       "name": "Enum Keys",
@@ -180,7 +174,7 @@
       "refersTo": "enum",
       "description": "Options of a tone or system setting; contents in Geist Mono 200.",
       "html": "<div class=\"ds-enum\"><button aria-pressed=\"true\">0.7 kHz</button><button>0.8 kHz</button><button>1.0 kHz</button></div>",
-      "css": ".ds-enum{display:inline-flex;border:1px solid var(--control, oklch(0.56 0 0));border-radius:6px;overflow:hidden}.ds-enum button{font:200 15px 'Geist Mono',ui-monospace,monospace;height:32px;padding:0 12px;border:0;background:var(--ground, oklch(0.17 0 0));color:var(--ink-soft, oklch(0.755 0 0))}.ds-enum button+button{border-left:1px solid var(--control, oklch(0.56 0 0))}.ds-enum [aria-pressed=true]{background:var(--surface-press, oklch(0.38 0 0));color:var(--ink, oklch(0.97 0 0))}"
+      "css": ".ds-enum{display:inline-flex;border:1px solid var(--control, oklch(0.56 0 0));border-radius:6px;overflow:hidden}.ds-enum button{font:200 15px 'Geist Mono',ui-monospace,monospace;height:36px;padding:0 12px;border:0;background:var(--ground, oklch(0.17 0 0));color:var(--ink-soft, oklch(0.755 0 0))}.ds-enum button+button{border-left:1px solid var(--control, oklch(0.56 0 0))}.ds-enum [aria-pressed=true]{background:var(--surface-press, oklch(0.38 0 0));color:var(--ink, oklch(0.97 0 0))}"
     },
     {
       "name": "Half-moon Keys",
@@ -193,7 +187,7 @@
   ],
   "narrative": {
     "northStar": "The half-moon in the dark",
-    "overview": "A dark, strictly neutral panel where color means only slow or fast; engraved faders, a half-moon switch and one graph with both rotors on the same clock.",
+    "overview": "A dark, strictly neutral panel where color means only slow or fast; fine-line faders, a half-moon switch and one graph with both rotors on the same clock.",
     "keyCharacteristics": [
       "Both rotors on one clock",
       "Green is Slow, red is Fast, ink is Brake",

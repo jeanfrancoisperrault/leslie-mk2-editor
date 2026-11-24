@@ -55,13 +55,8 @@ function bigStep(def: ParamDef): number {
   return span >= 50 ? 10 : span >= 20 ? 5 : 2;
 }
 
-export interface RowOptions {
-  /** Visible label; omitted when a table row already names the setting. */
-  label?: string;
-}
-
-/** One setting: optional label, its control, its value in real units. */
-export function buildParamRow(def: ParamDef, store: Store, opts: RowOptions = {}): ParamRow {
+/** One setting: its label, its control, its value in real units. */
+export function buildParamRow(def: ParamDef, store: Store, label: string): ParamRow {
   // The full name (with the rotor) identifies the control to assistive tech:
   // "Slow speed" alone exists twice on screen.
   const name = EXPLANATIONS[def.id]?.title ?? def.manualName;
@@ -73,8 +68,8 @@ export function buildParamRow(def: ParamDef, store: Store, opts: RowOptions = {}
   const kind = def.mapping.type === 'enum' ? ' p-enum' : def.mapping.type === 'channel' ? ' p-select' : '';
   const mode = voiceOf(def.id);
   const voice = mode ? ` voice-${mode}` : '';
-  const row = el('div', { class: `param${kind}${voice}`, 'data-param': def.id });
-  if (opts.label) row.append(el('span', { class: 'param-label', text: opts.label }));
+  const row = el('div', { class: `param${kind}${voice}`, 'data-param': def.id },
+    el('span', { class: 'param-label', text: label }));
 
   let control: HTMLElement;
   let updateControl: (state: AppState) => void;
@@ -91,7 +86,12 @@ export function buildParamRow(def: ParamDef, store: Store, opts: RowOptions = {}
     control = group;
     updateControl = () => {
       const v = store.getValue(def.id);
-      for (const { b, value } of buttons) b.setAttribute('aria-pressed', String(value === v));
+      const edited = store.isEdited(def.id);
+      for (const { b, value } of buttons) {
+        b.setAttribute('aria-pressed', String(value === v));
+        // Outlined key: the machine's own value, like the outlined cap of a fader.
+        b.classList.toggle('is-was', edited && value === store.loadedValue(def.id));
+      }
     };
   } else if (m.type === 'channel') {
     const select = el('select', { class: 'select', 'aria-label': name });
@@ -141,8 +141,7 @@ export function buildParamRow(def: ParamDef, store: Store, opts: RowOptions = {}
     updateControl = () => {
       const v = store.getValue(def.id);
       input.value = String(v);
-      const pct = ((v - def.min) / (def.max - def.min)) * 100;
-      input.style.setProperty('--fill', `${pct}%`);
+      input.style.setProperty('--fill', String((v - def.min) / (def.max - def.min)));
       input.setAttribute('aria-valuetext', formatValue(def, v));
       const loaded = store.loadedValue(def.id);
       was.hidden = !store.isEdited(def.id);
@@ -153,9 +152,10 @@ export function buildParamRow(def: ParamDef, store: Store, opts: RowOptions = {}
   row.append(control, valueBox);
 
   opensGuide(row, def.id, store);
-  // Double-click (outside buttons) resets to the factory default.
+  // Double-click on the control or its value resets to the factory default. Not
+  // on the name: selecting a word must never send anything.
   row.addEventListener('dblclick', (e) => {
-    if ((e.target as HTMLElement).closest('button')) return;
+    if ((e.target as HTMLElement).closest('button, .param-label')) return;
     store.resetToDefault(def.id);
   });
 

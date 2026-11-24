@@ -5,8 +5,6 @@ import type { RotorSettings } from '../ui/score-model';
 export const STR = {
   appTitle: 'Leslie 2101 mk2',
   groups: {
-    rotors: 'Réglages des rotors',
-    tone: 'Timbre',
     horn: 'Cornet',
     low: 'Rotor grave',
   } as Record<string, string>,
@@ -18,6 +16,8 @@ export const STR = {
     brakeTime: 'Freinage',
     level: 'Niveau',
   },
+  toneGroups: { character: 'Caractère', bass: 'Réglages des basses' },
+  toneRows: { horn: 'Cornet', cabinet: 'Cabine', level: 'Niveau', crossover: 'Croisement' },
   systemGroups: {
     channels: 'Canaux MIDI',
     reception: 'Réception MIDI',
@@ -50,7 +50,7 @@ export const STR = {
       'Le graphique montre les deux rotors sur la même horloge : ce qui se passe avec Slow et Brake quand les rotors tournent vite, puis avec Fast quand ils tournent lentement. Les cinq lignes sont la vitesse, de 0 à 400 rpm.',
       'Vert : Slow, rouge : Fast, blanc : Brake, sur le graphique, les curseurs et le half-moon.',
       'Il est calculé d’après les réglages. Les rampes sont tracées droites ; la courbe exacte de la machine n’est pas documentée.',
-      'Un point plein est la valeur actuelle. Un point creux, ou un curseur en contour, est la dernière valeur en mémoire dans la Leslie (lue ou enregistrée), visible dès que vous la changez.',
+      'Un point plein est la valeur actuelle. Un point creux, ou un curseur ou une touche en contour, est la dernière valeur en mémoire dans la Leslie (lue ou enregistrée), visible dès que vous la changez.',
     ],
   },
   preset1: 'Preset 1',

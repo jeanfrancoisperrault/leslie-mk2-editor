@@ -5,8 +5,6 @@ import type { RotorSettings } from '../ui/score-model';
 export const STR = {
   appTitle: 'Leslie 2101 / 2103 mk2',
   groups: {
-    rotors: 'Rotor settings',
-    tone: 'Tone',
     horn: 'Horn rotor',
     low: 'Low rotor',
   } as Record<string, string>,
@@ -18,6 +16,8 @@ export const STR = {
     brakeTime: 'Brake time',
     level: 'Level',
   },
+  toneGroups: { character: 'Character', bass: 'Bass settings' },
+  toneRows: { horn: 'Horn', cabinet: 'Cabinet', level: 'Level', crossover: 'Crossover' },
   systemGroups: {
     channels: 'MIDI channels',
     reception: 'MIDI reception',
@@ -151,7 +151,7 @@ export const STR = {
       'The graph shows both rotors on the same clock: what happens on Slow and Brake when the rotors turn fast, then on Fast when they turn slow. The five lines are the speed, from 0 to 400 rpm.',
       'Green is Slow, red is Fast, white is Brake: in the graph, on the faders and on the half-moon.',
       'It is calculated from the settings. Ramps are drawn straight; the machine’s exact curve is not documented.',
-      'A filled point is the value now. An open point, or an outlined cap on a fader, is what the Leslie last had in memory (read from it, or saved to it), shown once you change it.',
+      'A filled point is the value now. An open point, or an outlined cap or key, is what the Leslie last had in memory (read from it, or saved to it), shown once you change it.',
     ],
   },
   midiOut: 'MIDI output (to the Leslie MIDI IN)',

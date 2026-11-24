@@ -8,7 +8,7 @@ import type { SpeedCommand } from '../midi/speed';
 import type { AppState, Store } from '../state/store';
 import { opensGuide, scheduleFocusClear } from './controls';
 import { el, svgEl } from './dom';
-import { SEGMENT_PARAM, SPAN_S, rampPoints, rotorSettings, stepSpeed } from './score-model';
+import { RotorMotion, SEGMENT_PARAM, SPAN_S, rampPoints, rotorSettings } from './score-model';
 import type { Rotor } from './score-model';
 
 const ROTORS: Rotor[] = ['horn', 'low'];
@@ -23,8 +23,8 @@ const STAFF_GAP = 64;
 /** Below the low staff: speed label, then the time axis. */
 const FOOT = 50;
 /** Height the rest of the work area needs; the staves take what is left. */
-const REST_H = 506;
-const STAFF_MIN = 64;
+const REST_H = 519;
+const STAFF_MIN = 56;
 const STAFF_MAX = 124;
 /** Between measures: each has its own clock, and repeats the speed scale. */
 const GAP = 56;
@@ -50,9 +50,7 @@ export function buildScore(store: Store): Score {
   let mode: SpeedCommand | null = null;
   /** Seconds since the last command; null = no playhead. */
   let playTime: number | null = null;
-  /** Calculated speeds; null until a command is sent or reported (a dump does
-      not hold the rotor mode). */
-  const speed: Record<Rotor, number | null> = { horn: null, low: null };
+  const motion: Record<Rotor, RotorMotion> = { horn: new RotorMotion(), low: new RotorMotion() };
   const angle: Record<Rotor, number> = { horn: 0, low: 0 };
   const arms: Partial<Record<Rotor, SVGElement>> = {};
   const readouts: Partial<Record<Rotor, SVGElement>> = {};
@@ -119,7 +117,7 @@ export function buildScore(store: Store): Score {
     if (store.locked) return g;
     const s = settings(rotor);
     const was = loadedSettings(rotor);
-        MEASURES.forEach((cmd, i) => {
+    MEASURES.forEach((cmd, i) => {
       // Colored by the mode the measure leads to; each point by the speed it holds.
       const m = svgEl('g', { class: `voice-${cmd}` });
       g.append(m);
@@ -190,7 +188,8 @@ export function buildScore(store: Store): Score {
     for (const rotor of ROTORS) {
       arms[rotor]?.setAttribute('transform', `rotate(${angle[rotor]})`);
       const r = readouts[rotor];
-      if (r) r.textContent = speed[rotor] === null || store.locked ? '— rpm' : `${Math.round(speed[rotor]!)} rpm`;
+      const rpm = motion[rotor].speed;
+      if (r) r.textContent = rpm === null || store.locked ? '— rpm' : `${Math.round(rpm)} rpm`;
     }
     if (!playhead) return;
     const shown = mode !== null && playTime !== null && playTime <= SPAN_S && !store.locked;
@@ -209,13 +208,9 @@ export function buildScore(store: Store): Score {
     if (mode === null || store.locked) return false;
     let changing = false;
     for (const rotor of ROTORS) {
-      const s = settings(rotor);
-      // First command from an unknown state: assume the speed the measure starts at.
-      const from = speed[rotor] ?? rampPoints(mode, s)[0]![1];
-      const to = stepSpeed(from, mode, s, dt);
-      speed[rotor] = to;
-      if (!reduced.matches) angle[rotor] = (angle[rotor] + to * 6 * dt) % 360;
-      if (to !== from || (to > 0 && !reduced.matches)) changing = true;
+      const { before, after } = motion[rotor].step(mode, settings(rotor), dt);
+      if (!reduced.matches) angle[rotor] = (angle[rotor] + after * 6 * dt) % 360;
+      if (after !== before || (after > 0 && !reduced.matches)) changing = true;
     }
     if (playTime !== null) {
       playTime += dt;
@@ -256,7 +251,7 @@ export function buildScore(store: Store): Score {
     update(state) {
       if (wasLocked && !store.locked && mode !== null) {
         // Command sent before the first dump: the rotors have settled since.
-        for (const rotor of ROTORS) speed[rotor] = stepSpeed(0, mode, settings(rotor), Infinity);
+        for (const rotor of ROTORS) motion[rotor].settle(mode, settings(rotor));
         playTime = null;
       }
       wasLocked = store.locked;
@@ -271,12 +266,15 @@ export function buildScore(store: Store): Score {
     play(cmd) {
       advance(performance.now());
       // The footswitch may report the mode already running: no restart then.
-      if (cmd !== mode) playTime = cmd === null ? null : 0;
+      if (cmd !== mode) {
+        playTime = cmd === null ? null : 0;
+        for (const rotor of ROTORS) motion[rotor].start();
+      }
       mode = cmd;
       if (cmd === null) {
         cancelAnimationFrame(frame);
         frame = 0;
-        for (const rotor of ROTORS) speed[rotor] = null;
+        for (const rotor of ROTORS) motion[rotor].forget();
       }
       paintMotion();
       wake();
