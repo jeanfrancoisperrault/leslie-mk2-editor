@@ -36,9 +36,14 @@ Changes go to the speaker live, over MIDI.
 - Two MIDI cables: interface OUT to Leslie IN, and Leslie OUT to interface IN. The second one is required:
   the editor cannot ask the Leslie for its settings, and stays locked until it receives them.
 
-There is no online version yet: run it on your computer, as below.
+## Open it
 
-## Run it
+**https://jeanfrancoisperrault.github.io/leslie-mk2-editor/**
+
+Allow MIDI **and** SysEx when the browser asks. Nothing is installed, and the page sends nothing to any
+server: it talks to the Leslie directly.
+
+## Run it on your computer
 
 Node.js 20.19 or later (or 22.12 or later).
 
@@ -49,7 +54,7 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:5173 in Chrome or Edge, and allow MIDI **and** SysEx when the browser asks.
+Then open http://localhost:5173 in Chrome or Edge.
 
 ## First use
 
@@ -111,7 +116,8 @@ npm run build      # static files in dist/
 | `fixtures/` | real dumps, used by the tests |
 | `docs/` | hardware findings, decisions (`docs/adr/`) |
 
-[DESIGN.md](DESIGN.md) describes the visual system. The pre-commit hook runs the type check and the tests.
+[DESIGN.md](DESIGN.md) describes the visual system. The pre-commit hook runs the type check and the tests;
+GitHub Actions runs them again with the build, then deploys `main` to GitHub Pages.
 
 **Before changing anything that sends MIDI**: never send a SysEx message whose meaning is not confirmed, and
 nothing before a dump is loaded (the rotor keys excepted). The rules are in
@@ -126,7 +132,7 @@ is not liable for any malfunction, damage or loss of settings that may follow fr
 ## License
 
 [MIT](LICENSE), Copyright (c) 2026 Jean-francois Perrault. It covers this project's code and documents, not
-the names and trademarks above. Third parties: Plus Jakarta Sans and Geist Mono (SIL Open Font License),
-installed from npm; some agent skills in `.claude/skills/` (MIT, see their license file there).
+the names and trademarks above. Third parties: Plus Jakarta Sans and Geist Mono (SIL Open Font License,
+[full text](public/third-party-licenses.txt)); some agent skills in `.claude/skills/` (MIT, see their license file there).
 
 Credits: [jf.cool](https://jf.cool)
