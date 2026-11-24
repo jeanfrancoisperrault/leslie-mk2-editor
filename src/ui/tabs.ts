@@ -7,6 +7,12 @@ export interface Tabs<T extends string> {
   select(id: T): void;
 }
 
+/** Index of the tab a key leads to; null when the key is not for the tabs. */
+export function tabAfterKey(key: string, current: number, count: number): number | null {
+  const step = key === 'ArrowRight' ? 1 : key === 'ArrowLeft' ? -1 : 0;
+  return step === 0 ? null : (current + step + count) % count;
+}
+
 /** Tab `tab-<id>` controls panel `view-<id>`; the caller shows the panel. */
 export function buildTabs<T extends string>(
   ids: readonly T[], labels: Record<T, string>, aria: string, onSelect: (id: T) => void,
@@ -20,10 +26,10 @@ export function buildTabs<T extends string>(
     return b;
   });
   root.addEventListener('keydown', (e) => {
-    const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-    if (step === 0) return;
+    const next = tabAfterKey(e.key, current, ids.length);
+    if (next === null) return;
     e.preventDefault();
-    select(ids[(current + step + ids.length) % ids.length]!);
+    select(ids[next]!);
     tabs[current]!.focus();
   });
 

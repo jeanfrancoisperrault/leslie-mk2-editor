@@ -103,7 +103,7 @@ export function buildExplainer(store: Store): Explainer {
   // At rest: two tabs, built once so that the chosen one survives the guide.
   const rest = STR.explainerEmpty;
   const panel = (id: RestView, ...children: Node[]) =>
-    el('div', { class: 'rest', id: `view-${id}`, role: 'tabpanel', 'aria-labelledby': `tab-${id}` }, ...children);
+    el('div', { class: 'rest', id: `view-${id}`, role: 'tabpanel', tabindex: '0', 'aria-labelledby': `tab-${id}` }, ...children);
   const restPanels: Record<RestView, HTMLElement> = {
     welcome: panel('welcome', el('p', { text: rest.intro }),
       ...rest.notices.flatMap((n) => [el('h2', { text: n.title }), el('p', { text: n.text })])),
@@ -188,20 +188,24 @@ export function buildExplainer(store: Store): Explainer {
     appendHints();
   }
 
-  return {
-    root,
-    toggle,
-    update(state) {
-      if (keyOf(state) !== currentId) {
-        rebuild(state);
-        return;
-      }
-      if (state.focusedParam === null) return;
-      const def = getParam(state.focusedParam);
-      const value = store.getValue(def.id);
-      if (valueEl) valueEl.textContent = formatValue(def, value);
-      if (rawEl) rawEl.textContent = machineValue(def, value);
-      viz?.update(value);
-    },
-  };
+  function update(state: AppState): void {
+    // The pointer may cross a setting while the keyboard reads this panel:
+    // replacing it would throw the focus away.
+    if (currentId === 'empty' && state.focusedParam !== null && body.querySelector(':focus-visible')) return;
+    if (keyOf(state) !== currentId) {
+      rebuild(state);
+      return;
+    }
+    if (state.focusedParam === null) return;
+    const def = getParam(state.focusedParam);
+    const value = store.getValue(def.id);
+    if (valueEl) valueEl.textContent = formatValue(def, value);
+    if (rawEl) rawEl.textContent = machineValue(def, value);
+    viz?.update(value);
+  }
+
+  // Focus left the panel: show the guide it was holding back.
+  body.addEventListener('focusout', () => setTimeout(() => update(store.state)));
+
+  return { root, toggle, update };
 }

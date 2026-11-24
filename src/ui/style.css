@@ -196,7 +196,7 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; text-wrap: balance; }
 .tabs button:hover { color: var(--ink); }
 .tabs button[aria-selected="true"] { color: var(--ink); border-color: var(--ink); }
 .status { margin-left: auto; color: var(--ink-soft); text-align: right; }
-.status.is-error { background: var(--ink); color: var(--ground); padding: 10px 12px; border-radius: var(--radius); }
+.status.is-error { background: var(--ink); color: var(--ground); display: flex; align-items: center; min-height: 38px; padding: 0 12px; line-height: 1.2; border-radius: var(--radius); }
 
 /* Side panel switch, against the panel: lit while it is open, always on a ground. */
 .guide-toggle {

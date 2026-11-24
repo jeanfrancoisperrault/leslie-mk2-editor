@@ -43,6 +43,7 @@ export const STR = {
       `Rotor grave : ${l.slow} à ${l.fast} rpm, montée ${l.rise} s, descente ${l.fall} s, freinage ${l.brake} s.`,
   },
   was: (value: string) => `lu : ${value}`,
+  explainerAria: 'Guide',
   guideToggle: { label: 'Guide', hide: 'Masquer le guide', show: 'Afficher le guide' },
   explainerEmpty: {
     aria: 'À propos de cet éditeur',
@@ -55,7 +56,7 @@ export const STR = {
       },
       {
         title: 'À vos risques',
-        text: 'Cet éditeur est fourni en l’état, sans aucune garantie. Il envoie des données MIDI à votre cabine, et Enregistrer en mémoire remplace les réglages qu’elle contient : gardez-en d’abord une copie (sauvegarde du dump, dans la connexion MIDI). Dans les limites permises par la loi, l’auteur n’est pas responsable des dysfonctionnements, des dommages ou des pertes de réglages qui pourraient suivre son utilisation.',
+        text: 'Cet éditeur est fourni en l’état, sans aucune garantie. Il envoie des données MIDI à votre cabine, et Enregistrer en mémoire remplace les réglages qu’elle contient : gardez-en d’abord une copie (Enregistrer le dump, dans la connexion MIDI en haut ; un outil SysEx peut le renvoyer). Dans les limites permises par la loi, l’auteur n’est pas responsable des dysfonctionnements, des dommages ou des pertes de réglages qui pourraient suivre son utilisation.',
       },
     ],
     graph: [

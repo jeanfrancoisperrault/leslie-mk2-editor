@@ -41,4 +41,5 @@ The in-app browser has no Web MIDI; the user tests in Chrome on the same dev ser
 Byte 32 = selected preset (0-based); block 60 = active state; 80 / 100 = stored Preset 1 / 2;
 block 40 likely the preset loaded at power-on. NRPN → active state only; MEMORY → stored preset;
 a received dump → stored presets, permanent. Low-rotor speeds show as an index on the panel.
-Brake OFF does not exist on this unit. Footswitch misbehaves only with MIDI cables connected.
+Brake OFF does not exist on this unit. The footswitch trouble of 2026-11-23 was a bad
+cable (found 2026-11-24); which button gives which mode has to be read again.

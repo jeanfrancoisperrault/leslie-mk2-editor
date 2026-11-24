@@ -3,7 +3,7 @@
 A desktop-first web editor for the Leslie 2101 mk2 and 2103 mk2 rotary speakers.
 It replaces the front-panel button-and-dial menu with a full-screen editor: every
 parameter of the machine on faders and key rows, real-world units first (rpm,
-seconds, kHz), and a permanent explainer panel that tells you what each setting
+seconds, kHz), and a guide panel (open at start, can be closed) that tells you what each setting
 does and what you hear. A score shows both rotors on one clock: what Slow, Fast
 and Brake will do with the current settings.
 
@@ -21,8 +21,7 @@ wired both ways. "Save to memory" writes the settings back as a dump.
 - Neutral dark UI built around a graph of the two rotors (`DESIGN.md`), vanilla
   TypeScript, no framework. Typefaces: Plus Jakarta Sans
   and Geist Mono (OFL), bundled.
-- Planned: A/B preset compare, undo, named presets (JSON), SysEx memory-dump
-  capture and `.syx` export.
+- Planned: A/B preset compare, undo, named presets (JSON).
 
 ## Stack
 

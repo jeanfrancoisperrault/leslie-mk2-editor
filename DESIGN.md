@@ -65,6 +65,16 @@ spacing:
   work: "30px 28px 10px"
   guide: "24px 28px"
 components:
+  guide-toggle:
+    backgroundColor: "{colors.surface-soft}"
+    textColor: "{colors.ink-soft}"
+    rounded: "{rounded.control}"
+    height: "38px"
+    padding: "0 12px"
+  guide-toggle-open:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
   button-primary:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.ground}"
@@ -136,14 +146,14 @@ Two faces, one job each (user decision, 2026-11-23), all bundled through `@fonts
 Single-line interface text is centered on its capitals (`text-box: trim-both cap alphabetic`), so
 both faces share one axis; boxes keep whole-pixel heights (bar controls 38px, keys and selects 36px).
 
-Scale: 13, 15, 18, 20, 24. Tabs and section titles are 18; Slow, Brake and Fast above the graphs are 15 bold, captions
+Scale: 13, 15, 18, 20, 24. Tabs and section titles are 18, the tabs of the guide panel 15; Slow, Brake and Fast above the graphs are 15 bold, captions
 that must not read as navigation. Sentence case everywhere; capitals appear only on the preset and half-moon keys and where the machine's own
 menu prints them.
 
 ## Layout
 
 One bar (name, preset, rotor, connection, save), then work area and guide
-(`clamp(320px, 26vw, 400px)`), then the closed MIDI console. Two views: Sound and System.
+(`clamp(320px, 26vw, 400px)`, can be closed), then the closed MIDI console. Two views: Sound and System.
 Rotor settings are two columns, one per rotor, split by a 1px `surface-soft` rule with 32px on each side
 (16px below 1260 px). Each column has its title and repeats the name of every row, so no figure reads as the label of
 the other rotor (drawn by the owner in Figma, 2026-11-24). Rows are grouped by mode in half-moon order (slow speed, fall time; brake time;

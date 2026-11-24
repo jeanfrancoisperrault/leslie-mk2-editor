@@ -143,7 +143,7 @@ export const STR = {
       aria: 'The computer and the USB-MIDI interface are linked by USB. Interface MIDI OUT goes to Leslie MIDI IN. Leslie MIDI OUT goes back to interface MIDI IN.',
     },
   },
-  explainerAria: 'Parameter explanation',
+  explainerAria: 'Guide',
   guideToggle: { label: 'Guide', hide: 'Hide the guide', show: 'Show the guide' },
   explainerEmpty: {
     aria: 'About this editor',
@@ -156,7 +156,7 @@ export const STR = {
       },
       {
         title: 'Use at your own risk',
-        text: 'This editor is provided as is, without warranty of any kind. It sends MIDI data to your speaker, and Save to memory overwrites the settings stored in it: keep a copy first (Save dump, in the MIDI connection). To the extent permitted by law, the author is not liable for any malfunction, damage or loss of settings that may follow from its use.',
+        text: 'This editor is provided as is, without warranty of any kind. It sends MIDI data to your speaker, and Save to memory overwrites the settings stored in it: keep a copy first (Save dump, in the MIDI connection at the top; a SysEx tool can send it back). To the extent permitted by law, the author is not liable for any malfunction, damage or loss of settings that may follow from its use.',
       },
     ],
     graph: [
