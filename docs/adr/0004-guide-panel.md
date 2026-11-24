@@ -20,4 +20,4 @@ disclaimer (personal, non-profit project), and wanted to be able to close the pa
 ## Consequences
 
 - One more motion than the playhead, the rotors and the lever.
-- The notices are usual wording, not legal advice; there is no license file yet.
+- The notices are usual wording, not legal advice. The README repeats them; the code is under the MIT license.
