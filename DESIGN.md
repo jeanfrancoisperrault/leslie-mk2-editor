@@ -166,6 +166,8 @@ shadow in its groove, a drop shadow under its cap.
 - Filled point: value now. Open point and dashed line: value last read from the
   Leslie or saved to its memory.
 - Hovering a stretch opens its guide, clicking it focuses its fader. Never the only way in.
+- Brake always lasts its set time, also from Slow, so the rotors stop with the playhead at the foot of the ramp. The
+  manual only gives the time from fast to stop.
 - Slow / Fast / Brake runs a playhead and turns the rotors at the calculated speed. Before a
   command is sent or reported the speed reads "— rpm": a dump does not hold the rotor mode.
 

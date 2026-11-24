@@ -26,6 +26,15 @@ describe('score model', () => {
     expect(stepSpeed(0, 'slow', s, 9)).toBe(46);
   });
 
+  it('brakes over the whole brake time from any speed, like the drawn ramp', () => {
+    let v = 46;
+    for (let i = 0; i < 20; i++) v = stepSpeed(v, 'brake', s, 0.1, 46); // 2 s of 4
+    expect(v).toBeCloseTo(23);
+    expect(stepSpeed(v, 'brake', s, 1.9, 46)).toBeGreaterThan(0);
+    expect(stepSpeed(v, 'brake', s, 2.1, 46)).toBe(0);
+    expect(stepSpeed(0, 'brake', s, 0.1, 0)).toBe(0);
+  });
+
   it('follows a setting changed while the rotor holds its speed', () => {
     expect(stepSpeed(400, 'fast', { ...s, fast: 378 }, 9)).toBe(378);
   });

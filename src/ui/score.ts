@@ -53,6 +53,8 @@ export function buildScore(store: Store): Score {
   /** Calculated speeds; null until a command is sent or reported (a dump does
       not hold the rotor mode). */
   const speed: Record<Rotor, number | null> = { horn: null, low: null };
+  /** Speeds when the current command came; null = the speed was unknown. */
+  const startSpeed: Record<Rotor, number | null> = { horn: null, low: null };
   const angle: Record<Rotor, number> = { horn: 0, low: 0 };
   const arms: Partial<Record<Rotor, SVGElement>> = {};
   const readouts: Partial<Record<Rotor, SVGElement>> = {};
@@ -212,7 +214,7 @@ export function buildScore(store: Store): Score {
       const s = settings(rotor);
       // First command from an unknown state: assume the speed the measure starts at.
       const from = speed[rotor] ?? rampPoints(mode, s)[0]![1];
-      const to = stepSpeed(from, mode, s, dt);
+      const to = stepSpeed(from, mode, s, dt, startSpeed[rotor] ?? s.fast);
       speed[rotor] = to;
       if (!reduced.matches) angle[rotor] = (angle[rotor] + to * 6 * dt) % 360;
       if (to !== from || (to > 0 && !reduced.matches)) changing = true;
@@ -271,7 +273,10 @@ export function buildScore(store: Store): Score {
     play(cmd) {
       advance(performance.now());
       // The footswitch may report the mode already running: no restart then.
-      if (cmd !== mode) playTime = cmd === null ? null : 0;
+      if (cmd !== mode) {
+        playTime = cmd === null ? null : 0;
+        Object.assign(startSpeed, speed);
+      }
       mode = cmd;
       if (cmd === null) {
         cancelAnimationFrame(frame);

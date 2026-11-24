@@ -43,12 +43,14 @@ export function rampPoints(cmd: SpeedCommand, s: RotorSettings): [number, number
   }
 }
 
-/** Speed after dt seconds of following a command, from any current speed. */
-export function stepSpeed(current: number, cmd: SpeedCommand, s: RotorSettings, dt: number): number {
+/** Speed after dt seconds of following a command, from any current speed.
+    A brake lasts its whole time from `brakeFrom`, the speed when it was asked:
+    the manual only gives the time from fast to stop. */
+export function stepSpeed(current: number, cmd: SpeedCommand, s: RotorSettings, dt: number, brakeFrom = s.fast): number {
   const target = cmd === 'fast' ? s.fast : cmd === 'slow' ? s.slow : 0;
   const span = Math.abs(s.fast - s.slow);
   const rate = current < target ? span / s.rise
-    : cmd === 'brake' ? s.fast / s.brake : span / s.fall;
+    : cmd === 'brake' ? brakeFrom / s.brake : span / s.fall;
   const max = rate * dt;
   // A zero or missing time means an immediate change.
   if (!Number.isFinite(max) || Math.abs(target - current) <= max) return target;
