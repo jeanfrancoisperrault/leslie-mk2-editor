@@ -16,6 +16,8 @@ export interface Panels {
   root: HTMLElement;
   update(state: AppState): void;
   play(cmd: SpeedCommand | null): void;
+  /** The waiting screen asks for the wiring diagram. */
+  onWiring: (() => void) | null;
 }
 
 type View = 'sound' | 'system';
@@ -34,11 +36,14 @@ export function buildPanels(store: Store, status: HTMLElement, guideToggle: HTML
   // Waiting instructions, shown until the first dump from the Leslie.
   const steps = el('ol', { class: 'waiting-steps' });
   for (const s of STR.waiting.steps) steps.append(el('li', { text: s }));
+  const wiring = el('button', { type: 'button', class: 'btn btn-outline', text: STR.waiting.wiring });
   const waiting = el('section', { class: 'waiting', role: 'status' },
     el('h2', { text: STR.waiting.title }),
     el('p', { text: STR.waiting.body }),
     steps,
+    wiring,
     el('p', { class: 'waiting-note', text: STR.waiting.note }));
+  wiring.addEventListener('click', () => panels.onWiring?.());
 
   // Rotor settings: one column per rotor, the same rows in both, each with its name.
   const rotors = el('div', { class: 'pair' });
@@ -86,8 +91,9 @@ export function buildPanels(store: Store, status: HTMLElement, guideToggle: HTML
     el('div', { class: 'work-head' }, tabs.root, status, guideToggle), score.root, waiting, sound, system);
   tabs.select('sound');
 
-  return {
+  const panels: Panels = {
     root,
+    onWiring: null,
     update(state) {
       paint();
       score.update(state);
@@ -95,4 +101,5 @@ export function buildPanels(store: Store, status: HTMLElement, guideToggle: HTML
     },
     play: (cmd) => score.play(cmd),
   };
+  return panels;
 }

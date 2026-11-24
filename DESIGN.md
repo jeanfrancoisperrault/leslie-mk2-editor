@@ -213,6 +213,10 @@ Flat surfaces, told apart by grey steps and 1px lines. The LED glow is the only 
 ### Credits
 - One 13px `ink-dim` line at the right end of the console bar: the version (from `package.json`), the licenses (editor and fonts), then the credits; a link turns `ink` on hover.
 
+### Startup dialog
+- Only when no MIDI port can be reached (unsupported browser, access refused, no port): a port's name does not tell what
+  is wired to it. It closes when a port appears or a dump arrives. The waiting screen opens it again for the wiring.
+
 ### Guide
 - Fixed right column, never a tooltip. "Guide", with the usual side panel icon and an arrow (right closes, left opens), shows and hides it from the top right
   of the work area, on the line of the tabs and against the panel, on `surface-soft` when closed and `surface` when

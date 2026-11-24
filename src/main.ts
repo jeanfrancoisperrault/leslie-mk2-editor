@@ -26,6 +26,7 @@ import { STR } from './content/i18n';
 import { Store } from './state/store';
 import { buildExplainer } from './ui/explainer';
 import { MidiOverlay } from './ui/overlay';
+import { dialogFor } from './ui/overlay-model';
 import { buildPanels } from './ui/panels';
 import { buildShell } from './ui/shell';
 
@@ -36,6 +37,7 @@ const store = new Store();
 const shell = buildShell(store);
 const explainer = buildExplainer(store);
 const panels = buildPanels(store, shell.status, explainer.toggle);
+panels.onWiring = () => overlay.show('wiring');
 
 // --- MIDI plumbing -----------------------------------------------------------
 // Every outgoing message goes through a tee: logged to the console, noted for
@@ -52,7 +54,6 @@ let selectedInputId: string | null = null;
 // Preferred ports: the MidiSport 2x2 port A (brief), then anything that looks
 // like a Leslie.
 const PREFERRED = [/midisport.*port\s*a\b/i, /leslie|2101|2103/i];
-const isLesliePort = (name: string): boolean => PREFERRED.some((re) => re.test(name));
 function pickPort(ports: PortInfo[]): PortInfo | undefined {
   for (const re of PREFERRED) {
     const hit = ports.find((p) => re.test(p.name));
@@ -163,6 +164,7 @@ dump.onComplete = (packets) => {
     lastDumpData = first!.data;
     refreshSave();
     store.loadFromDevice(decoded);
+    overlay.close(); // the Leslie answers: nothing left to explain
     const names = decoded.unsaved.map((id) => PARAMS.find((d) => d.id === id)?.manualName ?? id);
     shell.logMessage({ dir: 'in', hex: '  ⤷', text: `Editor loaded from dump · preset ${decoded.selectedPreset + 1}` +
       (names.length ? ` · not saved with MEMORY: ${names.join(', ')}` : '') +
@@ -250,18 +252,18 @@ function syncInputs(inputs: PortInfo[]): void {
 }
 
 midi.on((ev) => {
+  const dialog = dialogFor(ev);
+  if (dialog) overlay.show(dialog);
   switch (ev.kind) {
     case 'unsupported':
       store.setConnection({ kind: 'unsupported' });
       shell.setPorts([], 'sim');
       shell.setInputs([], null);
-      overlay.show('unsupported');
       break;
     case 'denied':
       store.setConnection({ kind: 'denied' });
       shell.setPorts([], 'sim');
       shell.setInputs([], null);
-      overlay.show('denied');
       break;
     case 'ready': {
       if (!ev.sysex) shell.logMessage({ dir: 'in', hex: '--', text: STR.sysexDenied });
@@ -271,21 +273,19 @@ midi.on((ev) => {
       if (pick) selectPort(pick.id);
       else store.setConnection({ kind: 'no-port' });
       syncInputs(ev.inputs);
-      if (ev.outputs.length === 0) overlay.show('no-port');
-      else if (!ev.outputs.some((p) => isLesliePort(p.name))) overlay.show('no-leslie');
       break;
     }
     case 'ports-changed': {
       const ports = ev.outputs;
       syncInputs(ev.inputs);
-      if (overlay.isOpen && ports.length > 0) {
+      // There was no port at all (dialog open or dismissed): take the first one offered. Sends nothing.
+      if (store.state.connection.kind === 'no-port' && ports.length > 0) {
         const pick = pickPort(ports)!;
         shell.setPorts(ports, pick.id);
         selectPort(pick.id);
-        overlay.close();
+        if (overlay.kind === 'no-port') overlay.close();
         break;
       }
-      if (overlay.isOpen && ports.length === 0) overlay.setKind('no-port');
       const stillThere = selectedPortId !== 'sim' && ports.some((p) => p.id === selectedPortId);
       shell.setPorts(ports, stillThere ? selectedPortId : 'sim');
       if (!stillThere && selectedPortId !== 'sim') {

@@ -1,11 +1,10 @@
-// Startup overlay shown when no compatible MIDI device is detected. It explains
-// how to hook the Leslie up over MIDI and closes itself as soon as a port
-// appears (hot-plug), or on user dismissal.
+// Startup dialog, shown when no MIDI port can be reached (overlay-model.ts). It
+// explains how to hook the Leslie up and closes as soon as a port appears, a
+// dump arrives, or the user dismisses it. Also opened on request, for the wiring.
 
 import { STR } from '../content/i18n';
 import { el, svgEl } from './dom';
-
-export type OverlayKind = 'unsupported' | 'denied' | 'no-port' | 'no-leslie';
+import type { OverlayKind } from './overlay-model';
 
 /** Connection diagram: computer <-> USB-MIDI interface, then one MIDI cable each
     way (the editor needs the return cable to read the Leslie). */
@@ -42,27 +41,26 @@ function chainDiagram(): SVGElement {
 
 export class MidiOverlay {
   #backdrop: HTMLElement | null = null;
-  #intro: HTMLElement | null = null;
+  #opener: Element | null = null;
   #kind: OverlayKind | null = null;
 
-  get isOpen(): boolean {
-    return this.#backdrop !== null;
+  /** What the open dialog is about; null when it is closed. */
+  get kind(): OverlayKind | null {
+    return this.#kind;
   }
 
   show(kind: OverlayKind): void {
-    if (this.#backdrop) {
-      this.setKind(kind);
-      return;
-    }
+    if (this.#backdrop) return;
     this.#kind = kind;
+    this.#opener = document.activeElement;
 
-    const title = el('h2', { id: 'midi-overlay-title', class: 'overlay-title', text: STR.overlay.title });
-    this.#intro = el('p', { class: 'overlay-intro', text: STR.overlay.intro[introKey(kind)] });
+    const wiring = kind === 'wiring';
+    const title = el('h2', { id: 'midi-overlay-title', class: 'overlay-title', text: wiring ? STR.overlay.howToTitle : STR.overlay.title });
 
     const steps = el('ol', { class: 'overlay-steps' });
     for (const s of STR.overlay.howTo) steps.append(el('li', { text: s }));
 
-    const dismiss = el('button', { type: 'button', class: 'btn btn-outline', text: STR.overlay.continueSim });
+    const dismiss = el('button', { type: 'button', class: 'btn btn-outline', text: wiring ? STR.overlay.close : STR.overlay.continueWithout });
     dismiss.addEventListener('click', () => this.close());
     const footer = el('div', { class: 'overlay-footer' });
     if (kind === 'denied' || kind === 'unsupported') {
@@ -74,12 +72,12 @@ export class MidiOverlay {
 
     const dialog = el('div', { class: 'overlay-dialog', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'midi-overlay-title' },
       title,
-      this.#intro,
-      el('h3', { class: 'overlay-subtitle', text: STR.overlay.howToTitle }),
+      ...(wiring ? [] : [el('p', { class: 'overlay-intro', text: STR.overlay.intro[kind] }),
+        el('h3', { class: 'overlay-subtitle', text: STR.overlay.howToTitle })]),
       el('div', { class: 'overlay-diagram' }, chainDiagram()),
       steps,
-      el('p', { class: 'overlay-note', text: STR.overlay.autoDetect }),
-      el('p', { class: 'overlay-note', text: STR.overlay.simulatorNote }),
+      ...(kind === 'no-port' ? [el('p', { class: 'overlay-note', text: STR.overlay.autoDetect })] : []),
+      ...(wiring ? [] : [el('p', { class: 'overlay-note', text: STR.overlay.lockedNote })]),
       footer,
     );
 
@@ -105,26 +103,12 @@ export class MidiOverlay {
     dismiss.focus();
   }
 
-  /** Swap the intro paragraph when the detection state changes while open. */
-  setKind(kind: OverlayKind): void {
-    if (!this.#backdrop || this.#kind === kind) return;
-    this.#kind = kind;
-    if (this.#intro) this.#intro.textContent = STR.overlay.intro[introKey(kind)];
-  }
-
   close(): void {
-    this.#backdrop?.remove();
+    if (!this.#backdrop) return;
+    this.#backdrop.remove();
     this.#backdrop = null;
-    this.#intro = null;
     this.#kind = null;
-  }
-}
-
-function introKey(kind: OverlayKind): keyof typeof STR.overlay.intro {
-  switch (kind) {
-    case 'unsupported': return 'unsupported';
-    case 'denied': return 'denied';
-    case 'no-port': return 'noPort';
-    case 'no-leslie': return 'noLeslie';
+    if (this.#opener instanceof HTMLElement) this.#opener.focus();
+    this.#opener = null;
   }
 }
