@@ -395,6 +395,7 @@ kbd { font-family: var(--font); font-size: 15px; font-weight: 500; border: 1px s
 .console[data-open="false"] .console-clear { display: none; }
 .console-last { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); overflow-x: clip; text-overflow: ellipsis; white-space: nowrap; }
 .credits { font-size: 13px; color: var(--ink-dim); white-space: nowrap; text-box: trim-both cap alphabetic; }
+.version { margin-right: 12px; }
 .credits a { position: relative; color: inherit; text-decoration: underline; text-decoration-color: var(--control); text-underline-offset: 3px; transition: color 0.15s ease-out; }
 .credits a::after { content: ""; position: absolute; inset: -8px -6px; }
 .credits a:hover { color: var(--ink); text-decoration-color: currentColor; }

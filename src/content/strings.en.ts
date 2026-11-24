@@ -170,6 +170,7 @@ export const STR = {
   midiIn: 'MIDI input (from the Leslie MIDI OUT)',
   noInput: 'No input',
   consoleClear: 'Clear',
+  version: (n: string) => `v${n} beta`,
   credits: 'Credits:',
   dir: { out: '→', in: '←', echo: '↩ echo' },
   sysexShort: 'SysEx refused: the editor cannot read the Leslie. Allow it (icon left of the URL), then reload.',

@@ -1,6 +1,7 @@
 // Application shell: one top bar (preset, rotor, connection, save), the status
 // sentence shown above the score, and the collapsible MIDI console.
 
+import { version } from '../../package.json';
 import { STR } from '../content/i18n';
 import type { AppState, Store } from '../state/store';
 import { opensGuide } from './controls';
@@ -153,7 +154,7 @@ export function buildShell(store: Store): Shell {
     log.replaceChildren();
     last.textContent = STR.consoleEmpty;
   });
-  const credits = el('p', { class: 'credits' }, `${STR.credits} `,
+  const credits = el('p', { class: 'credits' }, el('span', { class: 'version', text: STR.version(version) }), ` ${STR.credits} `,
     el('a', { href: 'https://jf.cool', target: '_blank', rel: 'noopener', text: 'jf.cool' }));
   const consoleRoot = el('div', { class: 'console', 'data-open': 'false' },
     el('div', { class: 'console-bar' }, toggle, last, el('div', { class: 'spacer' }), clear, credits), log);

@@ -211,7 +211,7 @@ Flat surfaces, told apart by grey steps and 1px lines. The LED glow is the only 
   command leaves on release, never while crossing Brake. Unknown mode: dashed, ghosted, no LED.
 
 ### Credits
-- One 13px `ink-dim` line at the right end of the console bar; the link turns `ink` on hover.
+- One 13px `ink-dim` line at the right end of the console bar: the version (from `package.json`), then the credits; the link turns `ink` on hover.
 
 ### Guide
 - Fixed right column, never a tooltip. "Guide", with the usual side panel icon and an arrow (right closes, left opens), shows and hides it from the top right
