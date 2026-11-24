@@ -1,6 +1,4 @@
-// Language selection point. English is the default pack; a French pack exists
-// in strings.fr.ts / explanations.fr.ts and can be wired here later (e.g. from
-// a ?lang= query or a header toggle).
+// Single entry point for every text of the interface (English only).
 
 export { STR } from './strings.en';
 export { EXPLANATIONS_EN as EXPLANATIONS } from './explanations.en';

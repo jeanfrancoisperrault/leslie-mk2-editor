@@ -1,4 +1,4 @@
-// English explanation content (default language), one entry per parameter id
+// Explanation content, one entry per parameter id
 // in schema.ts. Keep claims descriptive — nothing audible is asserted beyond
 // what the manual or the user confirmed (PLAN.md section 4.3).
 

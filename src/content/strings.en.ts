@@ -1,4 +1,4 @@
-// UI strings, English (default language).
+// UI strings.
 
 import type { RotorSettings } from '../ui/score-model';
 
