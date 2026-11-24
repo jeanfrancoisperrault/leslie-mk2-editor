@@ -29,14 +29,15 @@ time, the ramp redraws in the same place; see at a glance what differs from the 
 FIRST VIEWPORT: One grey bar (name, Preset 1/2, half-moon rotor switch, connection, Save). Below,
 left: Sound/System tabs with a one-line status, the score (about 270 px), then a Horn | Low
 pair of columns, each with its own row labels, then Character and Bass
-settings in the same two columns. Right: the guide on dark grey.
+settings in the same two columns. Right: the guide on dark grey (at rest: Welcome with
+the notices, How to read the graph), closed and opened by a Guide button on the tabs line.
 Console closed as a 36 px foot bar. No scrolling at 1440x900.
 
 FORM: Structure from the engraved score direction (candidate 3, seed key 745285e8); its light skin
 was rejected by the user, who chose the walnut skin with neutral grounds. Controls stay standard.
 
 Signature interaction: Slow/Fast/Brake runs a calculated playhead through the score; hovering a
-ramp opens its guide, clicking it focuses its fader. Motion exists nowhere else.
+ramp opens its guide, clicking it focuses its fader. Motion exists nowhere else, except the slide of the guide panel.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review,
 the verdict, DESIGN.md, and every shipping raster carrying its provenance

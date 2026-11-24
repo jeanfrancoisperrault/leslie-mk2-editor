@@ -1,4 +1,4 @@
-// Shared shapes for the per-language content packs.
+// Shapes of the interface texts.
 
 export type VizKind =
   | 'curve' // speed-time curve (rise / fall / brake)

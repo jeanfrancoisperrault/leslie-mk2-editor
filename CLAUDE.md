@@ -4,8 +4,8 @@ Static web app (Vite + TypeScript, no framework) that edits a Leslie 2101/2103 m
 Chrome/Edge only. Read `PRODUCT.md` (goals), `DESIGN.md` (visual system), `docs/dump-map.md`
 (everything verified on the machine) before changing behavior.
 
-- Code and comments in English. UI in English (international project); a French pack exists in
-  `src/content/*.fr.ts` for later. The owner writes in French: answer in French.
+- Code and comments in English. UI in English only (international project; the French pack was removed on
+  2026-11-24), all texts through `src/content/i18n.ts`. The owner writes in French: answer in French.
 - `src/params/schema.ts` is the single source of truth for parameters.
 - Commands: `npm run dev` (port 5173, also `.claude/launch.json`), `npm test`, `npm run typecheck`.
 

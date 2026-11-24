@@ -2,8 +2,9 @@
   "name": "leslie-2101mk2-editor",
   "private": true,
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
-  "description": "Desktop-first web editor for the Leslie 2101 mk2 rotary speaker (Web MIDI, NRPN + SysEx)",
+  "description": "Desktop-first web editor for the Leslie 2101 mk2 and 2103 mk2 rotary speakers (Web MIDI, NRPN + SysEx)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

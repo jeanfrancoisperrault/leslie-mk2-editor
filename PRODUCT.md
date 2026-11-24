@@ -16,13 +16,13 @@ Modèles visés : Leslie 2101 mk2 et 2103 mk2 — même électronique et même i
 (manuel officiel commun « 2101mk2/2103mk2 », les modèles ne diffèrent que par la finition).
 
 Langue de l'interface : anglais (décision utilisateur du 2026-11-20, remplace le français
-par défaut du plan initial) ; structure i18n conservée, pack français disponible dans le code.
+par défaut du plan initial) ; pack français supprimé le 2026-11-24. Textes réunis dans `src/content/`.
 
 ## Contraintes produit
 
 - Application web statique, sans backend. Chrome / Edge uniquement (Web MIDI) ; message clair sur Safari.
 - Desktop first : conçu pour 1440×900, utilisable jusqu'à 1100 px. Pas de layout mobile en v1.
-- Langue : projet international, interface en anglais ; i18n prête pour d'autres langues (pack français existant, traductions plus tard). Commentaires de code en anglais.
+- Langue : projet international, interface en anglais seulement. Commentaires de code en anglais.
 - Édition en direct par NRPN ; SysEx réservé au dump mémoire (lecture, sauvegarde, écriture).
 - L'éditeur ne peut pas demander l'état à la machine (aucun dump request n'obtient de réponse) :
   il attend un DUMP OUT lancé depuis la face avant et reste verrouillé jusque-là. « Save to memory »

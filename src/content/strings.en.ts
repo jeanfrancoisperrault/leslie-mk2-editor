@@ -1,4 +1,4 @@
-// UI strings, English (default language).
+// UI strings.
 
 import type { RotorSettings } from '../ui/score-model';
 
@@ -143,11 +143,23 @@ export const STR = {
       aria: 'The computer and the USB-MIDI interface are linked by USB. Interface MIDI OUT goes to Leslie MIDI IN. Leslie MIDI OUT goes back to interface MIDI IN.',
     },
   },
-  explainerAria: 'Parameter explanation',
+  explainerAria: 'Guide',
+  guideToggle: { label: 'Guide', hide: 'Hide the guide', show: 'Show the guide' },
   explainerEmpty: {
-    title: 'Parameter guide',
-    body: [
-      'Hover or focus any setting: what it sets, what you hear and its range appear here.',
+    aria: 'About this editor',
+    tabs: { welcome: 'Welcome', graph: 'How to read the graph' },
+    intro: 'Set up your Leslie 2101 or 2103 mk2 on one screen, and hear each change as you make it. Hover or focus a setting to see here what it does.',
+    notices: [
+      {
+        title: 'Unofficial project',
+        text: 'A personal, non-profit project. It is not affiliated with, endorsed by or supported by the makers of Leslie speakers or Hammond organs. Leslie, Hammond and all other names and trademarks belong to their respective owners; they are used here only to say which machines this editor works with.',
+      },
+      {
+        title: 'Use at your own risk',
+        text: 'This editor is provided as is, without warranty of any kind. It sends MIDI data to your speaker, and Save to memory overwrites the settings stored in it: keep a copy first (Save dump, in the MIDI connection at the top; a SysEx tool can send it back). To the extent permitted by law, the author is not liable for any malfunction, damage or loss of settings that may follow from its use.',
+      },
+    ],
+    graph: [
       'The graph shows both rotors on the same clock: what happens on Slow and Brake when the rotors turn fast, then on Fast when they turn slow. The five lines are the speed, from 0 to 400 rpm.',
       'Green is Slow, red is Fast, white is Brake: in the graph, on the faders and on the half-moon.',
       'It is calculated from the settings. Ramps are drawn straight; the machine’s exact curve is not documented.',
