@@ -204,12 +204,17 @@ Flat surfaces, told apart by grey steps and 1px lines. The LED glow is the only 
 - One 13px `ink-dim` line at the right end of the console bar; the link turns `ink` on hover.
 
 ### Guide
-- Fixed right column, never a tooltip. Title in the mode color, machine menu name, what it sets,
+- Fixed right column, never a tooltip. "Guide", with the usual side panel icon and an arrow (right closes, left opens), shows and hides it from the top right
+  of the work area, on the line of the tabs and against the panel, on `surface-soft` when closed and `surface` when
+  open. An arrow in the
+  panel, then a button at its foot, were not understood; in the top bar it truncated the MIDI port. Open at every start, so that the notices are seen (user decision, 2026-11-24). At rest, two 15px tabs (user decision, 2026-11-24): Welcome, with the
+  trademark notice and the disclaimer, and How to read the graph. On a setting: title in the mode color, machine menu name, what it sets,
   what you hear, value (with raw data or display code) / range / default, figure for tone settings.
 
 ## Motion
 
-The playhead, the rotors and the half-moon lever are the only motion, and they carry state. Transitions 150 to 200 ms.
+The playhead, the rotors, the half-moon lever and the slide of the guide panel (400 ms, ease-in-out, on its button only)
+are the only motion, and they carry state. Other transitions 150 to 200 ms.
 With reduced motion the rotors do not turn; the figures still update.
 
 ## Do's and Don'ts

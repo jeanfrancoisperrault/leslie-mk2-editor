@@ -34,8 +34,8 @@ const MODES: SpeedCommand[] = ['slow', 'fast', 'brake'];
 
 const store = new Store();
 const shell = buildShell(store);
-const panels = buildPanels(store, shell.status);
 const explainer = buildExplainer(store);
+const panels = buildPanels(store, shell.status, explainer.toggle);
 
 // --- MIDI plumbing -----------------------------------------------------------
 // Every outgoing message goes through a tee: logged to the console, noted for

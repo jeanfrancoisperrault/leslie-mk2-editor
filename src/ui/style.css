@@ -169,7 +169,16 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; text-wrap: balance; }
 .select:hover { border-color: var(--ink); }
 
 /* ---------- Page ---------- */
-.main { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 26vw, 400px); min-height: 0; }
+.main {
+  --guide: clamp(320px, 26vw, 400px);
+  --slide: 400ms cubic-bezier(0.5, 0, 0.3, 1); /* ease-in-out */
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--guide);
+  min-height: 0;
+}
+.main:has(.explainer.is-closed) { grid-template-columns: minmax(0, 1fr) 0px; }
+.main.is-sliding { transition: grid-template-columns var(--slide); }
 .work { padding: 30px 28px 10px; overflow-y: auto; }
 .work-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 38px; margin-bottom: 8px; }
 .tabs { display: flex; gap: 24px; }
@@ -188,6 +197,26 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; text-wrap: balance; }
 .tabs button[aria-selected="true"] { color: var(--ink); border-color: var(--ink); }
 .status { margin-left: auto; color: var(--ink-soft); text-align: right; }
 .status.is-error { background: var(--ink); color: var(--ground); padding: 10px 12px; border-radius: var(--radius); }
+
+/* Side panel switch, against the panel: lit while it is open, always on a ground. */
+.guide-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  height: 38px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease-out, background-color 0.15s ease-out;
+}
+.guide-toggle:hover, .guide-toggle[aria-expanded="true"] { background: var(--surface); color: var(--ink); }
+.guide-toggle[aria-expanded="true"]:hover, .guide-toggle:active { background: var(--surface-press); }
+.guide-toggle span { text-box: trim-both cap alphabetic; }
 
 /* ---------- Rotor settings ---------- */
 /* Rules of this view keep 10px on both sides. */
@@ -318,9 +347,20 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; text-wrap: balance; }
 .waiting-note { color: var(--ink-soft); }
 
 /* ---------- Guide ---------- */
-.explainer { background: var(--surface-soft); padding: 24px 28px; overflow-y: auto; }
+.explainer { min-width: 0; min-height: 0; overflow: hidden; background: var(--surface-soft); }
+.explainer.is-closed { visibility: hidden; }
+/* Closing: stays visible, then leaves the tab order, once off screen. */
+.main.is-sliding .explainer { transition: visibility var(--slide); }
+/* Keeps its width, so that the text slides without wrapping again. */
+.guide-body { width: var(--guide); height: 100%; padding: 24px 28px; overflow-y: auto; }
 .explainer h2 { font-size: 24px; color: var(--voice); }
 .explainer p { margin-top: 12px; font-size: 15px; line-height: 1.45; }
+/* At rest: same height as the Sound and System tabs, one step smaller. */
+.explainer .tabs { margin-top: 6px; gap: 20px; }
+.explainer .tabs button { font-size: 15px; white-space: nowrap; }
+.rest { margin-top: 16px; }
+.rest h2 { margin-top: 24px; font-size: 18px; }
+.rest h2 + p { margin-top: 6px; }
 .explainer .machine { margin-top: 2px; font-size: 15px; color: var(--ink-soft); }
 .explainer .machine b { color: var(--ink); }
 .explainer .meta { display: grid; grid-template-columns: auto auto auto; justify-content: space-between; gap: 12px; margin-top: 18px; padding: 12px 0; border-block: 1px solid var(--surface); }

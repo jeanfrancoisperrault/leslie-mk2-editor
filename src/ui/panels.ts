@@ -10,6 +10,7 @@ import type { ParamRow } from './controls';
 import { el } from './dom';
 import { ROTOR_ROWS, SYSTEM_GROUPS, TONE_GROUPS } from './layout';
 import { buildScore } from './score';
+import { buildTabs } from './tabs';
 
 export interface Panels {
   root: HTMLElement;
@@ -20,7 +21,7 @@ export interface Panels {
 type View = 'sound' | 'system';
 const VIEWS: View[] = ['sound', 'system'];
 
-export function buildPanels(store: Store, status: HTMLElement): Panels {
+export function buildPanels(store: Store, status: HTMLElement, guideToggle: HTMLElement): Panels {
   const rows: ParamRow[] = [];
   const add = (id: string, label: string): HTMLElement => {
     const row = buildParamRow(getParam(id), store, label);
@@ -67,41 +68,23 @@ export function buildPanels(store: Store, status: HTMLElement): Panels {
   const views: Record<View, HTMLElement> = { sound, system };
 
   let view: View = 'sound';
-  const tablist = el('div', { class: 'tabs', role: 'tablist', 'aria-label': STR.views.aria });
-  const tabs = VIEWS.map((v) => {
-    const b = el('button', { type: 'button', role: 'tab', id: `tab-${v}`, 'aria-controls': `view-${v}`, text: STR.views[v] });
-    b.addEventListener('click', () => select(v));
-    tablist.append(b);
-    return b;
-  });
-  tablist.addEventListener('keydown', (e) => {
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-    e.preventDefault();
-    select(view === 'sound' ? 'system' : 'sound');
-    tabs[VIEWS.indexOf(view)]!.focus();
-  });
-
-  function select(next: View): void {
+  const tabs = buildTabs(VIEWS, STR.views, STR.views.aria, (next) => {
     view = next;
-    VIEWS.forEach((v, i) => {
-      tabs[i]!.setAttribute('aria-selected', String(v === view));
-      tabs[i]!.tabIndex = v === view ? 0 : -1;
-    });
     paint();
     score.update(store.state); // the graph pauses while hidden
-  }
+  });
 
   function paint(): void {
     const locked = store.locked;
     waiting.hidden = !locked;
-    tablist.hidden = locked;
+    tabs.root.hidden = locked;
     score.root.hidden = !locked && view !== 'sound';
     for (const v of VIEWS) views[v].hidden = locked || v !== view;
   }
 
   const root = el('div', { class: 'work' },
-    el('div', { class: 'work-head' }, tablist, status), score.root, waiting, sound, system);
-  select('sound');
+    el('div', { class: 'work-head' }, tabs.root, status, guideToggle), score.root, waiting, sound, system);
+  tabs.select('sound');
 
   return {
     root,

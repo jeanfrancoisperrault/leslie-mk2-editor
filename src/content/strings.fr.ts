@@ -43,10 +43,22 @@ export const STR = {
       `Rotor grave : ${l.slow} à ${l.fast} rpm, montée ${l.rise} s, descente ${l.fall} s, freinage ${l.brake} s.`,
   },
   was: (value: string) => `lu : ${value}`,
+  guideToggle: { label: 'Guide', hide: 'Masquer le guide', show: 'Afficher le guide' },
   explainerEmpty: {
-    title: 'Guide des réglages',
-    body: [
-      'Survolez ou sélectionnez un réglage : ce qu’il fait, ce qu’on entend et sa plage s’affichent ici.',
+    aria: 'À propos de cet éditeur',
+    tabs: { welcome: 'Bienvenue', graph: 'Lire le graphique' },
+    intro: 'Réglez votre Leslie 2101 ou 2103 mk2 sur un seul écran, et entendez chaque changement aussitôt. Survolez ou sélectionnez un réglage pour voir ici ce qu’il fait.',
+    notices: [
+      {
+        title: 'Projet non officiel',
+        text: 'Un projet personnel, à but non lucratif. Il n’est ni affilié aux fabricants des cabines Leslie et des orgues Hammond, ni approuvé ou soutenu par eux. Leslie, Hammond et tous les autres noms et marques appartiennent à leurs propriétaires respectifs ; ils ne servent ici qu’à indiquer les machines compatibles.',
+      },
+      {
+        title: 'À vos risques',
+        text: 'Cet éditeur est fourni en l’état, sans aucune garantie. Il envoie des données MIDI à votre cabine, et Enregistrer en mémoire remplace les réglages qu’elle contient : gardez-en d’abord une copie (sauvegarde du dump, dans la connexion MIDI). Dans les limites permises par la loi, l’auteur n’est pas responsable des dysfonctionnements, des dommages ou des pertes de réglages qui pourraient suivre son utilisation.',
+      },
+    ],
+    graph: [
       'Le graphique montre les deux rotors sur la même horloge : ce qui se passe avec Slow et Brake quand les rotors tournent vite, puis avec Fast quand ils tournent lentement. Les cinq lignes sont la vitesse, de 0 à 400 rpm.',
       'Vert : Slow, rouge : Fast, blanc : Brake, sur le graphique, les curseurs et le half-moon.',
       'Il est calculé d’après les réglages. Les rampes sont tracées droites ; la courbe exacte de la machine n’est pas documentée.',
