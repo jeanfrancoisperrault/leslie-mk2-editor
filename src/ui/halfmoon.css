@@ -42,6 +42,11 @@
 .halfmoon[data-unknown] .hm-lever-body { fill: var(--surface); stroke: var(--ink-dim); stroke-dasharray: 3 3; }
 .halfmoon[data-unknown] .hm-lever-cap { fill: var(--rule-strong); }
 
+/* No MIDI output: the switch is off. */
+.halfmoon[data-off] .hm-lever { cursor: not-allowed; }
+.hm-key:disabled { color: var(--control); cursor: not-allowed; }
+.halfmoon[data-off] .hm-lever .hm-lever-cap { fill: var(--rule-strong); }
+
 @media (max-width: 1260px) {
   .halfmoon { width: 256px; padding: 0 2px; }
   .hm-lever { width: 108px; height: 25.6px; }

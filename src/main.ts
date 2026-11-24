@@ -107,6 +107,7 @@ store.onSend = (def, value) => {
 };
 
 shell.onSpeed = (cmd) => {
+  if (!hardwareSink) return; // nothing to turn: the switch is off
   // Close any NRPN session first so the speed command is not mis-addressed.
   queue.flush();
   const ch = store.getValue('controlChannel');

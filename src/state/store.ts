@@ -14,6 +14,11 @@ export type ConnectionKind =
   | { kind: 'simulator' }
   | { kind: 'port'; id: string; name: string };
 
+/** Whether a message reaches a real MIDI output. */
+export function canSend(connection: ConnectionKind): boolean {
+  return connection.kind === 'port';
+}
+
 export interface AppState {
   /** Raw values: presetValues[presetIndex][paramId]. */
   presetValues: [Record<string, number>, Record<string, number>];

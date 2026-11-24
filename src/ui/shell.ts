@@ -3,6 +3,7 @@
 
 import { version } from '../../package.json';
 import { STR } from '../content/i18n';
+import { canSend } from '../state/store';
 import type { AppState, Store } from '../state/store';
 import { opensGuide } from './controls';
 import { el } from './dom';
@@ -183,6 +184,7 @@ export function buildShell(store: Store): Shell {
       channelSelect.value = String(ch);
 
       const c = state.connection;
+      halfMoon.setEnabled(canSend(c));
       led.dataset['state'] = c.kind === 'port' ? 'on' : c.kind === 'simulator' ? 'off' : 'warn';
       const label = c.kind === 'port' ? c.name : STR.connection.states[c.kind];
       connectionText.textContent = c.kind === 'port'
