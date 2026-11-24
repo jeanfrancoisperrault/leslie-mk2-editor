@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Store } from '../state/store';
+import { Store, canSend } from '../state/store';
 
 function load(store: Store): void {
   store.loadFromDevice({
@@ -87,5 +87,12 @@ describe('edits compared with the values read from the Leslie', () => {
     store.setValue('hornRiseTime', 6);
     load(store);
     expect(store.editCount()).toBe(0);
+  });
+});
+
+describe('rotor commands', () => {
+  it('can only be sent through a real MIDI output', () => {
+    expect(canSend({ kind: 'port', id: 'o1', name: 'USB MIDI Interface' })).toBe(true);
+    for (const kind of ['simulator', 'no-port', 'denied', 'unsupported'] as const) expect(canSend({ kind })).toBe(false);
   });
 });

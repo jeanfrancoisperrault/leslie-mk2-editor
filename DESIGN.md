@@ -209,6 +209,7 @@ Flat surfaces, told apart by grey steps and 1px lines. The LED glow is the only 
 - Slow, Brake and Fast are real keys in capitals; the lit LED has a 4px glow, the only one in the app.
 - Lever: `ground` body, `ink-soft` top, leaning outwards at both ends. Drag, or press the slot. The
   command leaves on release, never while crossing Brake. Unknown mode: dashed, ghosted, no LED.
+- Off without a MIDI output (simulator included): keys disabled in `control`, lever still, nothing plays.
 
 ### Credits
 - One 13px `ink-dim` line at the right end of the console bar: the version (from `package.json`), the licenses (editor and fonts), then the credits; a link turns `ink` on hover.

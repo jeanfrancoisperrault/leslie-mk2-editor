@@ -4,6 +4,7 @@
 import { EXPLANATIONS, STR } from '../content/i18n';
 import type { SpeedCommand } from '../midi/speed';
 import { getParam } from '../params/schema';
+import { canSend } from '../state/store';
 import type { AppState, Store } from '../state/store';
 import { buildParamRow } from './controls';
 import type { ParamRow } from './controls';
@@ -37,12 +38,13 @@ export function buildPanels(store: Store, status: HTMLElement, guideToggle: HTML
   const steps = el('ol', { class: 'waiting-steps' });
   for (const s of STR.waiting.steps) steps.append(el('li', { text: s }));
   const wiring = el('button', { type: 'button', class: 'btn btn-outline', text: STR.waiting.wiring });
+  const rotorNote = el('p', { class: 'waiting-note', text: STR.waiting.note });
   const waiting = el('section', { class: 'waiting', role: 'status' },
     el('h2', { text: STR.waiting.title }),
     el('p', { text: STR.waiting.body }),
     steps,
     wiring,
-    el('p', { class: 'waiting-note', text: STR.waiting.note }));
+    rotorNote);
   wiring.addEventListener('click', () => panels.onWiring?.());
 
   // Rotor settings: one column per rotor, the same rows in both, each with its name.
@@ -96,6 +98,7 @@ export function buildPanels(store: Store, status: HTMLElement, guideToggle: HTML
     onWiring: null,
     update(state) {
       paint();
+      rotorNote.hidden = !canSend(state.connection);
       score.update(state);
       for (const row of rows) row.update(state);
     },

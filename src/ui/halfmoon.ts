@@ -14,6 +14,8 @@ export interface HalfMoon {
   root: HTMLElement;
   /** Last mode sent or reported; null = unknown (lever dimmed, no light). */
   setMode(cmd: SpeedCommand | null): void;
+  /** Off when no MIDI output is connected: it still shows the mode, and does nothing. */
+  setEnabled(on: boolean): void;
   onSelect: ((cmd: SpeedCommand) => void) | null;
 }
 
@@ -21,7 +23,7 @@ export function buildHalfMoon(): HalfMoon {
   let mode: SpeedCommand | null = null;
 
   const key = (cmd: SpeedCommand): HTMLButtonElement => {
-    const b = el('button', { type: 'button', class: `hm-key hm-${cmd}`, 'data-cmd': cmd, title: STR.speed.note },
+    const b = el('button', { type: 'button', class: `hm-key hm-${cmd}`, 'data-cmd': cmd },
       el('span', { class: 'hm-name', text: STR.speed.cmds[cmd] }));
     if (cmd !== 'brake') b.append(el('span', { class: 'lamp', 'aria-hidden': 'true' }));
     b.addEventListener('click', () => halfMoon.onSelect?.(cmd));
@@ -58,7 +60,7 @@ export function buildHalfMoon(): HalfMoon {
     return ((e.clientX - r.left - r.width / 2) / r.width) * (LEVER_W / TRAVEL);
   };
   lever.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || root.hasAttribute('data-off')) return;
     e.preventDefault();
     lever.setPointerCapture(e.pointerId);
     drag = new LeverDrag(mode, pointerT(e));
@@ -94,6 +96,14 @@ export function buildHalfMoon(): HalfMoon {
       root.toggleAttribute('data-unknown', cmd === null);
       for (const b of keys) b.setAttribute('aria-pressed', String(b.dataset['cmd'] === cmd));
       if (!drag) rest();
+    },
+    setEnabled(on) {
+      if (!on) endDrag();
+      root.toggleAttribute('data-off', !on);
+      for (const b of keys) {
+        b.disabled = !on;
+        b.title = on ? STR.speed.note : STR.saveMemory.needPort;
+      }
     },
   };
   halfMoon.setMode(null);

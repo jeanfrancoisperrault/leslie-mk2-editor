@@ -1,6 +1,6 @@
 # Leslie 2101 / 2103 mk2 Editor
 
-**Version 0.9.0, beta.** It does what it is meant to do, but has been tested on one speaker only. Keep a copy of
+**Version 0.9.1, beta.** It does what it is meant to do, but has been tested on one speaker only. Keep a copy of
 your settings before you use it.
 
 A web editor for the Leslie 2101 mk2 and 2103 mk2 rotary speakers. It replaces the front panel
