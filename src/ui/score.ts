@@ -23,8 +23,8 @@ const STAFF_GAP = 64;
 /** Below the low staff: speed label, then the time axis. */
 const FOOT = 50;
 /** Height the rest of the work area needs; the staves take what is left. */
-const REST_H = 506;
-const STAFF_MIN = 64;
+const REST_H = 519;
+const STAFF_MIN = 56;
 const STAFF_MAX = 124;
 /** Between measures: each has its own clock, and repeats the speed scale. */
 const GAP = 56;
@@ -121,7 +121,7 @@ export function buildScore(store: Store): Score {
     if (store.locked) return g;
     const s = settings(rotor);
     const was = loadedSettings(rotor);
-        MEASURES.forEach((cmd, i) => {
+    MEASURES.forEach((cmd, i) => {
       // Colored by the mode the measure leads to; each point by the speed it holds.
       const m = svgEl('g', { class: `voice-${cmd}` });
       g.append(m);

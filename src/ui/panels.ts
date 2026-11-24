@@ -8,7 +8,7 @@ import type { AppState, Store } from '../state/store';
 import { buildParamRow } from './controls';
 import type { ParamRow } from './controls';
 import { el } from './dom';
-import { ROTOR_ROWS, SYSTEM_GROUPS, TONE_ROWS } from './layout';
+import { ROTOR_ROWS, SYSTEM_GROUPS, TONE_GROUPS } from './layout';
 import { buildScore } from './score';
 
 export interface Panels {
@@ -22,8 +22,8 @@ const VIEWS: View[] = ['sound', 'system'];
 
 export function buildPanels(store: Store, status: HTMLElement): Panels {
   const rows: ParamRow[] = [];
-  const add = (id: string, label?: string): HTMLElement => {
-    const row = buildParamRow(getParam(id), store, label ? { label } : {});
+  const add = (id: string, label: string): HTMLElement => {
+    const row = buildParamRow(getParam(id), store, label);
     rows.push(row);
     return row.root;
   };
@@ -39,21 +39,22 @@ export function buildPanels(store: Store, status: HTMLElement): Panels {
     steps,
     el('p', { class: 'waiting-note', text: STR.waiting.note }));
 
-  // Rotor settings: one row per setting, one column per rotor.
-  const rotors = el('section', { class: 'rotors', 'aria-label': STR.groups['rotors']! },
-    el('span', {}),
-    el('h2', { class: 'col-horn', text: STR.groups['horn']! }),
-    el('h2', { class: 'col-low', text: STR.groups['low']! }));
-  for (const r of ROTOR_ROWS) {
-    const horn = add(r.horn);
-    const low = add(r.low);
-    horn.classList.add('col-horn');
-    low.classList.add('col-low');
-    rotors.append(el('span', { class: 'row-label', text: STR.rows[r.key] }), horn, low);
+  // Rotor settings: one column per rotor, the same rows in both, each with its name.
+  const rotors = el('div', { class: 'pair' });
+  for (const rotor of ['horn', 'low'] as const) {
+    const title = STR.groups[rotor]!;
+    const block = el('section', { class: 'column', 'aria-label': title }, el('h2', { text: title }));
+    for (const r of ROTOR_ROWS) block.append(add(r[rotor], STR.rows[r.key]));
+    rotors.append(block);
   }
-  const tone = el('section', { class: 'tone', 'aria-label': STR.groups['tone']! });
-  for (const id of TONE_ROWS) tone.append(add(id, EXPLANATIONS[id]?.title ?? id));
-  const sound = el('div', { class: 'view', id: 'view-sound', role: 'tabpanel', 'aria-labelledby': 'tab-sound' },
+  const tone = el('div', { class: 'pair tone' });
+  for (const g of TONE_GROUPS) {
+    const title = STR.toneGroups[g.key];
+    const block = el('section', { class: 'column', 'aria-label': title }, el('h2', { text: title }));
+    for (const r of g.rows) block.append(add(r.param, STR.toneRows[r.key]));
+    tone.append(block);
+  }
+  const sound = el('div', { class: 'view sound', id: 'view-sound', role: 'tabpanel', 'aria-labelledby': 'tab-sound' },
     rotors, tone);
 
   const system = el('div', { class: 'view system', id: 'view-system', role: 'tabpanel', 'aria-labelledby': 'tab-system' });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PARAMS } from '../params/schema';
-import { ROTOR_ROWS, SYSTEM_GROUPS, TONE_ROWS, voiceOf } from '../ui/layout';
+import { ROTOR_ROWS, SYSTEM_GROUPS, TONE_GROUPS, voiceOf } from '../ui/layout';
 import { rampPoints, rotorSettings, stepSpeed, SPAN_S } from '../ui/score-model';
 
 const s = { slow: 46, fast: 400, rise: 1, fall: 2, brake: 4 };
@@ -65,7 +65,7 @@ describe('screen layout', () => {
   });
 
   it('places every schema parameter exactly once (preset and mode live in the bar)', () => {
-    const placed = [...ROTOR_ROWS.flatMap((r) => [r.horn, r.low]), ...TONE_ROWS,
+    const placed = [...ROTOR_ROWS.flatMap((r) => [r.horn, r.low]), ...TONE_GROUPS.flatMap((g) => g.rows.map((r) => r.param)),
       ...SYSTEM_GROUPS.flatMap((g) => g.params)].sort();
     expect(placed).toEqual(PARAMS.map((p) => p.id).filter((id) => id !== 'presetNumber' && id !== 'leslieMode').sort());
   });

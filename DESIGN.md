@@ -103,7 +103,7 @@ components:
 **Creative North Star: "The half-moon in the dark"**
 
 A dark, strictly neutral panel where color means only one thing: slow or fast. Black, white and grey
-for everything else, engraved faders for the hand, one graph that shows both rotors on the same
+for everything else, fine-line faders for the hand, one graph that shows both rotors on the same
 clock. Layout and controls stay standard. History in `docs/adr/0001-score-design.md`.
 
 ## Colors
@@ -136,23 +136,28 @@ Two faces, one job each (user decision, 2026-11-23), all bundled through `@fonts
 Single-line interface text is centered on its capitals (`text-box: trim-both cap alphabetic`), so
 both faces share one axis; boxes keep whole-pixel heights (bar controls 38px, keys and selects 36px).
 
-Scale: 13, 15, 18, 20, 24. Sentence case everywhere; capitals appear only on the preset and half-moon keys and where the machine's own
+Scale: 13, 15, 18, 20, 24. Tabs and section titles are 18; Slow, Brake and Fast above the graphs are 15 bold, captions
+that must not read as navigation. Sentence case everywhere; capitals appear only on the preset and half-moon keys and where the machine's own
 menu prints them.
 
 ## Layout
 
 One bar (name, preset, rotor, connection, save), then work area and guide
 (`clamp(320px, 26vw, 400px)`), then the closed MIDI console. Two views: Sound and System.
-Rotor settings are one matrix, grouped by mode in half-moon order (slow speed, fall time; brake time;
-fast speed, rise time; level), not in the order of the machine menu: one row per setting, one column per rotor, with a spacer wide
-enough (64px or more) that the horn's figures never read as labels of the low rotor's faders. The graphs grow with
-the window height (64 to 124 px); at 1440x900 Sound fits without scrolling. Below 1260 px the tone
-and system groups take one column. Minimum width 1100 px.
+Rotor settings are two columns, one per rotor, split by a 1px `surface-soft` rule with 32px on each side
+(16px below 1260 px). Each column has its title and repeats the name of every row, so no figure reads as the label of
+the other rotor (drawn by the owner in Figma, 2026-11-24). Rows are grouped by mode in half-moon order (slow speed, fall time; brake time;
+fast speed, rise time; level), not in the order of the machine menu. The tone settings follow the same two columns,
+titled Character (Horn, Cabinet) and Bass settings (Level, Crossover); keys and fader line up with the rotor faders.
+Rows are 36px, column titles 42px, so that all of it fits at 1440x900 (chosen by the owner over three columns, with
+shorter faders, and over a third tab).
+Section rules are soft (`surface-soft`, `surface` on the guide) and keep 10px on both sides; only the console keeps an
+`ink` line. The graphs grow with the window height (56 to 124 px); at 1440x900 Sound fits without scrolling. Below 1260 px the system
+groups take one column. Minimum width 1100 px.
 
 ## Elevation
 
-Flat surfaces, told apart by grey steps and 1px lines. Besides the LED glow, the fader is the only exception: an inset
-shadow in its groove, a drop shadow under its cap.
+Flat surfaces, told apart by grey steps and 1px lines. The LED glow is the only exception.
 
 ## Components
 
@@ -172,16 +177,17 @@ shadow in its groove, a drop shadow under its cap.
   command is sent or reported the speed reads "— rpm": a dump does not hold the rotor mode.
 
 ### Fader
-- Native range input: 5px engraved groove filled in the mode color, upright white cap with an index
-  line, ticks at real detents, outlined cap at the value last read from the
-  machine or saved to it, once edited. Arrows, Shift+arrows, Delete or double-click.
+- Native range input: 2px line filled in the mode color up to a 2x22px upright stroke of the same color
+  (4px on hover and while dragging, 14px target), ticks at real detents, 6px outline at half opacity at the
+  value last read from the machine or saved to it, once edited. Arrows, Shift+arrows, Delete or double-click.
 
 ### Keys, selects, buttons
 - Lamp keys (presets): no outline, no fill. A point that lights `ink` plus a name; inactive name
   in `ink-dim`, `ink` on hover. The active key sits on `ground`, with the control radius, darker than
   the bar. A faint 1px rule separates them from the half-moon.
 - Enum keys: one `control` outline around the options. Others in `ink-soft`; the chosen one is `ink` on
-  `surface-press`. No solid white fill outside the primary button.
+  `surface-press`. No solid white fill outside the primary button. Once edited, the key of the machine's own value is
+  outlined at half opacity, like the outline on a fader; no "was" text next to keys (assistive tech still gets it).
 - Primary button: ink. Disabled: outline and `ink-soft`, no opacity tricks.
 - Connection: one button with the state in words, opening a popover with ports, channel and dump.
 
