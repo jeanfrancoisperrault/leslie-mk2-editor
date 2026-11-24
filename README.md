@@ -133,6 +133,6 @@ is not liable for any malfunction, damage or loss of settings that may follow fr
 
 [MIT](LICENSE), Copyright (c) 2026 Jean-francois Perrault. It covers this project's code and documents, not
 the names and trademarks above. Third parties: Plus Jakarta Sans and Geist Mono (SIL Open Font License,
-[full text](public/third-party-licenses.txt)); some agent skills in `.claude/skills/` (MIT, see their license file there).
+[full text](public/licenses.txt)); some agent skills in `.claude/skills/` (MIT, see their license file there).
 
 Credits: [jf.cool](https://jf.cool)
